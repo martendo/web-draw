@@ -41,6 +41,8 @@ const CLOSE_CODES = {
   1015: "TLS Handshake"
 };
 
+var ctrlKey = false;
+
 // Pen stroke cap and join options (used with value from selects)
 const CAPS = ["round", "butt", "square"];
 
@@ -2760,6 +2762,13 @@ html.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 
+html.addEventListener("keydown", (event) => {
+  if (event.key === "Control") ctrlKey = true;
+});
+html.addEventListener("keyup", (event) => {
+  if (event.key === "Control") ctrlKey = false;
+});
+
 var upTimeout, downTimeout;
 html.addEventListener("pointerup", () => {
   clearTimeout(upTimeout);
@@ -2771,6 +2780,7 @@ html.addEventListener("pointerup", () => {
 const canvasContainer = document.getElementById("canvasContainer");
 canvasContainer.addEventListener("pointerdown", mouseHold);
 canvasContainer.addEventListener("wheel", (event) => {
+  if (!ctrlKey) return;
   event.preventDefault();
   const delta = Math.sign(event.deltaY) * -0.25;
   zoom(delta);
