@@ -1,0 +1,20 @@
+{
+  "hosting": {
+    "target": "app",
+    "public": "public",
+    "headers": [{
+      "source": "**",
+      "headers": [{
+        "key": "Cache-Control",
+        "value": "no-cache"
+      }]
+    }],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**",
+      "dev/*",
+      "server.js"
+    ]
+  }
+}

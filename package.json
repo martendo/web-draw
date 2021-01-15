@@ -1,0 +1,26 @@
+{
+  "name": "web-draw",
+  "version": "0.10.0",
+  "description": "A little real-time online drawing program.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martendo7/web-draw.git"
+  },
+  "author": "martendo7",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/martendo7/web-draw/issues"
+  },
+  "homepage": "https://github.com/martendo7/web-draw#readme",
+  "dependencies": {
+    "ws": "^7.4.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.3",
+    "utf-8-validate": "^5.0.4"
+  }
+}

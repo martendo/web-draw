@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "web-draw-fe761"
+  },
+  "targets": {
+    "web-draw-fe761": {
+      "hosting": {
+        "app": [
+          "w-draw"
+        ]
+      }
+    }
+  }
+}
