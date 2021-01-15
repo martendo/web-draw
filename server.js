@@ -1,3 +1,5 @@
+"use strict";
+
 const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: process.env.PORT || 3000 });
@@ -19,7 +21,7 @@ class Session {
     this.clients = new Map;
     this.password = null;
     sessions.set(this.id, this);
-    console.log("\x1b[36m%s\x1b[0m", `Create session ${this.id} - ${sessions.size} sessions open`);
+    console.log(`Create session ${this.id} - ${sessions.size} sessions open`);
   }
   
   join(client) {
@@ -31,15 +33,24 @@ class Session {
     client.send({
       type: "session-joined",
       id: this.id,
-      users: this.clients.size,
-      clientIds: [...this.clients].map((c) => c[1].id).filter((id) => id !== client.id)
+      total: this.clients.size,
+      clients: [...this.clients.values()].map((c) => {
+        return {
+          id: c.id,
+          name: c.name
+        };
+      }),
+      password: this.password
     });
     client.broadcast({
       type: "user-joined",
-      users: this.clients.size,
-      clientIds: [client.id]
+      total: this.clients.size,
+      client: {
+        id: client.id,
+        name: client.name
+      }
     });
-    console.log("\x1b[35m%s\x1b[0m", `Client ${client.id} joined session ${this.id} - ${this.clients.size} clients in session`);
+    console.log(`Client ${client.id} joined session ${this.id} - ${this.clients.size} clients in session`);
     if (this.clients.size !== 1) {
       [...this.clients.values()][0].send({
         type: "request-canvas",
@@ -58,20 +69,21 @@ class Session {
       });
     }
     this.clients.delete(client.id);
-    console.log("\x1b[35m%s\x1b[0m", `Client ${client.id} left session ${this.id} - ${this.clients.size} clients in session`);
-    client.session = null;
-    
-    this.clients.forEach((c) => {
-      c.send({
-        type: "user-left",
-        users: this.clients.size,
-        clientIds: [client.id]
-      });
+    client.broadcast({
+      type: "user-left",
+      total: this.clients.size,
+      client: {
+        id: client.id,
+        name: client.name
+      }
     });
+    client.session = null;
+    console.log(`Client ${client.id} left session ${this.id} - ${this.clients.size} clients in session`);
+    
     if (this.clients.size == 0) {
       sessions.delete(this.id);
       delete this;
-      console.log("\x1b[36m%s\x1b[0m", `Delete session ${this.id} - ${sessions.size} sessions open`);
+      console.log(`Delete session ${this.id} - ${sessions.size} sessions open`);
     }
   }
 }
@@ -80,6 +92,7 @@ class Client {
   constructor(connection, id) {
     this.connection = connection;
     this.id = id;
+    this.name = null;
     this.session = null;
     this.isAlive = true;
     clients.set(this.id, this);
@@ -99,6 +112,13 @@ class Client {
       if (error) console.error("Message send failed", msg, error);
     });
   }
+  
+  ping() {
+    if (!this.isAlive) return this.connection.terminate();
+    this.isAlive = false;
+    this.pingTime = Date.now();
+    this.connection.ping();
+  }
 }
 
 function joinSession(client, id) {
@@ -117,6 +137,44 @@ function createSession(client, id) {
   joinSession(client, id);
 }
 
+var stdin = process.openStdin();
+stdin.addListener("data", (data) => {
+  const msg = data.toString().trim(),
+        command = msg.split(" ")[0],
+        args = msg.split(" ").slice(1);
+  switch(command) {
+    case "dels": {
+      if (sessions.has(args[0])) {
+        const session = sessions.get(args[0]);
+        session.clients.forEach((client) => {
+          session.leave(client);
+        });
+        sessions.delete(args[0]);
+        console.log(`Deleted session ${args[0]}`);
+      } else {
+        console.log(`No session ${args[0]} to delete`);
+      }
+      break;
+    }
+    case "remu": {
+      if (clients.has(args[0])) {
+        const client = clients.get(args[0]);
+        if (client.session) client.session.leave(client);
+        client.connection.close(4000);
+        clients.delete(args[0]);
+        console.log(`Removed user ${args[0]}`);
+      } else {
+        console.log(`No user ${args[0]} to remove`);
+      }
+      break;
+    }
+    default: {
+      console.log(`Unknown command ${command}`);
+      break;
+    }
+  }
+});
+
 wss.on("connection", (socket) => {
   let id = createId();
   while (clients.has(id)) {
@@ -127,32 +185,35 @@ wss.on("connection", (socket) => {
     type: "connection-established",
     id: client.id
   });
-  console.log("\x1b[33m%s\x1b[0m", `Client connect ${client.id} - ${clients.size} clients connected`);
-  socket.on("pong", () => client.isAlive = true);
-  const pingClient = setInterval(() => {
-    if (client.isAlive === false) return socket.terminate();
-    client.isAlive = false;
-    socket.ping();
-  }, 30000);
+  console.log(`Client connect ${client.id} - ${clients.size} clients connected`);
+  socket.on("pong", () => {
+    client.send({
+      type: "latency",
+      latency: Date.now() - client.pingTime
+    });
+    client.isAlive = true;
+  });
+  const pingClient = setInterval(() => client.ping(), 10000);
+  setTimeout(() => client.ping(), 1000);
   socket.on("error", (error) => {
-    throw new Error(error);
+    console.error(error);
   });
   socket.on("close", (code) => {
     clients.delete(client.id);
-    console.log("\x1b[33m%s\x1b[0m", `Client disconnect ${client.id} - ${code} - ${clients.size} clients connected`);
+    console.log(`Client disconnect ${client.id} - ${code} - ${clients.size} clients connected`);
     clearInterval(pingClient);
     const session = client.session;
     if (session) session.leave(client);
     socket.close();
-    delete client;
   });
   socket.on("message", (msg) => {
-    if (msg.slice(0, 4) === "ping") {
-      socket.send("pong" + msg.slice(4));
-      return;
-    }
     const data = JSON.parse(msg);
     switch (data.type) {
+      case "user-name": {
+        client.name = data.name;
+        client.send(data);
+        // Fallthrough
+      }
       case "fill":
       case "clear":
       case "clear-blank":
@@ -211,6 +272,30 @@ wss.on("connection", (socket) => {
         break;
       }
       */
+      case "chat-message": {
+        if (data.message.slice(0, 3) === "to:") {
+          const idList = data.message.split(" ")[0].slice(3);
+          var ids = idList.split(",");
+          ids = ids.filter((id) => client.session.clients.has(id));
+          if (ids.length === 0) break;
+          ids.push(client.id);
+          ids = [...new Set(ids)];
+          ids.forEach((id) => {
+            client.session.clients.get(id).send({
+              type: "chat-message",
+              message: data.message.slice(3 + idList.length + 1),
+              clientId: client.id,
+              priv: ids,
+              timestamp: Date.now()
+            });
+          });
+        } else {
+          data.timestamp = Date.now();
+          client.broadcast(data);
+          client.send(data);
+        }
+        break;
+      }
       case "response-canvas": {
         client.session.clients.get(data.clientId).send(data);
         break;
@@ -282,7 +367,7 @@ wss.on("connection", (socket) => {
             id: data.id
           });
         } else {
-          console.log("\x1b[35m\x1b[1m%s\x1b[0m", `Change session ${client.session.id} to ${data.id}`);
+          console.log(`Change session ${client.session.id} to ${data.id}`);
           sessions.delete(client.session.id);
           client.session.id = data.id;
           sessions.set(client.session.id, client.session);
@@ -302,13 +387,20 @@ wss.on("connection", (socket) => {
       case "session-password": {
         client.session.password = data.password;
         client.send({
-          type: "password-set"
+          type: "password-set",
+          password: client.session.password,
+          clientId: client.id
         });
-        console.log("\x1b[35m\x1b[1m%s\x1b[0m", `Set session ${client.session.id} password ${data.password}`);
+        client.broadcast({
+          type: "password-set",
+          password: client.session.password,
+          clientId: client.id
+        });
+        console.log(`Set session ${client.session.id} password ${data.password}`);
         break;
       }
       default: {
-        console.log("\x1b[31m%s\x1b[0m", `Unknown message ${data.type}!`, data);
+        console.log(`Unknown message ${data.type}!`, data);
         break;
       }
     }
