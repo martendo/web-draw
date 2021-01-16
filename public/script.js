@@ -1464,8 +1464,8 @@ function clearMouseHold(event) {
   currentAction.type = null;
 }
 
-// Download canvas image
-function download() {
+// Export canvas image
+function exportCanvas() {
   const a = document.createElement("a");
   a.style.display = "none";
   a.href = sessionCanvas.toDataURL("image/png");
@@ -2893,7 +2893,7 @@ for (let i = 0; i < menuLabels.length; i++) {
 }
 document.getElementById("fileSaveBtn").addEventListener("click", saveCanvas);
 document.getElementById("fileOpenBtn").addEventListener("click", openCanvas);
-document.getElementById("fileDownloadBtn").addEventListener("click", download);
+document.getElementById("fileExportBtn").addEventListener("click", exportCanvas);
 document.getElementById("fileImportBtn").addEventListener("click", selectImport);
 document.getElementById("editUndoBtn").addEventListener("click", doUndo);
 document.getElementById("editRedoBtn").addEventListener("click", doRedo);
