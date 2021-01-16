@@ -1887,7 +1887,8 @@ function updateUserInfo(num) {
     isAre = "is";
     s = "";
   }
-  document.getElementById("userBox").innerHTML = `There ${isAre} <a href="javascript:void(0)" onclick="modalOpen('sessionInfoModal')">${num} user${s}</a> connected to this session.`;
+  document.getElementById("userBox").innerHTML = `There ${isAre} <a href="javascript:void(0)" id="userCount">${num} user${s}</a> connected to this session.`;
+  document.getElementById("userCount").onclick = () => modalOpen("sessionInfoModal");
   
   document.getElementById("sessionInfoClients").textContent = num;
   updateSessionInfoClientTable();
@@ -1970,7 +1971,9 @@ function setCurrentSessionPasswordText(password) {
   if (password === null) {
     text.textContent = "There is currently no password set on this session.";
   } else {
-    text.innerHTML = `Current password: <span class="clickToCopy lightBox" title="Copy" onclick="copyText(event, this.textContent)">${password}</span>`;
+    text.innerHTML = `Current password: <span class="clickToCopy lightBox" title="Copy" id="currentPassword">${password}</span>`;
+    const current = document.getElementById("currentPassword");
+    current.onclick = (event) => copyText(event, current.textContent);
   }
 }
 
