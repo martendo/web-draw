@@ -43,6 +43,11 @@ const CLOSE_CODES = {
 
 var ctrlKey = false;
 
+// Callback functions
+const CALLBACKS = {
+  "updateColourValueAlpha": updateColourValueAlpha
+};
+
 // Pen stroke cap and join options (used with value from selects)
 const CAPS = ["round", "butt", "square"];
 
@@ -395,7 +400,7 @@ function setSliderValue(id, value, doCallback = true) {
   document.getElementById(id + "Value").textContent = value;
   const min = parseFloat(input.dataset.min);
   document.getElementById(id + "Bar").style.width = Math.max(Math.min((value - min) / (parseFloat(input.dataset.width) - min) * 100, 100), 0) + "%";
-  if (input.dataset.callback && doCallback) window[input.dataset.callback](value);
+  if (input.dataset.callback && doCallback) CALLBACKS[input.dataset.callback](value);
 }
 function sliderValUpDown(id, dir) {
   const slider = document.getElementById(id + "Input");
