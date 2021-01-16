@@ -2257,9 +2257,13 @@ socket.onclose = (event) => {
   clearTimeout(wakingUp);
   const info = document.getElementById("wakingUpInfo");
   if (info) info.remove();
-  connectionInfo.textContent = "Disconnected from server. :(";
+  connectionInfo.innerHTML = "Disconnected from server. :(<br><br>";
   connectionInfo.className = "connectionInfoDisconnected";
   connectionInfo.style.display = "block";
+  const reloadBtn = document.createElement("button");
+  reloadBtn.textContent = "Reload";
+  reloadBtn.addEventListener("click", () => location.reload());
+  connectionInfo.appendChild(reloadBtn);
   document.getElementById("menuOptionsContainer").style.display = "none";
   modalOpen("disconnectModal");
 };
