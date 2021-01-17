@@ -233,10 +233,6 @@ button:active:not(:disabled) {
 #rightBox {
   border-left: 1px solid #d0d0d0;
   grid-column: 3;
-  /*
-  overflow-x: hidden;
-  overflow-y: hidden;
-  */
   position: relative;
   overflow-y: auto;
 }
@@ -251,7 +247,7 @@ button:active:not(:disabled) {
   width: 300px;
   white-space: pre-wrap;
 }
-#chatBox/*, #rightBox*/ {
+#chatBox {
   padding: 0;
 }
 .boxHeader {
@@ -381,10 +377,6 @@ a.chatMessageName {
 }
 #topBox, #bottomBox, #leftBox, #rightBox {
   background-color: #fcfcfc;
-  /*
-}
-#topBox, #bottomBox, #leftBox {
-  */
   padding: 8px;
 }
 #topBox, #bottomBox, #leftBox, #rightBox, #menubar {
@@ -516,7 +508,7 @@ label {
   z-index: 0;
   background-size: 16px;
 }
-.sessionCanvas/*, .layerIcon*/ {
+.sessionCanvas {
   background: url("/img/transparent.png");
 }
 .clientCanvas {
@@ -679,34 +671,6 @@ select {
 #infoModalTable td {
   vertical-align: top;
 }
-/*
-#topHalf, #bottomHalf {
-  overflow-y: auto;
-  padding: 8px;
-  width: 100%;
-}
-#topHalf {
-  height: 450px;
-}
-#bottomHalf {
-  border-top: 1px solid #e0e0e0;
-  height: calc(100% - 450px);
-}
-.layerBox {
-  border: 1px solid #404040;
-  padding: 4px;
-  background-color: #f8f8f8;
-  display: block;
-}
-.layerIcon {
-  image-rendering: auto;
-  border: 1px solid #808080;
-  background-size: 8px;
-}
-#layerTable {
-  width: 100%;
-}
-*/
 .floatLeft {
   float: left;
 }
