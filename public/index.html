@@ -423,14 +423,70 @@
         <div class="modalHeader"><h3>Help</h3></div>
         <div class="modalBody">
           You're telling me you don't know how to use a drawing program?<br>
-          <h4>Session? Create? Join? Huh?</h4>
+          <h4>Contents</h4>
+          <a><label for="helpContentsCollapse" class="collapseLabel">Show/Hide</label></a><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
+          <section class="collapseContent">
+            <ul>
+              <li><a href="#help-sessions">Sessions</a></li>
+              <li><a href="#help-menubar">Menubar</a><ul>
+                <li><a href="#help-menubar-save_open">Save/Open</a></li>
+                <li><a href="#help-menubar-export_import">Export/Import</a></li>
+                <li><a href="#help-menubar-resize_canvas">Resize Canvas</a></li>
+                <li><a href="#help-menubar-session_id_password">Session ID & Password</a></li>
+                <li><a href="#help-menubar-info">Info</a></li>
+              </ul></li>
+              <li><a href="#help-top_toolbar">Top Toolbar</a><ul>
+                <li><a href="#help-top_toolbar-undo_redo">Undo/Redo</a></li>
+                <li><a href="#help-top_toolbar-clear">Clear</a></li>
+                <li><a href="#help-top_toolbar-canvas_scale">Canvas Scale</a></li>
+              </ul></li>
+              <li><a href="#help-left_toolbar">Left Toolbar</a></li>
+              <li><a href="#help-right_toolbar">Right Toolbar</a><ul>
+                <li><a href="#help-right_toolbar-colours">Colours</a></li>
+                <li><a href="#help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</a><ul>
+                  <li><a href="#help-right_toolbar-mode_opacity-mode">Mode</a></li>
+                  <li><a href="#help-right_toolbar-mode_opacity-opacity">Opacity</a></li>
+                </ul></li>
+                <li><a href="#help-right_toolbar-line_size">Line Size Settings</a></li>
+                <li><a href="#help-right_toolbar-line_cap">Line Cap Settings</a></li>
+                <li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
+                  <li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
+                  <li><a href="help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
+                  <li><a href="help-right_toolbar-flood_fill-alpha">Change alpha value</a></li>
+                </ul></li>
+                <li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
+                  <li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
+                  <li><a href="#help-right_toolbar-colour_picker-sample_opacity">Sample opacity</a></li>
+                </ul></li>
+                <li><a href="#help-right_toolbar-rect_select">Rectangular Select Actions</a><ul>
+                  <li><a href="#help-right_toolbar-rect_select-copy">Copy</a></li>
+                  <li><a href="#help-right_toolbar-rect_select-cut">Cut</a></li>
+                  <li><a href="#help-right_toolbar-rect_select-paste">Paste</a></li>
+                  <li><a href="#help-right_toolbar-rect_select-clear">Clear</a></li>
+                </ul></li>
+                <li><a href="#help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</a><ul>
+                  <li><a href="#help-right_toolbar-shape-outline">Outline</a></li>
+                  <li><a href="#help-right_toolbar-shape-fill">Fill</a></li>
+                </ul></li>
+              </ul></li>
+              <li><a href="#help-chat">Chat</a></li>
+              <li><a href="#help-bottom_toolbar">Bottom Toolbar</a></li>
+              <li><a href="#help-keyboard_shortcuts">Keyboard Shortcuts</a><ul>
+                <li><a href="#help-keyboard_shortcuts-edit">Edit</a></li>
+                <li><a href="#help-keyboard_shortcuts-view">View</a></li>
+                <li><a href="#help-keyboard_shortcuts-selection">With Selection</a></li>
+                <li><a href="#help-keyboard_shortcuts-other">Other</a></li>
+              </ul></li>
+            </ul>
+          </section>
+          <h4 id="help-sessions">Sessions</h4>
           Imagine a session is the room you're in. Everybody in the same room sees and works on the same drawing.<br>
           If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
           If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random 4-character ID.<br>
           <br>
           <strong>Tip!</strong><br>
           The URL you get in the address bar when in a session can be used to automatically join the session. It follows this format:<br>
-          <code>https://w-draw.web.app/s/&#60;session_id&#62;</code>, where <code>&#60;session_id&#62;</code> is the ID of the session to join.<br>
+          <code>https://w-draw.web.app<strong class="mono">/s/&#60;session_id&#62;</strong></code>, where <code>&#60;session_id&#62;</code> is the ID of the session to join.<br>
           You can send this link to your friends so that they can join right away!<br>
           If a session with the given ID does not exist, a new one with that ID will be automatically created and joined.<br>
           <br>
@@ -438,37 +494,38 @@
           <br>
           <strong>Tip!</strong><br>
           The session password can also be passed through the URL in a query string:<br>
-          <code>https://w-draw.web.app/s/secret-drawing?pass=&#60;password&#62;</code>, where <code>&#60;password&#62;</code> is the session's password.<br>
+          <code>https://w-draw.web.app/s/secret-drawing<strong class="mono">?pass=&#60;password&#62;</strong></code>, where <code>&#60;password&#62;</code> is the session's password.<br>
           Share this link to your friends and they won't need to type the password in themselves!<br>
           If you are creating the session with this link (a session with the specified ID doesn't exist yet), then the password on the new session will be automatically set to the one specified.<br>
-          <h4>Menubar</h4>
+          <h4 id="help-menubar">Menubar</h4>
           The menubar (at the very top of the screen) allows you to do useful things, like save your canvas for later, set a password on your session, or look at this help window!<br>
-          <h5>Save/Open</h5>
+          <h5 id="help-menubar-save_open">Save/Open</h5>
           Web Draw can save and open JSON files containing the info it needs to recreate your canvas. It's the same data that is sent to a new client joining your session. It contains the canvas size, undo data, and redo data. Canvas object attribute modification is planned to come soon in Web Draw, but if you need it now, you can look for the attributes in the JSON, such as changing a <code>type: "stroke"</code>'s <code>colour</code> property to <code>"#ff0000"</code> (red).<br>
-          <h5>Session ID & Password</h5>
-          Through the "Session" menu, you can change the current session's ID and set (or remove) a password.<br>
-          <h5>Info</h5>
-          This "Info" window will show a little info about the web app and the client (you!).<br>
-          Ping is the latency of the connection to the server. Every 10 seconds, the server will send a ping to the browser and wait for a pong to make sure the connection is still alive. It also measures the amount of time between when the ping was sent and the pong was recieved, and tells the browser about it and displays it here so you can know about it. If you're curious, I typically get an average latency of around 70 ms.<br>
-          <h4>Top Toolbar</h4>
-          The top toolbar has your canvas controls.
-          <h5>Undo/Redo</h5>
-          Click the "Undo" button to undo the last action on the canvas.<br>
-          Click "Redo" to redo the last undone action.<br>
-          I should note that these are actions that anyone in the session has made, not just your own.<br>
-          <h5>Export/Import</h5>
+          <h5 id="help-menubar-export_import">Export/Import</h5>
           With the "Export" button, you can save your drawing as a PNG image!<br>
           And with "Import", you can upload an image to use in your drawing!<br>
-          <h5>Clear</h5>
+          <h5 id="help-menubar-resize_canvas">Resize Canvas</h5>
+          In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.<br>
+          <h5 id="help-menubar-session_id_password">Session ID & Password</h5>
+          Through the "Session" menu, you can change the current session's ID and set (or remove) a password.<br>
+          <h5 id="help-menubar-info">Info</h5>
+          This "Info" window will show a little info about the web app and the client (you!).<br>
+          Ping is the latency of the connection to the server. Every 10 seconds, the server will send a ping to your browser and wait for a pong to make sure the connection is still alive. It also measures the amount of time between when the ping was sent and the pong was received, and tells the browser about it so it can display it here so you can know about it. If you're curious, I typically get an average latency of around 40 ms.<br>
+          <h4 id="help-top_toolbar">Top Toolbar</h4>
+          The top toolbar has your canvas controls.
+          <h5 id="help-top_toolbar-undo_redo">Undo/Redo</h5>
+          Click the "Undo" button to undo the last action on the canvas.<br>
+          Click "Redo" to redo the last undone action.<br>
+          <br>
+          Note: These are actions that anyone in the session has made, not just your own.<br>
+          <h5 id="help-top_toolbar-clear">Clear</h5>
           Clear the canvas to all white. Double click to clear to all transparent pixels. (<code>#00000000</code>)<br>
-          <h5>Resize Canvas</h5>
-          Change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.<br>
-          <h5>Canvas Scale</h5>
+          <h5 id="help-top_toolbar-canvas_scale">Canvas Scale</h5>
           This is the scale (or "zoom") of the canvas on your screen. This doesn't affect anybody else's canvas scale, just yours.<br>
           To change it, you can either use your mouse wheel on the canvas area with the <kbd>Control</kbd> key held down, or if you want, you can enter a scale factor into the number box.<br>
           The "Reset" button will reset the scale to 1.<br>
           The "Fit" button will set the canvas scale to the largest size that will fit in the canvas area.<br>
-          <h4>Left Toolbar</h4>
+          <h4 id="help-left_toolbar">Left Toolbar</h4>
           On the left, you've got all your different tools.<br>
           <strong>Pen</strong>: Draw a free-form line however you want!<br>
           <strong>Flood Fill</strong>: Fill an area of a similar colour, decided by the fill threshold. Colours with a difference within the threshold will be recoloured.<br>
@@ -479,62 +536,68 @@
           <strong>Ellipse</strong>: Draw an ellipse, with optional outline & fill.<br>
           <br>
           Note: With every applicable tool, the left mouse button will use Colour 1, and the right will use Colour 2.<br>
-          <h4>Right Toolbar</h4>
+          <h4 id="help-right_toolbar">Right Toolbar</h4>
           You'll see your colours and tool settings over on the right.<br>
-          The colours are always shown. Colour 1 is the colour to use with the left mouse button, and Colour 2 is used with the right. Click on a colour in the table to the left with the left or right button to set the colour. Click on the colour box for Colour 1 or 2 to choose a custom colour with a colour picker, or type in a hex RGB colour value in the box below.<br>
-          <h5>Tool Mode and Opacity Settings</h5>
+          <h5 id="help-right_toolbar-colours">Colours</h5>
+          The colours are always shown. Colour 1 is the colour to use with the left mouse button, and Colour 2 is used with the right. Click on a colour in the table to the left with the left or right button to set the corresponding colour. Click on the colour box for Colour 1 or 2 to choose a custom colour with a colour picker, or type in a hex RGB or RGBA colour value in the box below. You can use 3-digit or 6-digit hex RGB colours, or 4-digit or 8-digit hex RGBA colours.<br>
+          <h5 id="help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</h5>
           The pen, flood fill, line, and shapes tools all share the following settings:<br>
-          <h6>Mode</h6>
+          <h6 id="help-right_toolbar-mode_opacity-mode">Mode</h6>
           The "Mode" setting decides how new canvas content is added to the existing content. There are a total of 26 options, the most common of which I have put at the very top:<br>
           <strong>Normal</strong>: New content is drawn on top of existing content. This is what is considered normal, hence "Normal".<br>
           <strong>Behind</strong>: New content is drawn behind existing content. This means it will only be shown where the existing content has transparency.<br>
           <strong>Erase</strong>: Existing content is kept where it doesn't overlap the new content. This means the pixels where the content overlaps will be made transparent, like it's being erased.<br>
           <br>
           The rest of the modes I won't describe here, but there are descriptions from the <a href="https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">MDN documentation</a>. Keep in mind I have renamed several of the options for clarity. You might be better off checking the tooltip for each mode, unless you want to see a picture.<br>
-          <h6>Opacity</h6>
+          <h6 id="help-right_toolbar-mode_opacity-opacity">Opacity</h6>
           This is how "see-through" things you draw will be, 100 being completely opaque, and 0 being completely transparent.<br>
-          <h5>Line Size Settings</h5>
+          <h5 id="help-right_toolbar-line_size">Line Size Settings</h5>
           With the pen, line, and shape tools, you can set a line size. When drawing shapes, this applies to only the outline of the shape.<br>
           This is the thickness of a line in pixels. The maximum is 10000, because I think that's a reasonable limit. Let me know if you think otherwise.<br>
-          <h5>Line Cap Settings</h5>
+          <h5 id="help-right_toolbar-line_cap">Line Cap Settings</h5>
           The pen and line tools have a line cap setting.<br>
           The line cap is what the ends of a line will look like.<br>
           <strong>Pen cap options</strong>: Round, Butt, and Square.<br>
           <strong>Round</strong>: The ends of lines are rounded.<br>
           <strong>Butt</strong>: The ends of lines are squared off at the endpoints.<br>
           <strong>Square</strong>: The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.<br>
-          <h5>Flood Fill Settings</h5>
-          Threshold.<br>
-          <h6>Threshold</h6>
-          The maximum colour difference from the original clicked colour to fill. This is the maximum difference for each individual RGBA colour value, not the total of the 4. If all values are within the threshold, the pixel will be recoloured.<br>
-          <h5>Colour Picker Settings</h5>
+          <h5 id="help-right_toolbar-flood_fill">Flood Fill Settings</h5>
+          <h6 id="help-right_toolbar-flood_fill-threshold">Threshold</h6>
+          The maximum colour difference of a pixel from the original clicked colour to be recoloured. This is the maximum difference for each of the channels selected with the "Fill by" setting, not the total of all the colour differences. If all values are within the threshold, the pixel will be recoloured.<br>
+          <h6 id="help-right_toolbar-flood_fill-fill_by">Fill by</h6>
+          This setting determines which channels to check for colour difference to decide whether or not to recolour the pixel. Available options are: RGBA (default), RGB, Red, Green, Blue, and Alpha.<br>
+          <h6 id="help-right_toolbar-flood_fill-alpha">Change alpha value</h6>
+          If this box is unchecked, the alpha values of the recoloured pixels will be taken from the image before the flood fill.<br>
+          <h5 id="help-right_toolbar-colour_picker">Colour Picker Settings</h5>
           You can merge the sampled colour with the current and/or sample the opacity in addition to colour.<br>
-          <h6>Merge with current</h6>
-          The new colour will be the average of the current colour and the sampled colour. For example, if the current is black (0, 0, 0) and the sampled is white (255, 255, 255), the new colour will be grey (128, 128, 128).<br>
-          <h6>Sample opacity</h6>
-          Set the opacity (for pen & flood fill) to the sampled pixel's alpha value.<br>
-          <h5>Rectangular Select Actions</h5>
-          When using the rectangular select tool, you don't have any settings available, but you get buttons.<br>
-          <h6>Copy</h6>
+          <h6 id="help-right_toolbar-colour_picker-merge">Merge with current</h6>
+          The new colour will be the average of the current colour and the sampled colour. For example, if the current is black <code>(0, 0, 0)</code> and the sampled is white <code>(255, 255, 255)</code>, the new colour will be grey <code>(128, 128, 128)</code>.<br>
+          <h6 id="help-right_toolbar-colour_picker-sample_opacity">Sample opacity</h6>
+          Set your colour opacity to the sampled pixel's alpha value.<br>
+          <h5 id="help-right_toolbar-rect_select">Rectangular Select Actions</h5>
+          The rectangular select tool doesn't have any settings available, but there are buttons for manipulating your selection.<br>
+          <h6 id="help-right_toolbar-rect_select-copy">Copy</h6>
           Copy the pixels at the selected area on the canvas.<br>
-          <h6>Cut</h6>
+          <h6 id="help-right_toolbar-rect_select-cut">Cut</h6>
           Copy the pixels and then clear the selected area to Colour 2.<br>
-          <h6>Paste</h6>
+          <h6 id="help-right_toolbar-rect_select-paste">Paste</h6>
           Put the pixels in the selection onto the canvas.<br>
-          <h6>Clear</h6>
+          <h6 id="help-right_toolbar-rect_select-clear">Clear</h6>
           Set the selected pixels to Colour 2.<br>
-          <h5>Shape (Rectangle & Ellipse) Settings</h5>
-          When drawing shapes, you can enable or disable its outline and/or fill.<br>
-          <h6>Outline</h6>
+          <h5 id="help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</h5>
+          When drawing shapes, you can enable or disable outlines and/or fill.<br>
+          <h6 id="help-right_toolbar-shape-outline">Outline</h6>
           The line around the outer edge of the shape. Uses the colour which the mouse was clicked with.<br>
-          <h6>Fill</h6>
+          <h6 id="help-right_toolbar-shape-fill">Fill</h6>
           Whether or not the inside of the shape is filled with a solid colour. Uses the opposite colour from what the mouse was clicked with.<br>
-          <h4>Chat</h4>
+          <h4 id="help-chat">Chat</h4>
           Use the chat to send messages to other people in the session, including private messages to people you choose.<br>
+          <br>
           Normally, a message is sent to everyone in the session. However, if the message begins with "to:", it will be a private message sent only to the people with the client IDs that follow. For example, if your message is "to:x7sm PRIVATE MESSAGE!!!", only you and the person with the client ID of <code>x7sm</code> will be able to see the message, and no one else. You can also use a comma-separated list of IDs, like this: "to:x7sm,18hp Hello!"<br>
+          <br>
           Clicking the name of a user in the chat (above a message they have sent) will add their client ID to the "to" list in the message box.<br>
           <br>
-          You can also use some markdown formatting in your messages. Allowed formatting:<br>
+          You can also use some markdown formatting in your messages. Available formatting:<br>
           <table class="table border">
             <tr>
               <th>Typed</th>
@@ -558,19 +621,18 @@
             </tr>
           </table><br>
           You can escape the special characters with a backslash if you want to, for example, use asterisks around a word without italicizing it. You can do that by putting a backslash before a special character. "\*cough*" will suffice and will be shown as "*cough*". If either one of the opening or closing or both formatting characters are escaped (e.g. "\*"), the text will not be formatted. And as you should expect, you can escape the backslash as well: "\\**cool**" will result in "\<strong>cool</strong>". You can escape the backslash and the formatting, too, and the backslash before the backslash, and so on.<br>
-          <h4>Bottom Toolbar</h4>
+          <h4 id="help-bottom_toolbar">Bottom Toolbar</h4>
           At the bottom of your screen is some session info.<br>
           You will see the ID of the session you are currently in and the number of users connected to it.<br>
           Your session ID can be easily copied to the clipboard by clicking on it. If you want to share a link where your buddies can automatically join your session without any other hassle, just copy the link in the address bar, which will have your session ID in it. (See above, Sessions.)<br>
-          Finally, a "Leave" button to leave the session. You will be taken back to the "menu" page.<br>
-          <br>
-          <h4>Keyboard Shortcuts</h4>
-          <h5>Edit</h5>
+          Finally, a "Leave" button to leave the session. You will be taken back to the main page.<br>
+          <h4 id="help-keyboard_shortcuts">Keyboard Shortcuts</h4>
+          <h5 id="help-keyboard_shortcuts-edit">Edit</h5>
           <ul>
             <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> - Undo</li>
             <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <strong>OR</strong> <kbd>Ctrl</kbd> + <kbd>Y</kbd> - Redo</li>
           </ul>
-          <h5>View</h5>
+          <h5 id="help-keyboard_shortcuts-view">View</h5>
           <ul>
             <li><kbd>+</kbd> - Zoom canvas in</li>
             <li><kbd>-</kbd> - Zoom canvas out</li>
@@ -587,13 +649,13 @@
           <ul>
             <li><kbd>Escape</kbd> - Toggle chat sidebar</li>
           </ul>
-          <h5>With Selection</h5>
+          <h5 id="help-keyboard_shortcuts-selection">With Selection</h5>
           <ul>
             <li><kbd>Ctrl</kbd> + <kbd>C</kbd> - Copy</li>
             <li><kbd>Ctrl</kbd> + <kbd>X</kbd> - Cut</li>
             <li><kbd>Ctrl</kbd> + <kbd>V</kbd> - Paste</li>
           </ul>
-          <h5>Other</h5>
+          <h5 id="help-keyboard_shortcuts-other">Other</h5>
           <ul>
             <li><kbd>F1</kbd> - Open Help window</li>
           </ul>

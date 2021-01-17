@@ -2964,7 +2964,10 @@ document.getElementById("canvasResizeModal").addEventListener("keydown", () => {
   }
 });
 
-document.getElementById("helpModalDoneBtn").addEventListener("click", () => modalClose("helpModal"));
+document.getElementById("helpModalDoneBtn").addEventListener("click", () => {
+  modalClose("helpModal");
+  location.hash = "";
+});
 document.getElementById("infoModalDoneBtn").addEventListener("click", () => modalClose("infoModal"));
 
 document.getElementById("sessionInfoModalDoneBtn").addEventListener("click", () => modalClose("sessionInfoModal"));

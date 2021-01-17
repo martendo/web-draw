@@ -750,3 +750,15 @@ table tr.sessionInfoClient:active {
 #sessionInfoClientBody .sessionInfoThisClient:active {
   background-color: #f0f0c8;
 }
+
+.collapseButton {
+  display: none;
+}
+.collapseContent {
+  max-height: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.collapseButton:checked + .collapseContent {
+  max-height: 1000vh;
+}
