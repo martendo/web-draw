@@ -2214,11 +2214,16 @@ socket.onopen = () => {
   // Tell the server if there is a session ID in the URL
   const result = /^\/s\/(.+)$/g.exec(location.pathname);
   if (result) {
+    const pass = /pass=(.+)/g.exec(location.search);
     sendMessage({
       type: "url-session",
-      id: decodeURIComponent(result[1])
+      id: decodeURIComponent(result[1]),
+      password: (pass ? decodeURIComponent(pass[1]) : null)
     });
   }
+  // Remove session path in case session isn't joined (e.g. wrong password)
+  window.history.replaceState({}, "Web Draw", "/");
+  // Query string also removed
   
   // Send mouse movements if mouse has moved
   setInterval(() => {

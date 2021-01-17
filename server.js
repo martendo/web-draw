@@ -81,6 +81,21 @@ class Session {
       console.log(`Delete session ${this.id} - ${sessions.size} sessions open`);
     }
   }
+  
+  setPassword(client, password) {
+    this.password = password;
+    client.send({
+      type: "password-set",
+      password: this.password,
+      clientId: client.id
+    });
+    client.broadcast({
+      type: "password-set",
+      password: this.password,
+      clientId: client.id
+    });
+    console.log(`Set session ${this.id} password ${password}`);
+  }
 }
 
 class Client {
@@ -116,20 +131,42 @@ class Client {
   }
 }
 
-function joinSession(client, id) {
+function joinSession(client, id, pass = null) {
   const session = sessions.get(id);
   if (session.password) {
-    client.send({
-      type: "enter-password",
-      id: id
-    });
+    if (pass) {
+      checkSessionPassword(client, id, pass);
+    } else {
+      client.send({
+        type: "enter-password",
+        id: id
+      });
+    }
   } else {
     session.join(client);
   }
 }
-function createSession(client, id) {
+function createSession(client, id, pass = null) {
   const session = new Session(id);
   joinSession(client, id);
+  session.setPassword(client, pass);
+}
+function checkSessionPassword(client, id, password) {
+  const session = sessions.get(id);
+  if (!session) {
+    client.send({
+      type: "session-no-exist",
+      id: id
+    });
+  } else if (password === session.password) {
+    session.join(client);
+  } else {
+    client.send({
+      type: "wrong-password",
+      password: password,
+      id: id
+    });
+  }
 }
 
 var stdin = process.openStdin();
@@ -325,21 +362,7 @@ wss.on("connection", (socket) => {
         break;
       }
       case "enter-password": {
-        const session = sessions.get(data.id);
-        if (!session) {
-          client.send({
-            type: "session-no-exist",
-            id: data.id
-          });
-        } else if (data.password === session.password) {
-          session.join(client);
-        } else {
-          client.send({
-            type: "wrong-password",
-            password: data.password,
-            id: data.id
-          });
-        }
+        checkSessionPassword(client, data.id, data.password);
         break;
       }
       case "leave-session": {
@@ -349,9 +372,9 @@ wss.on("connection", (socket) => {
       }
       case "url-session": {
         if (sessions.has(data.id)) {
-          joinSession(client, data.id);
+          joinSession(client, data.id, data.password);
         } else {
-          createSession(client, data.id);
+          createSession(client, data.id, data.password);
         }
         break;
       }
@@ -380,18 +403,7 @@ wss.on("connection", (socket) => {
         break;
       }
       case "session-password": {
-        client.session.password = data.password;
-        client.send({
-          type: "password-set",
-          password: client.session.password,
-          clientId: client.id
-        });
-        client.broadcast({
-          type: "password-set",
-          password: client.session.password,
-          clientId: client.id
-        });
-        console.log(`Set session ${client.session.id} password ${data.password}`);
+        client.session.setPassword(client, data.password);
         break;
       }
       default: {
