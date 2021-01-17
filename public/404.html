@@ -54,7 +54,7 @@
   <body>
     <h1>What??</h1>
     <p>Whatever you're trying to find, it ain't here. Sorry!</p>
-    <p><a href=https://w-draw.web.app>Go home</a></p>
+    <p><a href="https://w-draw.web.app">Go home</a></p>
     
     <br><br><br><br><br>
     
@@ -62,7 +62,7 @@
     <p id="text"></p>
     
     <script>
-      document.getElementById("text").innerHTML = `<code>${location.pathname.slice(1)}</code>?? What even is that???`;
+      document.getElementById("text").innerHTML = `<code>${decodeURI(location.pathname.slice(1))}</code>?? What even is that???`;
     </script>
   </body>
 </html>
