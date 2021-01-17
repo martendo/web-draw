@@ -66,7 +66,7 @@ a {
   vertical-align: baseline;
 }
 a[target="_blank"]::after {
-  content: url(img/external.png);
+  content: url("/img/external.png");
   margin: 0 2px 0 6px;
 }
 a:hover {
@@ -405,7 +405,7 @@ a.chatMessageName {
 .penColourContainer {
   padding: 0;
   border: none;
-  background: url("img/transparent.png");
+  background: url("/img/transparent.png");
   background-size: 20px;
 }
 .penColourValue {
@@ -517,7 +517,7 @@ label {
   background-size: 16px;
 }
 .sessionCanvas/*, .layerIcon*/ {
-  background: url("img/transparent.png");
+  background: url("/img/transparent.png");
 }
 .clientCanvas {
   z-index: 1;

@@ -25,9 +25,9 @@
     
     <meta name="theme-color" content="#00a2e8">
     
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/style.css">
   </head>
   
   <body>
@@ -41,7 +41,7 @@
           <button class="infoBtn" id="infoBtn">Info
           </button><button class="infoBtn" id="helpBtn">Help</button>
         </div>
-        <h1><img class="penIcon" src="img/pen-icon.png" alt="Pen Logo">Web Draw</h1>
+        <h1><img class="penIcon" src="/img/pen-icon.png" alt="Pen Logo">Web Draw</h1>
         <div id="connectionInfo">
           <div id="connectionInfoText">Connecting to server...</div>
           <div id="connectionInfoWait">&#183;&#183;&#183;</div>
@@ -128,49 +128,49 @@
         <tr>
           <td>
             <button id="penBtn" title="Pen Tool&#10;Draw a free-form line">
-              <img id="penBtnIcon" src="img/pen.png" alt="P">
+              <img id="penBtnIcon" src="/img/pen.png" alt="P">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="fillBtn" title="Flood Fill Tool&#10;Fill an area of the same colour">
-              <img id="fillBtnIcon" src="img/flood-fill.png" alt="F">
+              <img id="fillBtnIcon" src="/img/flood-fill.png" alt="F">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="colourPickerBtn" title="Colour Picker Tool&#10;Get a colour from the canvas">
-              <img id="colourPickerIcon" src="img/colour-picker.png" alt="C">
+              <img id="colourPickerIcon" src="/img/colour-picker.png" alt="C">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="selectBtn" title="Rectangular Select Tool&#10;Select a rectangular area from the canvas to manipulate">
-              <img id="selectIcon" src="img/select.png" alt="S">
+              <img id="selectIcon" src="/img/select.png" alt="S">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="lineBtn" title="Line Tool&#10;Draw a straight line from one point to another">
-              <img id="lineIcon" src="img/line.png" alt="L">
+              <img id="lineIcon" src="/img/line.png" alt="L">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="rectBtn" title="Rectangle Tool&#10;Draw a rectangle">
-              <img id="rectIcon" src="img/rect.png" alt="R">
+              <img id="rectIcon" src="/img/rect.png" alt="R">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="ellipseBtn" title="Ellipse Tool&#10;Draw an ellipse">
-              <img id="ellipseIcon" src="img/ellipse.png" alt="R">
+              <img id="ellipseIcon" src="/img/ellipse.png" alt="R">
             </button>
           </td>
         </tr>
@@ -426,12 +426,13 @@
           <h4>Session? Create? Join? Huh?</h4>
           Imagine a session is the room you're in. Everybody in the same room sees and works on the same drawing.<br>
           If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
-          If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random (almost) 4-character ID. (It doesn't use vowels.)<br>
+          If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random 4-character ID.<br>
           <br>
           <strong>Tip!</strong><br>
-          To automatically join a session when you enter the site link, add the ID of the session you want to join in the hash, like so:<br>
-          <code>https://w-draw.web.app/#YOUR_ID</code>, where <code>YOUR_ID</code> is the ID of the session to join.<br>
-          If a session with the ID in the hash does not exist, a new one with that ID will be automatically created.<br>
+          The URL you get in the address bar when in a session can be used to automatically join the session. It follows this format:<br>
+          <code>https://w-draw.web.app/s/&#60;session_id&#62;</code>, where <code>&#60;session_id&#62;</code> is the ID of the session to join.<br>
+          You can send this link to your friends so that they can join right away!<br>
+          If a session with the given ID does not exist, a new one with that ID will be automatically created and joined.<br>
           <br>
           You may be prompted to enter a password when joining a session. If you don't know it, you can't join the session!<br>
           <h4>Menubar</h4>
@@ -554,7 +555,7 @@
           <h4>Bottom Toolbar</h4>
           At the bottom of your screen is some session info.<br>
           You will see the ID of the session you are currently in and the number of users connected to it.<br>
-          Your session ID can be easily copied to the clipboard by clicking on it. If you want to share a link where your buddies can automatically join your session without any other hassle, just copy the link in the address bar, which will have your session ID in the hash. (See above, Sessions.)<br>
+          Your session ID can be easily copied to the clipboard by clicking on it. If you want to share a link where your buddies can automatically join your session without any other hassle, just copy the link in the address bar, which will have your session ID in it. (See above, Sessions.)<br>
           Finally, a "Leave" button to leave the session. You will be taken back to the "menu" page.<br>
           <br>
           <h4>Keyboard Shortcuts</h4>
@@ -792,7 +793,7 @@
           <table id="infoModalTable">
             <tr>
               <td>
-                <h4>Web Draw<img class="penIcon" src="img/pen.png" alt="Pen Logo"></h4>
+                <h4>Web Draw<img class="penIcon" src="/img/pen.png" alt="Pen Logo"></h4>
                 <small><code>v0.11.0</code></small><br>
                 By <a href="https://github.com/martendo7" target="_blank">martendo7</a><br>
                 <table class="table">
@@ -899,7 +900,7 @@
       </div>
     </div>
     
-    <script src="script.js"></script>
+    <script src="/script.js"></script>
     
   </body>
 </html>

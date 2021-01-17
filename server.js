@@ -63,11 +63,6 @@ class Session {
     if (client.session !== this) {
       console.error("Client not in this session!");
     }
-    if (client.connection.readyState === WebSocket.OPEN) {
-      client.send({
-        type: "leave-session"
-      });
-    }
     this.clients.delete(client.id);
     client.broadcast({
       type: "user-left",

@@ -181,7 +181,7 @@ const thisCanvas = document.getElementById("thisCanvas");
 const thisCtx = thisCanvas.getContext("2d");
 
 // Keep user's client ID and session ID
-var thisClientId, thisSessionId;
+var thisClientId, thisSessionId = null;
 
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
@@ -1854,7 +1854,7 @@ function addUsers(c, total) {
     clients.set(client.id, client);
     if (client.id !== thisClientId) {
       const img = document.createElement("img");
-      img.src = "img/cursor.png";
+      img.src = "/img/cursor.png";
       img.classList.add("cursorIcon");
       img.id = "cursorIcon-" + client.id;
       document.body.appendChild(img);
@@ -1937,17 +1937,17 @@ function leaveSession() {
   sendMessage({
     type: "leave-session"
   });
-  sessionLeft();
-}
-function sessionLeft() {
+  
   document.getElementById("menuScreen").style.display = "grid";
   document.getElementById("drawScreen").style.display = "none";
   const cursors = document.getElementsByClassName("cursorIcon");
   for (var i = 0; i < cursors.length; i++) {
     cursors[i].remove();
   }
-  location.hash = "";
+  window.history.replaceState({}, "Web Draw", "/");
   document.getElementById("sessionIdInfo").textContent = "N/A";
+  
+  thisSessionId = null;
 }
 
 function changeSessionId() {
@@ -1959,7 +1959,7 @@ function changeSessionId() {
 
 function setSessionId(id) {
   thisSessionId = id;
-  location.hash = encodeURIComponent(thisSessionId);
+  window.history.replaceState({}, `${thisSessionId} - Web Draw`, `/s/${encodeURIComponent(thisSessionId)}`);
   document.getElementById("sessionId").textContent = thisSessionId;
   document.getElementById("sessionIdInfo").textContent = thisSessionId;
   document.getElementById("sessionIdCurrent").textContent = thisSessionId;
@@ -2211,11 +2211,12 @@ socket.onopen = () => {
   const info = document.getElementById("wakingUpInfo");
   if (info) info.remove();
   
-  // Tell the server if there is a session ID in the URL hash
-  if (location.hash !== "") {
+  // Tell the server if there is a session ID in the URL
+  const result = /^\/s\/(.+)$/g.exec(location.pathname);
+  if (result) {
     sendMessage({
       type: "url-session",
-      id: decodeURIComponent(location.hash.slice(1))
+      id: decodeURIComponent(result[1])
     });
   }
   
@@ -2633,10 +2634,6 @@ socket.onmessage = (event) => {
     case "session-already-exist": {
       document.getElementById("sessionAlreadyExist").textContent = data.id;
       modalOpen("sessionAlreadyExistModal");
-      break;
-    }
-    case "leave-session": {
-      sessionLeft();
       break;
     }
     case "session-id-changed": {
