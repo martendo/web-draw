@@ -6,13 +6,12 @@
 "use strict";
 
 // Immediately Invoked Function Expression
-(function () {
+(() => {
 
 // The URL of the WebSockets server
 const WSS_URL = "wss://web-draw.herokuapp.com";
 
-// Send mouse movement update to server (if mouse has moved since last update)
-// every X ms.
+// Send mouse movement update to server (if mouse has moved since last update) every X ms.
 const MOUSEMOVE_UPDATE_INTERVAL = 50;
 
 // WebSocket closure code descriptions
@@ -210,8 +209,7 @@ const Canvas = {
   setScaleValue(event) {
     this.setScale(parseFloat(event.currentTarget.value));
   },
-  // Set the canvas scale to whatever fits in the container, optionally only if
-  // it doesn't already fit
+  // Set the canvas scale to whatever fits in the container, optionally only if it doesn't already fit
   scaleToFit(allowLarger = true) {
     thisCanvas.style.transform = "scale(0)";
     sessionCanvas.style.transform = "scale(0)";
@@ -306,7 +304,7 @@ const Canvas = {
       ActionHistory.clearRedo();
     }
     for (var i = 0; i < ActionHistory.undoActions.length; i++) {
-      ActionHistory.undoRedoAction(ActionHistory.undoActions[i]);
+      ActionHistory.doAction(ActionHistory.undoActions[i]);
     }
     Modal.close("retrieveModal");
   }
@@ -477,7 +475,7 @@ const Slider = {
   },
   doArrow(id, dir) {
     const slider = document.getElementById(id + "Input");
-    const newVal = Math.min(Math.max(parseFloat(slider.dataset.value) + (dir ? 1 : -1), slider.dataset.min), slider.dataset.max);
+    const newVal = Math.min(Math.max(parseFloat(slider.dataset.value) + (dir === "up" ? 1 : -1), slider.dataset.min), slider.dataset.max);
     this.setValue(id, newVal);
   }
 };
@@ -494,7 +492,7 @@ const Colour = {
     ] : null;
   },
   rgbToHex(colour) {
-    return "#" + ("000000" + ((colour[0] << 16) + (colour[1] << 8) + colour[2]).toString(16)).substr(-6);
+    return "#" + ("00000" + ((colour[0] << 16) + (colour[1] << 8) + colour[2]).toString(16)).substr(-6);
   }
 };
 
@@ -692,75 +690,70 @@ const Fill = {
 
 const Selection = {
   // Selection constants & variables
-  NO_SELECTION: {
-    selected: false,
-    move: {},
-    resize: {}
-  },
   HANDLE_SIZE: 5,
   HANDLE_GRAB_SIZE: 15,
   
-  getResizeHandle(point, vals) {
+  getResizeHandle(point, handles) {
     if (!currentAction.data.selected) return false;
-    var val = null;
+    var handle = null;
     if (isPointInside(point.x, point.y, {
       x: currentAction.data.x - (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[0];
+      handle = handles[0];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x + (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y - (this.HANDLE_GRAB_SIZE / 2),
       width: currentAction.data.width - this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[1];
+      handle = handles[1];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x + currentAction.data.width - (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[2];
+      handle = handles[2];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x - (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: currentAction.data.height - this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[3];
+      handle = handles[3];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x + currentAction.data.width - (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: currentAction.data.height - this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[4];
+      handle = handles[4];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x - (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y + currentAction.data.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[5];
+      handle = handles[5];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x + (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y + currentAction.data.height - (this.HANDLE_GRAB_SIZE / 2),
       width: currentAction.data.width - this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[6];
+      handle = handles[6];
     } else if (isPointInside(point.x, point.y, {
       x: currentAction.data.x + currentAction.data.width - (this.HANDLE_GRAB_SIZE / 2),
       y: currentAction.data.y + currentAction.data.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
-      val = vals[7];
+      handle = handles[7];
     }
-    return val;
+    return handle;
   },
   draw(ctx, sel, handles, drawOld = true) {
     ctx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
@@ -955,7 +948,7 @@ const Selection = {
   },
   remove() {
     sendMessage({
-      type: "clear-selection",
+      type: "remove-selection",
       clientId: thisClientId
     });
     currentAction = NO_ACTION;
@@ -1123,8 +1116,8 @@ function getRelCursorPos(event) {
   mouse.x += Canvas.container.scrollLeft;
   mouse.y += Canvas.container.scrollTop;
   return {
-    x: ~~((mouse.x - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.scale))) / Canvas.scale),
-    y: ~~((mouse.y - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.scale))) / Canvas.scale)
+    x: ((mouse.x - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.scale))) / Canvas.scale) | 0,
+    y: ((mouse.y - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.scale))) / Canvas.scale) | 0
   };
 }
 
@@ -1599,8 +1592,7 @@ function changeColour(value, num, addCustom = true) {
   updateColour(value, num);
   penColours[num] = value;
   if (addCustom) {
-    // Check if colour is one of the basic colours, if it is, don't add it to
-    // the custom colours
+    // Check if colour is one of the basic colours, if it is, don't add it to the custom colours
     for (var i = 0; i < BASIC_COLOURS.values.length; i++) {
       if (BASIC_COLOURS.values[i].includes(value)) return;
     }
@@ -1734,8 +1726,7 @@ const ActionHistory = {
   undoActions: [],
   redoActions: [],
   
-  // Push an action onto this.undoActions, enable the undo button, disable the redo
-  // button
+  // Push an action onto this.undoActions, enable the undo button, disable the redo button
   addToUndo(data) {
     this.undoActions.push(data);
     this.enableUndo();
@@ -1755,11 +1746,12 @@ const ActionHistory = {
       this.redoActions.push(previousAction);
       clearCanvasBlank(false);
       for (var i = 0; i < this.undoActions.length; i++) {
-        this.undoRedoAction(this.undoActions[i]);
+        this.doAction(this.undoActions[i]);
       }
       this.enableRedo();
     } else {
       this.clearUndo();
+      return;
     }
     if (!this.undoActions.length) this.clearUndo();
   },
@@ -1776,15 +1768,16 @@ const ActionHistory = {
     const previousAction = this.redoActions.pop();
     if (previousAction) {
       this.undoActions.push(previousAction);
-      this.undoRedoAction(previousAction);
+      this.doAction(previousAction);
       this.enableUndo();
     } else {
       this.clearRedo();
+      return;
     }
     if (!this.redoActions.length) this.clearRedo();
   },
   // Handle different types of actions
-  undoRedoAction(action) {
+  doAction(action) {
     switch (action.type) {
       case "stroke": {
         Pen.drawStroke(sessionCtx, action.stroke, false);
@@ -2107,9 +2100,9 @@ const Chat = {
       .replaceAll("\\", "&#92;");
     const client = clients.get(msg.clientId);
     const box = document.getElementById("chatMessages");
-    // Quirk that is actually wanted: When chatBox is not displayed, its dimensions are all 0, so isAtBottom is true
     var bubble;
     const last = box.children[box.children.length - 1];
+    // Quirk that is actually wanted: When chatBox is not displayed, its dimensions are all 0, so isAtBottom is true
     // 14 = 8px padding, 1px border, 5px margin
     const isAtBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + (last ? last.children[last.children.length - 1].getBoundingClientRect().height : 0) + 14;
     // Create new message bubble if last message was not from the same person or is not of the same type or it was 3 or more minutes ago
@@ -2251,9 +2244,9 @@ socket.onopen = () => {
   if (info) info.remove();
   
   // Tell the server if there is a session ID in the URL
-  const result = /^\/s\/(.+)$/g.exec(location.pathname);
+  const result = /^\/s\/(.+)$/.exec(location.pathname);
   if (result) {
-    const pass = /pass=(.+)/g.exec(location.search);
+    const pass = /[?&]pass=(.+?)(?:&|$)/.exec(location.search);
     sendMessage({
       type: "url-session",
       id: decodeURIComponent(result[1]),
@@ -2413,7 +2406,7 @@ socket.onmessage = (event) => {
       clientSelections.set(data.clientId, {});
       break;
     }
-    case "clear-selection": {
+    case "remove-selection": {
       clientSelections.delete(data.clientId);
       const canvas = clientCanvasses.get(data.clientId);
       canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
@@ -2692,8 +2685,7 @@ socket.onmessage = (event) => {
       Modal.open("sessionHasIdModal");
       break;
     }
-    // An unknown message has been sent from the server. This should never
-    // happen!!!
+    // An unknown message has been sent from the server. This should never happen!!!
     default: {
       console.error("Unknown message!", data);
       return;
@@ -2701,20 +2693,18 @@ socket.onmessage = (event) => {
   }
 };
 
-// Set up events that end strokes for all of the page in case it happens outside
-// of the canvas
-const html = document.getElementById("html");
-html.addEventListener("pointermove", (event) => mouseMove(event), { passive: false });
-html.addEventListener("pointerup", (event) => clearMouseHold(event), { passive: false });
-html.addEventListener("pointercancel", (event) => clearMouseHold(event), { passive: false });
-html.addEventListener("pointerleave", (event) => clearMouseHold(event), { passive: false });
-html.addEventListener("contextmenu", (event) => {
+// Set up events that end or cancel actions for all of the page in case it happens outside of the canvas
+document.addEventListener("pointermove", (event) => mouseMove(event), { passive: false });
+document.addEventListener("pointerup", (event) => clearMouseHold(event), { passive: false });
+document.addEventListener("pointercancel", (event) => clearMouseHold(event), { passive: false });
+document.addEventListener("pointerleave", (event) => clearMouseHold(event), { passive: false });
+document.addEventListener("contextmenu", (event) => {
   const tagName = event.target.tagName;
   if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA") return;
   event.preventDefault();
   event.stopPropagation();
 });
-html.addEventListener("click", (event) => {
+document.addEventListener("click", (event) => {
   if (event.target.tagName == "LI") return;
   const selected = document.getElementsByClassName("menuSelected");
   for (var i = 0; i < selected.length; i++) {
@@ -2722,7 +2712,7 @@ html.addEventListener("click", (event) => {
   }
 });
 
-html.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event) => {
   if (event.target.tagName !== "BODY") {
     if (!event.ctrlKey) {
       switch (event.key) {
@@ -2813,21 +2803,20 @@ html.addEventListener("keydown", (event) => {
   event.preventDefault();
 });
 
-html.addEventListener("keydown", (event) => {
+document.addEventListener("keydown", (event) => {
   if (event.key === "Control") ctrlKey = true;
 });
-html.addEventListener("keyup", (event) => {
+document.addEventListener("keyup", (event) => {
   if (event.key === "Control") ctrlKey = false;
 });
 
 var upTimeout, downTimeout;
-html.addEventListener("pointerup", () => {
+document.addEventListener("pointerup", () => {
   clearTimeout(upTimeout);
   clearTimeout(downTimeout);
 });
 
-// Set up events for the canvas, but not the move or ending ones (see html event
-// listeners)
+// Set up events for the canvas, but not the move or ending ones (see above event listeners)
 Canvas.container.addEventListener("pointerdown", (event) => mouseHold(event));
 Canvas.container.addEventListener("wheel", (event) => {
   if (!ctrlKey) return;
@@ -2857,17 +2846,17 @@ TOOL_SETTINGS_SLIDERS.forEach((input) => {
   const up = document.getElementById(input.id + "ValueUp");
   const down = document.getElementById(input.id + "ValueDown");
   up.addEventListener("pointerdown", (event) => {
-    Slider.doArrow(input.id, true);
+    Slider.doArrow(input.id, "up");
     upTimeout = setTimeout(function repeatUp() {
-      Slider.doArrow(input.id, true);
+      Slider.doArrow(input.id, "up");
       upTimeout = setTimeout(() => repeatUp(), 30);
     }, 300);
     event.stopPropagation();
   });
   down.addEventListener("pointerdown", (event) => {
-    Slider.doArrow(input.id, false);
+    Slider.doArrow(input.id, "down");
     downTimeout = setTimeout(function repeatDown() {
-      Slider.doArrow(input.id, false);
+      Slider.doArrow(input.id, "down");
       downTimeout = setTimeout(() => repeatDown(), 30);
     }, 300);
     event.stopPropagation();

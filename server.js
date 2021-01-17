@@ -258,7 +258,7 @@ wss.on("connection", (socket) => {
       case "end-stroke":
       case "mouse-move":
       case "create-selection":
-      case "clear-selection":
+      case "remove-selection":
       case "selection-update":
       case "selection-copy":
       case "selection-cut":
