@@ -169,44 +169,6 @@ function checkSessionPassword(client, id, password) {
   }
 }
 
-var stdin = process.openStdin();
-stdin.addListener("data", (data) => {
-  const msg = data.toString().trim(),
-        command = msg.split(" ")[0],
-        args = msg.split(" ").slice(1);
-  switch(command) {
-    case "dels": {
-      if (sessions.has(args[0])) {
-        const session = sessions.get(args[0]);
-        session.clients.forEach((client) => {
-          session.leave(client);
-        });
-        sessions.delete(args[0]);
-        console.log(`Deleted session ${args[0]}`);
-      } else {
-        console.log(`No session ${args[0]} to delete`);
-      }
-      break;
-    }
-    case "remu": {
-      if (clients.has(args[0])) {
-        const client = clients.get(args[0]);
-        if (client.session) client.session.leave(client);
-        client.connection.close(4000);
-        clients.delete(args[0]);
-        console.log(`Removed user ${args[0]}`);
-      } else {
-        console.log(`No user ${args[0]} to remove`);
-      }
-      break;
-    }
-    default: {
-      console.log(`Unknown command ${command}`);
-      break;
-    }
-  }
-});
-
 wss.on("connection", (socket) => {
   let id = createId();
   while (clients.has(id)) {
@@ -273,37 +235,6 @@ wss.on("connection", (socket) => {
         client.broadcast(data);
         break;
       }
-      /*
-      case "start-stroke": {
-        client.broadcast(data);
-        client.session.currentStrokes.set(data.clientId, {
-          colour: data.colour,
-          compOp: data.compOp,
-          width: data.width,
-          caps: data.caps,
-          joins: data.joins,
-          points: [{
-            x: data.x,
-            y: data.y
-          }]
-        });
-        break;
-      }
-      case "add-stroke": {
-        client.broadcast(data);
-        client.session.currentStrokes.get(data.clientId).points.push({
-          x: data.x,
-          y: data.y
-        });
-        break;
-      }
-      case "end-stroke": {
-        client.broadcast(data);
-        client.session.strokes.push(client.session.currentStrokes.get(data.clientId));
-        client.session.currentStrokes.delete(data.clientId);
-        break;
-      }
-      */
       case "chat-message": {
         if (data.message.slice(0, 3) === "to:") {
           const idList = data.message.split(" ")[0].slice(3);
