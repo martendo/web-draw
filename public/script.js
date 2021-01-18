@@ -2240,7 +2240,7 @@ waitConnect();
 const wakingUp = setTimeout(() => {
   const info = document.createElement("div");
   info.id = "wakingUpInfo";
-  info.textContent = "You may be waking up the server. It goes to sleep every once in a while. Hang on tight!"
+  info.textContent = "You may be waking up the server. It goes to sleep after a bit of inactivity. Hang on tight!"
   document.getElementById("connectionInfo").appendChild(info);
 }, 3000);
 
