@@ -210,7 +210,7 @@ const Canvas = {
     this.setZoom(parseFloat(event.currentTarget.value / 100));
   },
   // Set the canvas zoom to whatever fits in the container, optionally only if it doesn't already fit
-  zoomToFit(allowLarger = true) {
+  zoomToWindow(type = "fit", allowLarger = true) {
     thisCanvas.style.transform = "scale(0)";
     sessionCanvas.style.transform = "scale(0)";
     clientCanvasses.forEach((clientCanvas) => {
@@ -219,7 +219,7 @@ const Canvas = {
     
     const widthZoom = (this.container.clientWidth - (15 * 2)) / sessionCanvas.width;
     const heightZoom = (this.container.clientHeight - (15 * 2)) / sessionCanvas.height;
-    const fitZoom = Math.min(widthZoom, heightZoom);
+    const fitZoom = type === "fit" ? Math.min(widthZoom, heightZoom) : Math.max(widthZoom, heightZoom);
     const newZoom = (fitZoom < this.zoom || allowLarger) ? fitZoom : this.zoom;
     this.setZoom(newZoom);
   },
@@ -286,7 +286,7 @@ const Canvas = {
       });
     }
     // Zoom canvas to fit in canvasContainer if it doesn't already
-    this.zoomToFit(false);
+    this.zoomToWindow("fit", false);
     sessionCtx.fillStyle = BLANK_COLOUR;
     sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
     ActionHistory.undoActions = data.undoActions;
@@ -2667,7 +2667,7 @@ socket.onmessage = (event) => {
       thisCanvas.height = Canvas.CANVAS_HEIGHT;
       // Resize if too big
       Canvas.setZoom(Canvas.DEFAULT_ZOOM);
-      Canvas.zoomToFit(false);
+      Canvas.zoomToWindow("fit", false);
       // Fill canvas with white
       sessionCtx.fillStyle = BLANK_COLOUR;
       sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
@@ -2946,7 +2946,8 @@ document.getElementById("editClearBtn").addEventListener("click", () => clearCan
 document.getElementById("editClearTransparentBtn").addEventListener("click", () => clearCanvas());
 document.getElementById("editResizeBtn").addEventListener("click", () => chooseCanvasSize());
 document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
-document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToFit());
+document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
+document.getElementById("viewFillZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fill"));
 document.getElementById("sessionInfoBtn").addEventListener("click", () => Modal.open("sessionInfoModal"));
 document.getElementById("sessionChangeIdBtn").addEventListener("click", () => {
   document.getElementById("sessionIdNew").value = Session.id;
@@ -2988,7 +2989,7 @@ const clearBtn = document.getElementById("clearBtn");
 clearBtn.addEventListener("click", () => clearCanvasBlank());
 clearBtn.addEventListener("dblclick", () => clearCanvas());
 document.getElementById("resetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
-document.getElementById("fitZoomBtn").addEventListener("click", () => Canvas.zoomToFit());
+document.getElementById("fitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
 
 document.getElementById("shareLinkBtn").addEventListener("click", () => Modal.open("shareSessionLinkModal"));
 document.getElementById("leaveBtn").addEventListener("click", () => Session.leave());
