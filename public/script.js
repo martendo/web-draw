@@ -191,48 +191,46 @@ const Canvas = {
   CANVAS_WIDTH:  800,
   CANVAS_HEIGHT: 600,
   
-  DEFAULT_SCALE: 1,
-  MIN_SCALE:     0,
+  DEFAULT_ZOOM: 1,
+  MIN_ZOOM:     0,
   
-  scale: null,
+  zoom: null,
   
   container: document.getElementById("canvasContainer"),
   
-  // Scale the canvas with the mouse wheel or pinch gesture
-  zoom(delta) {
-    if (this.scale + delta >= this.MIN_SCALE) {
-      this.scale += delta;
-      this.setScale(parseFloat(this.scale.toFixed(2)));
+  // Zoom the canvas with the mouse wheel
+  changeZoom(delta) {
+    if (this.zoom + delta >= this.MIN_ZOOM) {
+      this.zoom += delta;
+      this.setZoom(this.zoom);
     }
   },
-  // Set the canvas scale with the number input
-  setScaleValue(event) {
-    this.setScale(parseFloat(event.currentTarget.value));
+  // Set the canvas zoom with the number input
+  setZoomValue(event) {
+    this.setZoom(parseFloat(event.currentTarget.value / 100));
   },
-  // Set the canvas scale to whatever fits in the container, optionally only if it doesn't already fit
-  scaleToFit(allowLarger = true) {
+  // Set the canvas zoom to whatever fits in the container, optionally only if it doesn't already fit
+  zoomToFit(allowLarger = true) {
     thisCanvas.style.transform = "scale(0)";
     sessionCanvas.style.transform = "scale(0)";
     clientCanvasses.forEach((clientCanvas) => {
       clientCanvas.style.transform = "scale(0)";
     });
     
-    const canvasContainerWidth = this.container.clientWidth - (15 * 2);
-    const canvasContainerHeight = this.container.clientHeight - (15 * 2);
-    const widthScale = canvasContainerWidth / sessionCanvas.width;
-    const heightScale = canvasContainerHeight / sessionCanvas.height;
-    const fitScale = Math.min(widthScale, heightScale);
-    const newScale = (fitScale < this.scale || allowLarger) ? fitScale : this.scale;
-    this.setScale(newScale);
+    const widthZoom = (this.container.clientWidth - (15 * 2)) / sessionCanvas.width;
+    const heightZoom = (this.container.clientHeight - (15 * 2)) / sessionCanvas.height;
+    const fitZoom = Math.min(widthZoom, heightZoom);
+    const newZoom = (fitZoom < this.zoom || allowLarger) ? fitZoom : this.zoom;
+    this.setZoom(newZoom);
   },
-  // Set the canvas scale
-  setScale(scale) {
-    this.scale = scale;
-    document.getElementById("canvasScale").value = this.scale;
-    thisCanvas.style.transform = `scale(${this.scale})`;
-    sessionCanvas.style.transform = `scale(${this.scale})`;
+  // Set the canvas zoom
+  setZoom(zoom) {
+    this.zoom = zoom;
+    document.getElementById("canvasZoom").value = Math.round(this.zoom * 100);
+    thisCanvas.style.transform = `scale(${this.zoom})`;
+    sessionCanvas.style.transform = `scale(${this.zoom})`;
     clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.style.transform = `scale(${this.scale})`;
+      clientCanvas.style.transform = `scale(${this.zoom})`;
     });
   },
   
@@ -287,8 +285,8 @@ const Canvas = {
         Pen.commitStroke(clientCanvasses.get(clientId), stroke, false);
       });
     }
-    // Scale canvas to fit in canvasContainer if it doesn't already
-    this.scaleToFit(false);
+    // Zoom canvas to fit in canvasContainer if it doesn't already
+    this.zoomToFit(false);
     sessionCtx.fillStyle = BLANK_COLOUR;
     sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
     ActionHistory.undoActions = data.undoActions;
@@ -1116,8 +1114,8 @@ function getRelCursorPos(event) {
   mouse.x += Canvas.container.scrollLeft;
   mouse.y += Canvas.container.scrollTop;
   return {
-    x: ((mouse.x - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.scale))) / Canvas.scale) | 0,
-    y: ((mouse.y - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.scale))) / Canvas.scale) | 0
+    x: ((mouse.x - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.zoom))) / Canvas.zoom) | 0,
+    y: ((mouse.y - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.zoom))) / Canvas.zoom) | 0
   };
 }
 
@@ -1891,7 +1889,7 @@ const Session = {
         clientCanvas.id = "clientCanvas-" + client.id;
         clientCanvas.width = sessionCanvas.width;
         clientCanvas.height = sessionCanvas.height;
-        clientCanvas.style.transform = `scale(${Canvas.scale})`;
+        clientCanvas.style.transform = `scale(${Canvas.zoom})`;
         Canvas.container.appendChild(clientCanvas);
         clientCanvasses.set(client.id, clientCanvas);
       }
@@ -2564,8 +2562,8 @@ socket.onmessage = (event) => {
       if (data.outside) {
         cursor.style.display = "none";
       } else {
-        const x = (data.pos.x * Canvas.scale) + (sessionCanvas.offsetLeft + (sessionCanvas.clientLeft * Canvas.scale)) - Canvas.container.scrollLeft;
-        const y = (data.pos.y * Canvas.scale) + (sessionCanvas.offsetTop + (sessionCanvas.clientTop * Canvas.scale)) - Canvas.container.scrollTop;
+        const x = (data.pos.x * Canvas.zoom) + (sessionCanvas.offsetLeft + (sessionCanvas.clientLeft * Canvas.zoom)) - Canvas.container.scrollLeft;
+        const y = (data.pos.y * Canvas.zoom) + (sessionCanvas.offsetTop + (sessionCanvas.clientTop * Canvas.zoom)) - Canvas.container.scrollTop;
         cursor.style.left = x + "px";
         cursor.style.top = y + "px";
         cursor.style.display = "block";
@@ -2668,8 +2666,8 @@ socket.onmessage = (event) => {
       thisCanvas.width = Canvas.CANVAS_WIDTH;
       thisCanvas.height = Canvas.CANVAS_HEIGHT;
       // Resize if too big
-      Canvas.setScale(Canvas.DEFAULT_SCALE);
-      Canvas.scaleToFit(false);
+      Canvas.setZoom(Canvas.DEFAULT_ZOOM);
+      Canvas.zoomToFit(false);
       // Fill canvas with white
       sessionCtx.fillStyle = BLANK_COLOUR;
       sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
@@ -2758,31 +2756,31 @@ document.addEventListener("keydown", (event) => {
         break;
       }
       case "1": {
-        Canvas.setScale(1);
+        Canvas.setZoom(1);
         break;
       }
       case "2": {
-        Canvas.setScale(2);
+        Canvas.setZoom(2);
         break;
       }
       case "3": {
-        Canvas.setScale(4);
+        Canvas.setZoom(4);
         break;
       }
       case "4": {
-        Canvas.setScale(8);
+        Canvas.setZoom(8);
         break;
       }
       case "5": {
-        Canvas.setScale(16);
+        Canvas.setZoom(16);
         break;
       }
       case "=": {
-        Canvas.zoom(0.1);
+        Canvas.changeZoom(0.1);
         break;
       }
       case "-": {
-        Canvas.zoom(-0.1);
+        Canvas.changeZoom(-0.1);
         break;
       }
       case "Escape": {
@@ -2842,7 +2840,7 @@ Canvas.container.addEventListener("wheel", (event) => {
   if (!ctrlKey) return;
   event.preventDefault();
   const delta = Math.sign(event.deltaY) * -0.25;
-  Canvas.zoom(delta);
+  Canvas.changeZoom(delta);
 });
 
 // Set up inputs
@@ -2947,8 +2945,8 @@ document.getElementById("editRedoBtn").addEventListener("click", () => ActionHis
 document.getElementById("editClearBtn").addEventListener("click", () => clearCanvasBlank());
 document.getElementById("editClearTransparentBtn").addEventListener("click", () => clearCanvas());
 document.getElementById("editResizeBtn").addEventListener("click", () => chooseCanvasSize());
-document.getElementById("viewResetScaleBtn").addEventListener("click", () => Canvas.setScale(Canvas.DEFAULT_SCALE));
-document.getElementById("viewFitScaleBtn").addEventListener("click", () => Canvas.scaleToFit());
+document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
+document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToFit());
 document.getElementById("sessionInfoBtn").addEventListener("click", () => Modal.open("sessionInfoModal"));
 document.getElementById("sessionChangeIdBtn").addEventListener("click", () => {
   document.getElementById("sessionIdNew").value = Session.id;
@@ -2989,8 +2987,8 @@ document.getElementById("redoBtn").addEventListener("click", () => ActionHistory
 const clearBtn = document.getElementById("clearBtn");
 clearBtn.addEventListener("click", () => clearCanvasBlank());
 clearBtn.addEventListener("dblclick", () => clearCanvas());
-document.getElementById("resetScaleBtn").addEventListener("click", () => Canvas.setScale(Canvas.DEFAULT_SCALE));
-document.getElementById("fitScaleBtn").addEventListener("click", () => Canvas.scaleToFit());
+document.getElementById("resetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
+document.getElementById("fitZoomBtn").addEventListener("click", () => Canvas.zoomToFit());
 
 document.getElementById("shareLinkBtn").addEventListener("click", () => Modal.open("shareSessionLinkModal"));
 document.getElementById("leaveBtn").addEventListener("click", () => Session.leave());
@@ -3051,7 +3049,7 @@ document.getElementById("sessionAlreadyExistModalOkBtn").addEventListener("click
 document.getElementById("userModalSaveBtn").addEventListener("click", () => Session.saveUserSettings());
 document.getElementById("userModalCancelBtn").addEventListener("click", () => Modal.close("userModal"));
 
-document.getElementById("canvasScale").addEventListener("input", (event) => Canvas.setScaleValue(event));
+document.getElementById("canvasZoom").addEventListener("input", (event) => Canvas.setZoomValue(event));
 
 document.getElementById("selectCopyBtn").addEventListener("click", () => Selection.doCopy());
 document.getElementById("selectCutBtn").addEventListener("click", () => Selection.doCut());

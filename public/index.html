@@ -92,8 +92,8 @@
         </li><li id="viewMenu" class="menuItem">
           <div class="menuLabel">View</div>
           <ul class="menuDropdown">
-            <li id="viewResetScaleBtn" title="Set the zoom to 100%">Reset Zoom</li>
-            <li id="viewFitScaleBtn" title="Set the canvas zoom to fit the window">Zoom To Fit</li>
+            <li id="viewResetZoomBtn" title="Set the zoom to 100%">Reset Zoom</li>
+            <li id="viewFitZoomBtn" title="Set the canvas zoom to fit the window">Zoom To Fit</li>
           </ul>
         </li><li id="sessionMenu" class="menuItem">
           <div class="menuLabel">Session</div>
@@ -124,9 +124,9 @@
             <button id="undoBtn" title="Undo the last action">Undo
             </button><button id="redoBtn" title="Redo the last action">Redo
             </button><button id="clearBtn" title="Clear the canvas&#10;Double click to clear to transparent">Clear
-            </button><span class="spacer"></span><label for="canvasScale">Scale:</label>
-            <input id="canvasScale" type="number" step="0.05" min="0" title="The canvas scale"><button id="resetScaleBtn">Reset
-            </button><button id="fitScaleBtn">Fit</button>
+            </button><span class="spacer"></span><label for="canvasZoom">Zoom:</label>
+            <input id="canvasZoom" type="number" step="5" min="0" title="The canvas zoom"><button id="resetZoomBtn">Reset
+            </button><button id="fitZoomBtn">Fit</button>
           </td>
           <td class="tableExcess"></td>
         </tr>
@@ -448,7 +448,7 @@
               <li><a href="#help-top_toolbar">Top Toolbar</a><ul>
                 <li><a href="#help-top_toolbar-undo_redo">Undo/Redo</a></li>
                 <li><a href="#help-top_toolbar-clear">Clear</a></li>
-                <li><a href="#help-top_toolbar-canvas_scale">Canvas Scale</a></li>
+                <li><a href="#help-top_toolbar-canvas_zoom">Canvas Zoom</a></li>
               </ul></li>
               <li><a href="#help-left_toolbar">Left Toolbar</a></li>
               <li><a href="#help-right_toolbar">Right Toolbar</a><ul>
@@ -530,11 +530,11 @@
           Note: These are actions that anyone in the session has made, not just your own.
           <h5 id="help-top_toolbar-clear">Clear</h5>
           Clear the canvas to all white. Double click to clear to all transparent pixels. (<code>#00000000</code>)
-          <h5 id="help-top_toolbar-canvas_scale">Canvas Scale</h5>
-          This is the scale (or "zoom") of the canvas on your screen. This doesn't affect anybody else's canvas scale, just yours.<br>
-          To change it, you can either use your mouse wheel on the canvas area with the <kbd>Control</kbd> key held down, or if you want, you can enter a scale factor into the number box.<br>
-          The "Reset" button will reset the scale to 1.<br>
-          The "Fit" button will set the canvas scale to the largest size that will fit in the canvas area.
+          <h5 id="help-top_toolbar-canvas_zoom">Canvas Zoom</h5>
+          This is the displayed size of the canvas on your screen. This doesn't affect the actual size of the canvas or the zoom of the canvas on anybody else's screen. If you need to be more precise or detailed or just need to draw something small, you can zoom in a bit.<br>
+          To change it, you can either use your mouse wheel on the canvas area with the <kbd>Control</kbd> key held down, or if you want, you can enter percentage size into the number box.<br>
+          The "Reset" button will reset the zoom to 100%.<br>
+          The "Fit" button will set the canvas zoom to the largest size that will fit in the canvas area.
           <h4 id="help-left_toolbar">Left Toolbar</h4>
           On the left, you've got all your different tools.<br>
           <strong>Pen</strong>: Draw a free-form line however you want!<br>
@@ -647,13 +647,13 @@
           <ul>
             <li><kbd>+</kbd> - Zoom canvas in</li>
             <li><kbd>-</kbd> - Zoom canvas out</li>
-            <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> - Set canvas scale:
+            <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> - Set zoom:
               <ul>
-                <li><kbd>1</kbd> - 1</li>
-                <li><kbd>2</kbd> - 2</li>
-                <li><kbd>3</kbd> - 4</li>
-                <li><kbd>4</kbd> - 8</li>
-                <li><kbd>5</kbd> - 16</li>
+                <li><kbd>1</kbd> - 100%</li>
+                <li><kbd>2</kbd> - 200%</li>
+                <li><kbd>3</kbd> - 400%</li>
+                <li><kbd>4</kbd> - 800%</li>
+                <li><kbd>5</kbd> - 1600%</li>
               </ul>
             </li>
           </ul>

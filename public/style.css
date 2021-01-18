@@ -409,8 +409,8 @@ a.chatMessageName {
 #penWidth {
   width: 3em;
 }
-#canvasScale {
-  width: 3em;
+#canvasZoom {
+  width: calc(6ch + 6px);
 }
 .penIcon {
   vertical-align: bottom;
