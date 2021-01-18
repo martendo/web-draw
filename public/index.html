@@ -103,6 +103,7 @@
             <li id="sessionChangeIdBtn">Change ID</li>
             <li id="sessionSetPasswordBtn">Set Password</li>
             <li class="separator"></li>
+            <li id="sessionShareLinkBtn" title="Get a link you can share to join this session">Share Link</li>
             <li id="sessionLeaveBtn">Leave</li>
           </ul>
         </li><li id="helpMenu" class="menuItem">
@@ -407,7 +408,8 @@
         <tr>
           <td>
             <span>Session ID: </span>
-            <span id="sessionId" class="clickToCopy lightBox mono" title="Copy"></span><span class="spacer"></span><span id="userBox">There aren't any users connected to this session.</span><span class="spacer"></span><button id="leaveBtn" title="Leave this session">Leave</button>
+            <span id="sessionId" class="clickToCopy lightBox mono" title="Copy"></span><span class="spacer"></span><span id="userBox">There aren't any users connected to this session.</span><span class="spacer"></span><button id="shareLinkBtn" title="Get a link you can share to join this session">Share Link</button>
+            <button id="leaveBtn" title="Leave this session">Leave</button>
           </td>
           <td class="tableExcess"></td>
         </tr>
@@ -428,17 +430,19 @@
       <div class="modalContent">
         <div class="modalHeader"><h3>Help</h3></div>
         <div class="modalBody">
-          You're telling me you don't know how to use a drawing program?<br>
           <h4>Contents</h4>
           <a><label for="helpContentsCollapse" class="collapseLabel">Show/Hide</label></a><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
           <section class="collapseContent">
             <ul>
-              <li><a href="#help-sessions">Sessions</a></li>
+              <li><a href="#help-sessions">Sessions</a><ul>
+                <li><a href="#help-sessions-links">Session Links</a></li>
+              </ul></li>
               <li><a href="#help-menubar">Menubar</a><ul>
                 <li><a href="#help-menubar-save_open">Save/Open</a></li>
                 <li><a href="#help-menubar-export_import">Export/Import</a></li>
                 <li><a href="#help-menubar-resize_canvas">Resize Canvas</a></li>
                 <li><a href="#help-menubar-session_id_password">Session ID & Password</a></li>
+                <li><a href="#help-menubar-share_link">Share Link</a></li>
                 <li><a href="#help-menubar-info">Info</a></li>
               </ul></li>
               <li><a href="#help-top_toolbar">Top Toolbar</a><ul>
@@ -490,18 +494,16 @@
           If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
           If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random 4-character ID.<br>
           <br>
-          <strong>Tip!</strong><br>
-          The URL you get in the address bar when in a session can be used to automatically join the session. It follows this format:<br>
+          You may be prompted to enter a password when joining a session. If you don't know it, you can't join the session!
+          <h5 id="help-sessions-links">Session Links</h5>
+          If you're looking to share the link with your friends so they can automatically join, see <a href="#help-menubar-share_link">Share Link</a> on the menubar.<br>
+          <br>
+          The session URL can be used to automatically join the session. It follows this format:<br>
           <code>https://w-draw.web.app<strong class="mono">/s/&#60;session_id&#62;</strong></code>, where <code>&#60;session_id&#62;</code> is the ID of the session to join.<br>
-          You can send this link to your friends so that they can join right away!<br>
           If a session with the given ID does not exist, a new one with that ID will be automatically created and joined.<br>
           <br>
-          You may be prompted to enter a password when joining a session. If you don't know it, you can't join the session!<br>
-          <br>
-          <strong>Tip!</strong><br>
           The session password can also be passed through the URL in a query string:<br>
           <code>https://w-draw.web.app/s/secret-drawing<strong class="mono">?pass=&#60;password&#62;</strong></code>, where <code>&#60;password&#62;</code> is the session's password.<br>
-          Share this link to your friends and they won't need to type the password in themselves!<br>
           If you are creating the session with this link (a session with the specified ID doesn't exist yet), then the password on the new session will be automatically set to the one specified.
           <h4 id="help-menubar">Menubar</h4>
           The menubar (at the very top of the screen) allows you to do useful things, like save your canvas for later, set a password on your session, or look at this help window!<br>
@@ -514,6 +516,8 @@
           In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.
           <h5 id="help-menubar-session_id_password">Session ID & Password</h5>
           Through the "Session" menu, you can change the current session's ID and set (or remove) a password.
+          <h5 id="help-menubar-share_link">Share Link</h5>
+          Here you can get a link that you can share with your friends which will allow whoever uses it to automatically join the session. If your session has a password on it, you can optionally include it in the link so that whoever uses your link doesn't have to type it in. If the password isn't included, they will be prompted to enter it before joining, just like from the main page.
           <h5 id="help-menubar-info">Info</h5>
           This "Info" window will show a little info about the web app and the client (you!).<br>
           Ping is the latency of the connection to the server. Every 10 seconds, the server will send a ping to your browser and wait for a pong to make sure the connection is still alive. It also measures the amount of time between when the ping was sent and the pong was received, and tells the browser about it so it can display it here so you can know about it. If you're curious, I typically get an average latency of around 40 ms.
@@ -844,6 +848,36 @@
         <div class="modalHeader"><h3>The password <code id="sessionWrongPassword">N/A</code> does not match the password for the session <code id="sessionWrongPasswordId">N/A</code>.</h3></div>
         <div class="modalFooter">
           <button id="sessionWrongPasswordModalOkBtn">OK</button>
+        </div>
+      </div>
+    </div>
+    <div id="shareSessionLinkModal" class="modal">
+      <div class="modalContent">
+        <div class="modalHeader"><h3>Share Session Link</h3></div>
+        <div class="modalBody">
+          Share this link with your friends to join this session!<br>
+          <br>
+          <button id="sessionLinkCopy">Copy</button>
+          <code id="sessionLink" class="clickToCopy lightBox mono" title="Copy">N/A</code><br>
+          <div id="sessionLinkPassword">
+            <br>
+            <table class="table">
+              <tr>
+                <td><input type="checkbox" id="sessionLinkPasswordInput" checked></td>
+                <td>
+                  <label for="sessionLinkPasswordInput">
+                    <div class="checkLabel">
+                      Include Password<br>
+                      <small>Include the session's password in the link so whoever uses it doesn't need to type it in and can automatically join.</small>
+                    </div>
+                  </label>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div class="modalFooter">
+          <button id="shareLinkModalCloseBtn">Close</button>
         </div>
       </div>
     </div>

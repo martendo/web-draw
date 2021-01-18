@@ -1847,8 +1847,7 @@ const ActionHistory = {
 };
 
 // Copy text to the clipboard
-function copyText(event, text) {
-  const tooltip = document.getElementById("tooltip");
+function copyText(text, event = null) {
   navigator.clipboard.writeText(text, null, () => {
     console.log("navigator.clipboard.writeText failed");
     const textarea = document.createElement("textarea");
@@ -1860,17 +1859,22 @@ function copyText(event, text) {
     document.execCommand("copy");
     document.body.removeChild(textarea);
   });
-  tooltip.textContent = "Copied!";
-  tooltip.style.left = (event.clientX + 20) + "px";
-  tooltip.style.top = (event.clientY - 30) + "px";
-  tooltip.style.visibility = "visible";
-  setTimeout(() => {
-    tooltip.style.visibility = "hidden";
-  }, 1000);
+  if (event) {
+    const tooltip = document.getElementById("tooltip");
+    tooltip.textContent = "Copied!";
+    tooltip.style.left = (event.clientX + 20) + "px";
+    tooltip.style.top = (event.clientY - 30) + "px";
+    tooltip.style.visibility = "visible";
+    setTimeout(() => {
+      tooltip.style.visibility = "hidden";
+    }, 1000);
+  }
 }
 
 const Session = {
   id: null,
+  password: null,
+  link: location.origin,
   
   // Add/Remove a user canvas and mouse and update the total
   addUsers(c, total) {
@@ -1988,17 +1992,33 @@ const Session = {
     document.getElementById("sessionIdInfo").textContent = this.id;
     document.getElementById("sessionIdCurrent").textContent = this.id;
     document.getElementById("sessionInfoId").textContent = this.id;
+    this.updateLink();
   },
   
   updatePassword(password) {
+    this.password = password;
     const text = document.getElementById("sessionPasswordCurrent");
     if (password === null) {
       text.textContent = "There is currently no password set on this session.";
     } else {
-      text.innerHTML = `Current password: <span class="clickToCopy lightBox" title="Copy" id="currentPassword">${password}</span>`;
+      text.innerHTML = `Current password: <span class="clickToCopy lightBox" title="Copy" id="currentPassword">${this.password}</span>`;
       const current = document.getElementById("currentPassword");
-      current.onclick = (event) => copyText(event, current.textContent);
+      current.onclick = (event) => copyText(current.textContent, event);
     }
+    this.updateLink();
+  },
+  
+  updateLink() {
+    this.link = `${location.origin}/s/${encodeURIComponent(this.id)}`;
+    const includePassword = document.getElementById("sessionLinkPassword");
+    const includePasswordInput = document.getElementById("sessionLinkPasswordInput");
+    if (this.password !== null) {
+      if (includePasswordInput.checked) this.link += `?pass=${encodeURIComponent(this.password)}`;
+      includePassword.style.display = "block";
+    } else {
+      includePassword.style.display = "none";
+    }
+    document.getElementById("sessionLink").textContent = this.link;
   },
   
   setPassword() {
@@ -2935,6 +2955,7 @@ document.getElementById("sessionChangeIdBtn").addEventListener("click", () => {
   Modal.open("changeSessionIdModal");
 });
 document.getElementById("sessionSetPasswordBtn").addEventListener("click", () => Modal.open("setSessionPasswordModal"));
+document.getElementById("sessionShareLinkBtn").addEventListener("click", () => Modal.open("shareSessionLinkModal"));
 document.getElementById("sessionLeaveBtn").addEventListener("click", () => Session.leave());
 document.getElementById("helpHelpBtn").addEventListener("click", () => Modal.open("helpModal"));
 document.getElementById("helpInfoBtn").addEventListener("click", () => Modal.open("infoModal"));
@@ -2971,10 +2992,11 @@ clearBtn.addEventListener("dblclick", () => clearCanvas());
 document.getElementById("resetScaleBtn").addEventListener("click", () => Canvas.setScale(Canvas.DEFAULT_SCALE));
 document.getElementById("fitScaleBtn").addEventListener("click", () => Canvas.scaleToFit());
 
+document.getElementById("shareLinkBtn").addEventListener("click", () => Modal.open("shareSessionLinkModal"));
 document.getElementById("leaveBtn").addEventListener("click", () => Session.leave());
 
 [...document.getElementsByClassName("clickToCopy")].forEach((el) => {
-  el.addEventListener("click", (event) => copyText(event, el.textContent));
+  el.addEventListener("click", (event) => copyText(el.textContent, event));
 });
 document.getElementById("allPingsLink").addEventListener("click", () => Modal.open("allPingsModal"));
 
@@ -3009,6 +3031,10 @@ document.getElementById("setSessionPasswordModalRemoveBtn").addEventListener("cl
 });
 document.getElementById("setSessionPasswordModalSetBtn").addEventListener("click", () => Session.setPassword());
 document.getElementById("setSessionPasswordModalCancelBtn").addEventListener("click", () => Modal.close("setSessionPasswordModal"));
+
+document.getElementById("shareLinkModalCloseBtn").addEventListener("click", () => Modal.close("shareSessionLinkModal"));
+document.getElementById("sessionLinkCopy").addEventListener("click", (event) => copyText(Session.link));
+document.getElementById("sessionLinkPasswordInput").addEventListener("input", () => Session.updateLink());
 
 document.getElementById("enterSessionPasswordModalJoinBtn").addEventListener("click", () => Session.enterPassword());
 document.getElementById("enterSessionPasswordModalCancelBtn").addEventListener("click", () => Modal.close("enterSessionPasswordModal"));
