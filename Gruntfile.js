@@ -57,15 +57,15 @@ module.exports = function(grunt) {
     
     replace: {
       build: {
-        src: ["public/index.html"],
-        overwrite: true,
-        replacements: [{
-          from: "{{ DATE }}",
-          to: "<%= grunt.template.today(\"mmm d, 'yy\") %>"
-        }, {
-          from: "{{ VERSION }}",
-          to: "v<%= pkg.version %>"
-        }]
+        files: {
+          "public/index.html": [{
+            from: /{{ DATE }}/g,
+            to: "<%= grunt.template.today(\"mmm d, 'yy\") %>"
+          }, {
+            from: /{{ VERSION }}/g,
+            to: "v<%= pkg.version %>"
+          }]
+        }
       }
     }
   });
@@ -117,6 +117,17 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.loadNpmTasks('grunt-text-replace');
+  // replace
+  grunt.registerMultiTask("replace", function () {
+    this.files.forEach((file) => {
+      file = file.dest;
+      var data = grunt.file.read(file);
+      this.data.files[file].forEach((replacement) => {
+        data = data.replace(replacement.from, grunt.template.process(replacement.to));
+      });
+      grunt.file.write(file, data);
+    });
+  });
+  
   grunt.registerTask("build", ["htmlmin", "cssmin", "uglify", "replace"]);
 };
