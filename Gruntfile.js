@@ -6,6 +6,8 @@ const UglifyJS = require("uglify-es");
 
 module.exports = function(grunt) {
   grunt.initConfig({
+    pkg: grunt.file.readJSON("package.json"),
+    
     htmlmin: {
       options: {
         collapseBooleanAttributes: true,
@@ -33,6 +35,7 @@ module.exports = function(grunt) {
         }
       }
     },
+    
     uglify: {
       build: {
         files: {
@@ -40,6 +43,7 @@ module.exports = function(grunt) {
         }
       }
     },
+    
     cssmin: {
       build: {
         options: {
@@ -48,6 +52,20 @@ module.exports = function(grunt) {
         files: {
           "public/style.css": "src/style.css"
         }
+      }
+    },
+    
+    replace: {
+      build: {
+        src: ["public/index.html"],
+        overwrite: true,
+        replacements: [{
+          from: "{{ DATE }}",
+          to: "<%= grunt.template.today(\"mmm d, 'yy\") %>"
+        }, {
+          from: "{{ VERSION }}",
+          to: "v<%= pkg.version %>"
+        }]
       }
     }
   });
@@ -99,5 +117,6 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["htmlmin", "cssmin", "uglify",]);
+  grunt.loadNpmTasks('grunt-text-replace');
+  grunt.registerTask("build", ["htmlmin", "cssmin", "uglify", "replace"]);
 };

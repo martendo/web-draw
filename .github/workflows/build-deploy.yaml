@@ -19,7 +19,7 @@ jobs:
       - name: Install build dependencies
         run: npm install --only=dev
       
-      - name: Minify files (build)
+      - name: Build
         run: grunt build
       
       - name: Install deploy dependencies
