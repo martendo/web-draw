@@ -509,7 +509,10 @@
           <h4 id="help-menubar">Menubar</h4>
           The menubar (at the very top of the screen) allows you to do useful things, like save your canvas for later, set a password on your session, or look at this help window!<br>
           <h5 id="help-menubar-save_open">Save/Open</h5>
-          Web Draw can save and open JSON files containing the info it needs to recreate your canvas. It's the same data that is sent to a new client joining your session. It contains the canvas size, undo data, and redo data. Canvas object attribute modification is planned to come soon in Web Draw, but if you need it now, you can look for the attributes in the JSON, such as changing a <code>type: "stroke"</code>'s <code>colour</code> property to <code>"#ff0000"</code> (red).
+          Web Draw can save and open JSON files containing the info it needs to recreate your canvas. It's the same data that is sent to a new client joining your session. It contains the canvas size, undo data, and redo data. Canvas object attribute modification is planned to come soon in Web Draw, but if you need it now, you can look for the attributes in the JSON, such as changing a <code>type: "stroke"</code>'s <code>colour</code> property to <code>"#ff0000"</code> (red).<br>
+          <br>
+          <strong>WARNING!</strong><br>
+          The canvas data format is going to change and will become incompatible with newer versions of Web Draw.
           <h5 id="help-menubar-export_import">Export/Import</h5>
           With the "Export" button, you can save your drawing as a PNG image!<br>
           And with "Import", you can upload an image to use in your drawing!
@@ -738,6 +741,19 @@
     <div id="retrieveModal" class="modal">
       <div class="modalContent" style="min-width: 20em;">
         <div class="modalHeader"><h3 id="retrieveText">Setting up canvas...</h3></div>
+      </div>
+    </div>
+    
+    <div id="oldCanvasFileModal" class="modal">
+      <div class="modalContent">
+        <div class="modalHeader"><h3>Error Setting Up Canvas</h3></div>
+        <div class="modalBody">
+          There was a problem while trying to set up the drawing in your canvas file.<br>
+          It's likely that it is old and outdated - the canvas format has changed and will continue to change until I stop messing around with features.<br>
+        </div>
+        <div class="modalFooter">
+          <button id="oldCanvasFileModalOkBtn">OK</button>
+        </div>
       </div>
     </div>
     

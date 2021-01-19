@@ -265,7 +265,15 @@ const Canvas = {
     };
     reader.onload = (event) => {
       Modal.open("retrieveModal");
-      this.setup(JSON.parse(event.target.result));
+      try {
+        this.setup(JSON.parse(event.target.result));
+      } catch (err) {
+        console.log("Error setting up canvas: " + err);
+        ActionHistory.clearUndo();
+        ActionHistory.clearRedo();
+        Modal.close("retrieveModal");
+        Modal.open("oldCanvasFileModal");
+      }
     };
     reader.readAsText(file);
   },
@@ -3043,6 +3051,7 @@ document.getElementById("appInfoLink").addEventListener("click", () => Modal.ope
 document.getElementById("appInfoModalDoneBtn").addEventListener("click", () => Modal.close("appInfoModal"));
 
 document.getElementById("errorModalOkBtn").addEventListener("click", () => Modal.close("errorModal"));
+document.getElementById("oldCanvasFileModalOkBtn").addEventListener("click", () => Modal.close("oldCanvasFileModal"));
 document.getElementById("disconnectModalOkBtn").addEventListener("click", () => Modal.close("disconnectModal"));
 document.getElementById("sessionNoExistModalOkBtn").addEventListener("click", () => Modal.close("sessionNoExistModal"));
 document.getElementById("sessionAlreadyExistModalOkBtn").addEventListener("click", () => Modal.close("sessionAlreadyExistModal"));
