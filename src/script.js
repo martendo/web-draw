@@ -507,17 +507,13 @@ const Pen = {
   draw(x, y) {
     if (currentAction.type !== "stroke") return false;
     const lastPoint = currentAction.data.points[currentAction.data.points.length - 1];
-    if (currentAction.data.points.length > 0 && x === lastPoint.x && y === lastPoint.y) return;
+    if (currentAction.data.points.length > 0 && x === lastPoint[0] && y === lastPoint[1]) return;
     sendMessage({
       type: "add-stroke",
       clientId: thisClientId,
-      x: x,
-      y: y
+      pos: [x, y]
     });
-    currentAction.data.points.push({
-      x: x,
-      y: y
-    });
+    currentAction.data.points.push([x, y]);
     this.drawStroke(thisCtx, currentAction.data);
   },
   // Add a point to another client's current stroke and draw it
@@ -551,17 +547,17 @@ const Pen = {
     ctx.globalCompositeOperation = user ? DEFAULT_COMP_OP : COMP_OPS[stroke.compOp];
     
     ctx.beginPath();
-    ctx.moveTo(stroke.points[0].x, stroke.points[0].y);
+    ctx.moveTo(stroke.points[0][0], stroke.points[0][1]);
     
     for (var i = 0; i < stroke.points.length - 1; i++) {
       const p0 = stroke.points[i], p1 = stroke.points[i + 1];
-      const midPoint = {
-        x: (p0.x + p1.x) / 2,
-        y: (p0.y + p1.y) / 2
-      };
-      ctx.quadraticCurveTo(p0.x, p0.y, midPoint.x, midPoint.y);
+      const midPoint = [
+        (p0[0] + p1[0]) / 2,
+        (p0[1] + p1[1]) / 2
+      ];
+      ctx.quadraticCurveTo(p0[0], p0[1], midPoint[0], midPoint[1]);
     }
-    ctx.lineTo(stroke.points[i].x, stroke.points[i].y);
+    ctx.lineTo(stroke.points[i][0], stroke.points[i][1]);
     ctx.stroke();
     
     ctx.globalAlpha = 1;
@@ -2297,10 +2293,10 @@ socket.onopen = () => {
       } else if (!outside) {
         sendMessage({
           type: "mouse-move",
-          pos: {
-            x: mouseMoved.x,
-            y: mouseMoved.y
-          },
+          pos: [
+            mouseMoved.x,
+            mouseMoved.y
+          ],
           clientId: thisClientId
         });
         mouseMoved.outside = false;
@@ -2373,10 +2369,7 @@ socket.onmessage = (event) => {
     }
     // Another user has added a point in their current stroke
     case "add-stroke": {
-      clientStrokes.get(data.clientId).points.push({
-        x: data.x,
-        y: data.y
-      });
+      clientStrokes.get(data.clientId).points.push([data.pos[0], data.pos[1]]);
       Pen.drawClientStroke(data.clientId);
       break;
     }
@@ -2570,8 +2563,8 @@ socket.onmessage = (event) => {
       if (data.outside) {
         cursor.style.display = "none";
       } else {
-        const x = (data.pos.x * Canvas.zoom) + (sessionCanvas.offsetLeft + (sessionCanvas.clientLeft * Canvas.zoom)) - Canvas.container.scrollLeft;
-        const y = (data.pos.y * Canvas.zoom) + (sessionCanvas.offsetTop + (sessionCanvas.clientTop * Canvas.zoom)) - Canvas.container.scrollTop;
+        const x = (data.pos[0] * Canvas.zoom) + (sessionCanvas.offsetLeft + (sessionCanvas.clientLeft * Canvas.zoom)) - Canvas.container.scrollLeft;
+        const y = (data.pos[1] * Canvas.zoom) + (sessionCanvas.offsetTop + (sessionCanvas.clientTop * Canvas.zoom)) - Canvas.container.scrollTop;
         cursor.style.left = x + "px";
         cursor.style.top = y + "px";
         cursor.style.display = "block";
