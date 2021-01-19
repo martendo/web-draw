@@ -53,19 +53,23 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 ```
 ./
 ├─ .github/workflows
-│  └─ deploy.yaml
+│  └─ build-deploy.yaml
 ├─ public/
 │  ├─ img/
 │  │  └─ ...
+│  └─ favicon.ico
+├─ src/
 │  ├─ index.html
 │  ├─ script.js
 │  ├─ style.css
-│  └─ ...
+│  └─ 404.html
 ├─ README.md
-└─ server.js
+├─ server.js
 └─ ...
 ```
-- `.github/workflows/deploy.yaml` - GitHub Actions workflow to deploy to Firebase Hosting
+- `.github/workflows/build-deploy.yaml` - GitHub Actions workflow to minify code and deploy to Firebase Hosting
 - `public` - All the files the client needs; the root directory of the site
+  - Code in `src` is minified and placed in this directory
   - `img` - All the images (except favicon.ico, if that counts)
+- `src` - Source code of the web app
 - `server.js` - The WebSockets server
