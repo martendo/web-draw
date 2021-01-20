@@ -125,189 +125,127 @@ const Canvas = {
       ActionHistory.doAction(ActionHistory.undoActions[i]);
     }
     Modal.close("retrieveModal");
-  }
-};
-
-function openCanvas() {
-  const filePicker = document.getElementById("chooseCanvasFile");
-  filePicker.click();
-}
-
-// Set up the modal to resize the canvas
-function chooseCanvasSize() {
-  document.getElementById("canvasResizeWidth").value = sessionCanvas.width;
-  document.getElementById("canvasResizeHeight").value = sessionCanvas.height;
-  Modal.open("canvasResizeModal");
-}
-// Set the canvas size
-function resizeCanvas() {
-  Modal.close("canvasResizeModal");
-  const width = document.getElementById("canvasResizeWidth").value;
-  const height = document.getElementById("canvasResizeHeight").value;
-  Client.sendMessage({
-    type: "resize-canvas",
-    width: width,
-    height: height,
-    colour: penColours[1]
-  });
-  const thisCanvasImage = thisCanvas.toDataURL("image/png");
-  const sessionCanvasImage = sessionCanvas.toDataURL("image/png");
-  const clientCanvasImages = new Map;
-  clientCanvasses.forEach((clientCanvas) => {
-    clientCanvasImages.set(clientCanvas, clientCanvas.toDataURL("image/png"));
-  });
-  var changed = false;
-  if (width != sessionCanvas.width) {
-    thisCanvas.width = width;
-    sessionCanvas.width = width;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.width = width;
-    });
-    changed = true;
-  }
-  if (height != sessionCanvas.height) {
-    thisCanvas.height = height;
-    sessionCanvas.height = height;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.height = height;
-    });
-    changed = true;
-  }
-  if (changed) {
-    const thisImg = new Image();
-    thisImg.addEventListener("load", () => {
-      // Canvas already cleared from size change
-      thisCtx.drawImage(thisImg, 0, 0);
-    });
-    thisImg.src = thisCanvasImage;
-    
-    sessionCtx.fillStyle = penColours[1];
-    sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-    const sessionImg = new Image();
-    sessionImg.addEventListener("load", () => {
-      // Canvas already filled with background colour
-      sessionCtx.drawImage(sessionImg, 0, 0);
-    });
-    sessionImg.src = sessionCanvasImage;
-    
-    clientCanvasses.forEach((clientCanvas) => {
-      const clientCtx = clientCanvas.getContext("2d");
-      const clientImg = new Image();
-      clientImg.addEventListener("load", () => {
-      // Canvas already cleared from size change
-        clientCtx.drawImage(thisImg, 0, 0);
-      });
-      clientImg.src = clientCanvasImages.get(clientCanvas);
-    });
-  }
-}
-// Set the canvas image
-function setCanvas(width, height, image, bgColour) {
-  const thisCanvasImage = thisCanvas.toDataURL("image/png");
-  const clientCanvasImages = new Map;
-  clientCanvasses.forEach((clientCanvas) => {
-    clientCanvasImages.set(clientCanvas, clientCanvas.toDataURL("image/png"));
-  });
-  var changed = false;
-  if (width != sessionCanvas.width) {
-    thisCanvas.width = width;
-    sessionCanvas.width = width;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.width = width;
-    });
-    changed = true;
-  }
-  if (height != sessionCanvas.height) {
-    thisCanvas.height = height;
-    sessionCanvas.height = height;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.height = height;
-    });
-    changed = true;
-  }
+  },
   
-  if (changed) {
-    const thisImg = new Image();
-    thisImg.addEventListener("load", () => {
-      thisCtx.drawImage(thisImg, 0, 0);
-    });
-    thisImg.src = thisCanvasImage;
-    
-    clientCanvasses.forEach((clientCanvas) => {
-      const clientCtx = clientCanvas.getContext("2d");
-      const clientImg = new Image();
-      clientImg.addEventListener("load", () => {
-        clientCtx.drawImage(thisImg, 0, 0);
-      });
-      clientImg.src = clientCanvasImages.get(clientCanvas);
-    });
-  }
+  // Get the position of the cursor relative to the canvas
+  getCursorPos(event) {
+    var mouse;
+    if (typeof event.clientX === "undefined") {
+      mouse = {
+        x: event.changedTouches[0].clientX,
+        y: event.changedTouches[0].clientY
+      };
+    } else {
+      mouse = {
+        x: event.clientX,
+        y: event.clientY
+      };
+    }
+    return {
+      x: (((mouse.x + Canvas.container.scrollLeft) - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.zoom))) / Canvas.zoom) | 0,
+      y: (((mouse.y + Canvas.container.scrollTop) - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.zoom))) / Canvas.zoom) | 0
+    };
+  },
   
-  const img = new Image();
-  img.addEventListener("load", () => {
+  // Set the canvas size
+  resize(width, height, bgColour) {
+    function copyCanvas(canvas) {
+      const newCanvas = document.createElement("canvas");
+      newCanvas.width = canvas.width;
+      newCanvas.height = canvas.height;
+      newCanvas.getContext("2d").drawImage(canvas, 0, 0);
+      return newCanvas;
+    }
+    
+    const thisCanvasCopy = copyCanvas(thisCanvas);
+    const sessionCanvasCopy = copyCanvas(sessionCanvas);
+    const clientCanvasCopies = new Map;
+    clientCanvasses.forEach((clientCanvas) => {
+      clientCanvasCopies.set(clientCanvas, copyCanvas(clientCanvas));
+    });
+    var changed = false;
+    if (width != sessionCanvas.width) {
+      thisCanvas.width = width;
+      sessionCanvas.width = width;
+      clientCanvasses.forEach((clientCanvas) => {
+        clientCanvas.width = width;
+      });
+      changed = true;
+    }
+    if (height != sessionCanvas.height) {
+      thisCanvas.height = height;
+      sessionCanvas.height = height;
+      clientCanvasses.forEach((clientCanvas) => {
+        clientCanvas.height = height;
+      });
+      changed = true;
+    }
     if (changed) {
       sessionCtx.fillStyle = bgColour;
       sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-    } else {
-      sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-    }
-    sessionCtx.drawImage(img, 0, 0);
-  });
-  img.src = image;
-}
-
-// Completely clear the (session) canvas
-function clearCanvas(user = true) {
-  if (user) {
-    Client.sendMessage({
-      type: "clear"
-    });
-  }
-  sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-  if (user) {
-    ActionHistory.addToUndo({
-      type: "clear"
-    });
-  }
-}
-// Clear the (Session) canvas to the blank colour
-function clearCanvasBlank(user = true) {
-  if (user) {
-    Client.sendMessage({
-      type: "clear-blank"
-    });
-  }
-  sessionCtx.fillStyle = BLANK_COLOUR;
-  sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-  if (user) {
-    ActionHistory.addToUndo({
-      type: "clear-blank"
-    });
-  }
-}
-
-// Set up modal to import image
-function selectImport() {
-  const filePicker = document.getElementById("choosePicture");
-  filePicker.click();
-}
-// Import image and put on canvas
-function importPicture(event) {
-  const file = event.currentTarget.files[0];
-  const reader = new FileReader();
-  reader.onerror = () => {
-    window.alert("There was an error reading the file.");
-  };
-  reader.onload = (event) => {
-    const img = new Image();
-    img.addEventListener("load", () => {
-      Client.sendMessage({
-        type: "import-picture",
-        image: img.src
+      // Canvas already filled with background colour
+      sessionCtx.drawImage(sessionCanvasCopy, 0, 0);
+      
+      // Canvas already cleared from size change
+      thisCtx.drawImage(thisCanvasCopy, 0, 0);
+      
+      clientCanvasses.forEach((clientCanvas) => {
+        const clientCtx = clientCanvas.getContext("2d");
+        // Canvas already cleared from size change
+        clientCtx.drawImage(clientCanvasCopies.get(clientCanvas), 0, 0);
       });
-      sessionCtx.drawImage(img, 0, 0);
-    });
-    img.src = event.target.result;
-  };
-  reader.readAsDataURL(file);
-}
+    }
+  },
+  
+  // Import image and put on canvas
+  importPicture(event) {
+    const file = event.currentTarget.files[0];
+    const reader = new FileReader();
+    reader.onerror = () => {
+      window.alert("There was an error reading the file.");
+    };
+    reader.onload = (event) => {
+      const img = new Image();
+      img.addEventListener("load", () => {
+        Client.sendMessage({
+          type: "import-picture",
+          image: img.src
+        });
+        sessionCtx.drawImage(img, 0, 0);
+      });
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  },
+  
+  // Clear the (session) canvas to the blank colour
+  clearBlank(user = true) {
+    if (user) {
+      Client.sendMessage({
+        type: "clear-blank"
+      });
+    }
+    sessionCtx.fillStyle = BLANK_COLOUR;
+    sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    if (user) {
+      ActionHistory.addToUndo({
+        type: "clear-blank"
+      });
+    }
+  },
+  
+  // Completely clear the (session) canvas
+  clear(user = true) {
+    if (user) {
+      Client.sendMessage({
+        type: "clear"
+      });
+    }
+    sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    if (user) {
+      ActionHistory.addToUndo({
+        type: "clear"
+      });
+    }
+  }
+};

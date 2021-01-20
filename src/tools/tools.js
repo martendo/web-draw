@@ -23,7 +23,7 @@ function mouseHold(event) {
     currentPen = 0;
   }
   event.preventDefault();
-  const point = getRelCursorPos(event);
+  const point = Canvas.getCursorPos(event);
   if (currentAction.data && currentAction.data.selected) {
     const handle = Selection.getResizeHandle(point, [0, 1, 2, 3, 4, 5, 6, 7]);
     if (handle !== null) {
@@ -216,7 +216,7 @@ function startTool(point) {
 }
 // Handle mousemove (prepare update and add point to stroke if drawing)
 function mouseMove(event) {
-  const point = getRelCursorPos(event);
+  const point = Canvas.getCursorPos(event);
   document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
   Slider.update(event);
   switch (currentAction.type) {
@@ -350,13 +350,12 @@ function mouseMove(event) {
   } else {
     thisCanvas.style.cursor = "auto";
   }
-  const mouse = getRelCursorPos(event);
   mouseMoved.moved = true;
   if (event.target.tagName != "CANVAS") {
     mouseMoved.x = -1;
   } else {
-    mouseMoved.x = mouse.x;
-    mouseMoved.y = mouse.y;
+    mouseMoved.x = point.x;
+    mouseMoved.y = point.y;
   }
 }
 // Handle mouseup
@@ -364,7 +363,7 @@ function clearMouseHold(event) {
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
-      const point = getRelCursorPos(event);
+      const point = Canvas.getCursorPos(event);
       Pen.draw(point.x, point.y);
       Client.sendMessage({
         type: "end-stroke",

@@ -112,33 +112,6 @@ function isPointInside(x, y, rect) {
           rect.y < y && y < rect.y + rect.height);
 }
 
-// Get the position of the cursor
-function getCursorPos(event) {
-  var mouse;
-  if (typeof event.clientX === "undefined") {
-    mouse = {
-      x: event.changedTouches[0].clientX,
-      y: event.changedTouches[0].clientY
-    };
-  } else {
-    mouse = {
-      x: event.clientX,
-      y: event.clientY
-    };
-  }
-  return mouse;
-}
-// Get the position of the cursor relative to the canvas
-function getRelCursorPos(event) {
-  const mouse = getCursorPos(event);
-  mouse.x += Canvas.container.scrollLeft;
-  mouse.y += Canvas.container.scrollTop;
-  return {
-    x: ((mouse.x - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.zoom))) / Canvas.zoom) | 0,
-    y: ((mouse.y - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.zoom))) / Canvas.zoom) | 0
-  };
-}
-
 // Tell the user if their browser does not support WebSockets
 if (!("WebSocket" in window)) Modal.open("noWsModal");
 
@@ -337,7 +310,7 @@ const quickColourSelect = document.getElementById("quickColourSelect");
 quickColourSelect.addEventListener("click", (event) => { event.preventDefault(); });
 quickColourSelect.addEventListener("contextmenu", (event) => { event.preventDefault(); });
 
-document.getElementById("choosePicture").addEventListener("change", (event) => importPicture(event));
+document.getElementById("choosePicture").addEventListener("change", (event) => Canvas.importPicture(event));
 document.getElementById("chooseCanvasFile").addEventListener("change", (event) => Canvas.open(event));
 
 const penColourBoxes = document.getElementsByClassName("penColour");
@@ -377,14 +350,24 @@ for (let i = 0; i < menuLabels.length; i++) {
   }
 }
 document.getElementById("fileSaveBtn").addEventListener("click", () => Canvas.save());
-document.getElementById("fileOpenBtn").addEventListener("click", () => openCanvas());
+document.getElementById("fileOpenBtn").addEventListener("click", () => {
+  const filePicker = document.getElementById("chooseCanvasFile");
+  filePicker.click();
+});
 document.getElementById("fileExportBtn").addEventListener("click", () => Canvas.export());
-document.getElementById("fileImportBtn").addEventListener("click", () => selectImport());
+document.getElementById("fileImportBtn").addEventListener("click", () => {
+  const filePicker = document.getElementById("choosePicture");
+  filePicker.click();
+});
 document.getElementById("editUndoBtn").addEventListener("click", () => ActionHistory.doUndo());
 document.getElementById("editRedoBtn").addEventListener("click", () => ActionHistory.doRedo());
-document.getElementById("editClearBtn").addEventListener("click", () => clearCanvasBlank());
-document.getElementById("editClearTransparentBtn").addEventListener("click", () => clearCanvas());
-document.getElementById("editResizeBtn").addEventListener("click", () => chooseCanvasSize());
+document.getElementById("editClearBtn").addEventListener("click", () => Canvas.clearBlank());
+document.getElementById("editClearTransparentBtn").addEventListener("click", () => Canvas.clear());
+document.getElementById("editResizeBtn").addEventListener("click", () => {
+  document.getElementById("canvasResizeWidth").value = sessionCanvas.width;
+  document.getElementById("canvasResizeHeight").value = sessionCanvas.height;
+  Modal.open("canvasResizeModal");
+});
 document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
 document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
 document.getElementById("viewFillZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fill"));
@@ -426,8 +409,8 @@ document.getElementById("chatSendBtn").addEventListener("click", () => Chat.send
 document.getElementById("undoBtn").addEventListener("click", () => ActionHistory.doUndo());
 document.getElementById("redoBtn").addEventListener("click", () => ActionHistory.doRedo());
 const clearBtn = document.getElementById("clearBtn");
-clearBtn.addEventListener("click", () => clearCanvasBlank());
-clearBtn.addEventListener("dblclick", () => clearCanvas());
+clearBtn.addEventListener("click", () => Canvas.clearBlank());
+clearBtn.addEventListener("dblclick", () => Canvas.clear());
 document.getElementById("resetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
 document.getElementById("fitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
 
@@ -441,7 +424,18 @@ document.getElementById("allPingsLink").addEventListener("click", () => Modal.op
 
 document.getElementById("allPingsModalDoneBtn").addEventListener("click", () => Modal.close("allPingsModal"));
 
-document.getElementById("resizeModalOkBtn").addEventListener("click", () => resizeCanvas());
+document.getElementById("resizeModalOkBtn").addEventListener("click", () => {
+  Modal.close("canvasResizeModal");
+  const width = document.getElementById("canvasResizeWidth").value;
+  const height = document.getElementById("canvasResizeHeight").value;
+  Client.sendMessage({
+    type: "resize-canvas",
+    width: width,
+    height: height,
+    colour: penColours[1]
+  });
+  Canvas.resize(width, height, penColours[1]);
+});
 document.getElementById("resizeModalCancelBtn").addEventListener("click", () => Modal.close("canvasResizeModal"));
 document.getElementById("canvasResizeModal").addEventListener("keydown", () => {
   if (event.key === "Enter") {

@@ -283,8 +283,7 @@ const Client = {
         }
         // Another user has changed the canvas size
         case "resize-canvas": {
-          const image = sessionCanvas.toDataURL("image/png");
-          setCanvas(data.width, data.height, image, data.colour);
+          Canvas.resize(data.width, data.height, data.colour);
           break;
         }
         // The server needs a copy of the canvas to send to a new user

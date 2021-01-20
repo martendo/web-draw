@@ -21,7 +21,7 @@ const ActionHistory = {
     const previousAction = this.undoActions.pop();
     if (previousAction) {
       this.redoActions.push(previousAction);
-      clearCanvasBlank(false);
+      Canvas.clearBlank(false);
       for (var i = 0; i < this.undoActions.length; i++) {
         this.doAction(this.undoActions[i]);
       }
