@@ -1,6 +1,6 @@
 const Ellipse = {
   draw(ellipse, ctx, user = true) {
-    if (!ellipse.fill && !ellipse.outline) return;
+    if (!ellipse.outline && !ellipse.fill) return;
     
     const x = (ellipse.x + (ellipse.x + ellipse.width)) / 2;
     const y = (ellipse.y + (ellipse.y + ellipse.height)) / 2;

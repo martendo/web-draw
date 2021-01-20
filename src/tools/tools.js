@@ -55,26 +55,27 @@ function mouseHold(event) {
 }
 function startTool(point) {
   currentAction.type = null;
-  const opacityInput = document.getElementById("opacityInput");
-  var opacity = parseFloat(opacityInput.dataset.value);
-  opacity *= 0.01;
+  
+  const size         = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
+  const opacity      = parseFloat(document.getElementById("opacityInput").dataset.value) / 100;
+  const compOp       = parseInt(document.getElementById("compositeSelect").value, 10);
   const shapeOutline = document.getElementById("shapeOutline").checked;
-  const shapeFill = document.getElementById("shapeFill").checked;
+  const shapeFill    = document.getElementById("shapeFill").checked;
+  const caps         = parseInt(document.getElementById("lineCapSelect").value);
   
   if (tool !== RECT_SELECT_TOOL) Selection.remove();
   
   switch (tool) {
     case PEN_TOOL: {
-      const size = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
       currentAction = {
         type: "stroke",
         data: {
           points: [],
           colour: penColours[currentPen],
           size: size,
-          caps: parseInt(document.getElementById("lineCapSelect").value),
+          caps: caps,
           opacity: opacity,
-          compOp: parseInt(document.getElementById("compositeSelect").value, 10)
+          compOp: compOp
         }
       };
       sendMessage({
@@ -89,7 +90,6 @@ function startTool(point) {
       const thresholdInput = document.getElementById("fillThresholdInput");
       var threshold = parseInt(thresholdInput.dataset.value, 10);
       const fillColour = penColours[currentPen];
-      const compOp = parseInt(document.getElementById("compositeSelect").value, 10);
       const fillBy = parseInt(document.getElementById("fillBySelect").value, 10);
       const changeAlpha = document.getElementById("fillChangeAlpha").checked;
       sendMessage({
@@ -160,10 +160,10 @@ function startTool(point) {
           x1: point.x,
           y1: point.y,
           colour: penColours[currentPen],
-          width: parseInt(document.getElementById("penWidthInput").dataset.value, 10),
-          caps: parseInt(document.getElementById("lineCapSelect").value),
+          width: size,
+          caps: caps,
           opacity: opacity,
-          compOp: parseInt(document.getElementById("compositeSelect").value, 10)
+          compOp: compOp
         }
       };
       break;
@@ -181,9 +181,9 @@ function startTool(point) {
             outline: penColours[currentPen],
             fill: penColours[(currentPen + 1) % 2]
           },
-          lineWidth: parseInt(document.getElementById("penWidthInput").dataset.value, 10),
+          lineWidth: size,
           opacity: opacity,
-          compOp: parseInt(document.getElementById("compositeSelect").value, 10),
+          compOp: compOp,
           outline: shapeOutline,
           fill: shapeFill
         }
@@ -203,9 +203,9 @@ function startTool(point) {
             outline: penColours[currentPen],
             fill: penColours[(currentPen + 1) % 2]
           },
-          lineWidth: parseInt(document.getElementById("penWidthInput").dataset.value, 10),
+          lineWidth: size,
           opacity: opacity,
-          compOp: parseInt(document.getElementById("compositeSelect").value, 10),
+          compOp: compOp,
           outline: shapeOutline,
           fill: shapeFill
         }

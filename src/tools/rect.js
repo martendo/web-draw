@@ -1,6 +1,6 @@
 const Rect = {
   draw(rect, ctx, user = true) {
-    if (!rect.fill && !rect.outline) return;
+    if (!rect.outline && !rect.fill) return;
     
     const x = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;
     const y = rect.lineWidth % 2 !== 0 ? rect.y + 0.5 : rect.y;
