@@ -52,20 +52,25 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 ## What's where
 ```
 ./
-├─ .github/workflows
-│  └─ build-deploy.yaml
-├─ public/
-│  ├─ img/
-│  │  └─ ...
-│  └─ favicon.ico
-├─ src/
-│  ├─ index.html
-│  ├─ script.js
-│  ├─ style.css
-│  └─ 404.html
-├─ README.md
-├─ server.js
-└─ ...
+├── .github/workflows
+│   └── build-deploy.yaml
+├── public/
+│   ├── img/
+│   │   └── ...
+│   └── favicon.ico
+├── src/
+│   ├── tools/
+│   │   └── ...
+│   ├── ui/
+│   │   └── ...
+│   ├── 404.html
+│   ├── index.html
+│   ├── script.js
+│   ├── style.css
+│   └── ...
+├── README.md
+├── server.js
+└── ...
 ```
 - `.github/workflows/build-deploy.yaml` - GitHub Actions workflow to minify code and deploy to Firebase Hosting
 - `public` - All the files the client needs; the root directory of the site
