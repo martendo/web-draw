@@ -11,7 +11,7 @@ const ActionHistory = {
   },
   // Undo an action, and send a message to undo (from the user)
   doUndo() {
-    sendMessage({
+    Client.sendMessage({
       type: "undo"
     });
     this.undo();
@@ -35,7 +35,7 @@ const ActionHistory = {
   
   // Redo an action, and send a message to redo (from the user)
   doRedo() {
-    sendMessage({
+    Client.sendMessage({
       type: "redo"
     });
     this.redo();

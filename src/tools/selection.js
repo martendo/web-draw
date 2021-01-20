@@ -162,7 +162,7 @@ const Selection = {
     document.getElementById("selectSize").textContent = `${currentAction.data.width}x${currentAction.data.height}`;
     
     // Send to other clients (remove unnecessary info too)
-    sendMessage({
+    Client.sendMessage({
       type: "selection-update",
       selection: {
         selected: currentAction.data.selected,
@@ -172,7 +172,7 @@ const Selection = {
         height: currentAction.data.height,
         flipped: currentAction.data.flipped
       },
-      clientId: thisClientId
+      clientId: Client.id
     });
   },
   drawData(ctx, sel) {
@@ -233,33 +233,33 @@ const Selection = {
   },
   doCopy() {
     if (!currentAction.data.selected) return;
-    sendMessage({
+    Client.sendMessage({
       type: "selection-copy",
-      clientId: thisClientId
+      clientId: Client.id
     });
     this.copy(thisCtx, currentAction.data);
   },
   doCut() {
     if (!currentAction.data.selected) return;
-    sendMessage({
+    Client.sendMessage({
       type: "selection-cut",
       colour: penColours[1],
-      clientId: thisClientId
+      clientId: Client.id
     });
     this.cut(thisCtx, currentAction.data, penColours[1]);
   },
   doPaste() {
     if (!currentAction.data.selected || !currentAction.data.data) return;
-    sendMessage({
+    Client.sendMessage({
       type: "selection-paste",
-      clientId: thisClientId
+      clientId: Client.id
     });
     this.paste(currentAction.data);
   },
   remove() {
-    sendMessage({
+    Client.sendMessage({
       type: "remove-selection",
-      clientId: thisClientId
+      clientId: Client.id
     });
     currentAction = NO_ACTION;
     thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);

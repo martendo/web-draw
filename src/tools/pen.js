@@ -4,9 +4,9 @@ const Pen = {
     if (currentAction.type !== "stroke") return false;
     const lastPoint = currentAction.data.points[currentAction.data.points.length - 1];
     if (currentAction.data.points.length > 0 && x === lastPoint[0] && y === lastPoint[1]) return;
-    sendMessage({
+    Client.sendMessage({
       type: "add-stroke",
-      clientId: thisClientId,
+      clientId: Client.id,
       pos: [x, y]
     });
     currentAction.data.points.push([x, y]);

@@ -78,9 +78,9 @@ function startTool(point) {
           compOp: compOp
         }
       };
-      sendMessage({
+      Client.sendMessage({
         type: "start-stroke",
-        clientId: thisClientId,
+        clientId: Client.id,
         data: currentAction.data
       });
       Pen.draw(point.x, point.y);
@@ -92,7 +92,7 @@ function startTool(point) {
       const fillColour = penColours[currentPen];
       const fillBy = parseInt(document.getElementById("fillBySelect").value, 10);
       const changeAlpha = document.getElementById("fillChangeAlpha").checked;
-      sendMessage({
+      Client.sendMessage({
         type: "fill",
         x: point.x,
         y: point.y,
@@ -129,9 +129,9 @@ function startTool(point) {
       break;
     }
     case RECT_SELECT_TOOL: {
-      sendMessage({
+      Client.sendMessage({
         type: "create-selection",
-        clientId: thisClientId
+        clientId: Client.id
       });
       currentAction = {
         type: "selecting",
@@ -228,9 +228,9 @@ function mouseMove(event) {
     case "line": {
       event.preventDefault();
       currentAction.data.x1 = point.x, currentAction.data.y1 = point.y;
-      sendMessage({
+      Client.sendMessage({
         type: "line",
-        clientId: thisClientId,
+        clientId: Client.id,
         line: currentAction.data
       });
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
@@ -241,9 +241,9 @@ function mouseMove(event) {
       event.preventDefault();
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
-      sendMessage({
+      Client.sendMessage({
         type: "rect",
-        clientId: thisClientId,
+        clientId: Client.id,
         rect: currentAction.data
       });
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
@@ -254,9 +254,9 @@ function mouseMove(event) {
       event.preventDefault();
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
-      sendMessage({
+      Client.sendMessage({
         type: "ellipse",
-        clientId: thisClientId,
+        clientId: Client.id,
         ellipse: currentAction.data
       });
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
@@ -366,19 +366,19 @@ function clearMouseHold(event) {
       event.preventDefault();
       const point = getRelCursorPos(event);
       Pen.draw(point.x, point.y);
-      sendMessage({
+      Client.sendMessage({
         type: "end-stroke",
-        clientId: thisClientId
+        clientId: Client.id
       });
       Pen.commitStroke(thisCanvas, currentAction.data);
       break;
     }
     case "line": {
       event.preventDefault();
-      sendMessage({
+      Client.sendMessage({
         type: "commit-line",
         line: currentAction.data,
-        clientId: thisClientId
+        clientId: Client.id
       });
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       Line.draw(currentAction.data, sessionCtx, false);
@@ -390,10 +390,10 @@ function clearMouseHold(event) {
     }
     case "rect": {
       event.preventDefault();
-      sendMessage({
+      Client.sendMessage({
         type: "commit-rect",
         rect: currentAction.data,
-        clientId: thisClientId
+        clientId: Client.id
       });
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       Rect.draw(currentAction.data, sessionCtx, false);
@@ -405,10 +405,10 @@ function clearMouseHold(event) {
     }
     case "ellipse": {
       event.preventDefault();
-      sendMessage({
+      Client.sendMessage({
         type: "commit-ellipse",
         ellipse: currentAction.data,
-        clientId: thisClientId
+        clientId: Client.id
       });
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       Ellipse.draw(currentAction.data, sessionCtx, false);

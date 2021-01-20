@@ -11,10 +11,10 @@ const Chat = {
     const isAtBottom = box.scrollTop == box.scrollHeight - box.clientHeight;
     elementFitHeight(this.input);
     if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
-    sendMessage({
+    Client.sendMessage({
       type: "chat-message",
       message: msg,
-      clientId: thisClientId
+      clientId: Client.id
     });
   },
   
@@ -115,7 +115,7 @@ const Chat = {
     bubble.appendChild(msgText);
     box.appendChild(bubble);
     
-    if (msg.clientId !== thisClientId && box.parentElement.classList.contains("displayNone")) {
+    if (msg.clientId !== Client.id && box.parentElement.classList.contains("displayNone")) {
       // Add red dot to "Chat" button on menubar
       const chatNew = document.getElementById("chatNew");
       chatNew.style.width = "8px";
@@ -137,7 +137,7 @@ const Chat = {
     var title = "Only ";
     for (var i = 0; i < ids.length; i++) {
       var clientName = "Unknown";
-      if (ids[i] === thisClientId) {
+      if (ids[i] === Client.id) {
         clientName = "you";
       } else {
         const toClient = clients.get(ids[i]);

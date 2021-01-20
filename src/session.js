@@ -7,7 +7,7 @@ const Session = {
   addUsers(c, total) {
     c.forEach((client) => {
       clients.set(client.id, client);
-      if (client.id !== thisClientId) {
+      if (client.id !== Client.id) {
         const img = document.createElement("img");
         img.src = "/img/cursor.png";
         img.classList.add("cursorIcon");
@@ -27,7 +27,7 @@ const Session = {
   },
   removeUsers(client, total) {
     clients.delete(client.id);
-    if (client.id !== thisClientId) {
+    if (client.id !== Client.id) {
       const img = document.getElementById("cursorIcon-" + client.id);
       img.remove();
       document.getElementById("clientCanvas-" + client.id).remove();
@@ -62,7 +62,7 @@ const Session = {
       idCell.textContent = clientList[i].id;
       nameCell.textContent = clientList[i].name;
       row.classList.add("sessionInfoClient");
-      if (clientList[i].id === thisClientId) row.classList.add("sessionInfoThisClient");
+      if (clientList[i].id === Client.id) row.classList.add("sessionInfoThisClient");
       row.title = "Click to send private message";
       row.addEventListener("click", () => {
         Chat.box.classList.remove("displayNone");
@@ -75,21 +75,21 @@ const Session = {
   
   // Request to create a new session
   create() {
-    sendMessage({
+    Client.sendMessage({
       type: "create-session",
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Request to join a session
   join() {
-    sendMessage({
+    Client.sendMessage({
       type: "join-session",
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Leave a session
   leave() {
-    sendMessage({
+    Client.sendMessage({
       type: "leave-session"
     });
     
@@ -106,7 +106,7 @@ const Session = {
   },
   
   changeId() {
-    sendMessage({
+    Client.sendMessage({
       type: "session-id",
       id: document.getElementById("sessionIdNew").value
     });
@@ -149,14 +149,14 @@ const Session = {
   },
   
   setPassword() {
-    sendMessage({
+    Client.sendMessage({
       type: "session-password",
       password: document.getElementById("sessionPasswordNew").value
     });
   },
   
   enterPassword() {
-    sendMessage({
+    Client.sendMessage({
       type: "enter-password",
       password: document.getElementById("enterSessionPassword").value,
       id: document.getElementById("enterSessionPasswordId").textContent
@@ -165,11 +165,11 @@ const Session = {
   
   saveUserSettings() {
     const name = document.getElementById("userNameInput").value;
-    if (name !== clients.get(thisClientId).name) {
-      sendMessage({
+    if (name !== clients.get(Client.id).name) {
+      Client.sendMessage({
         type: "user-name",
         name: name,
-        clientId: thisClientId
+        clientId: Client.id
       });
       document.getElementById("userName").textContent = name;
     }

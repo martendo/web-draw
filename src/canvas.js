@@ -144,7 +144,7 @@ function resizeCanvas() {
   Modal.close("canvasResizeModal");
   const width = document.getElementById("canvasResizeWidth").value;
   const height = document.getElementById("canvasResizeHeight").value;
-  sendMessage({
+  Client.sendMessage({
     type: "resize-canvas",
     width: width,
     height: height,
@@ -259,7 +259,7 @@ function setCanvas(width, height, image, bgColour) {
 // Completely clear the (session) canvas
 function clearCanvas(user = true) {
   if (user) {
-    sendMessage({
+    Client.sendMessage({
       type: "clear"
     });
   }
@@ -273,7 +273,7 @@ function clearCanvas(user = true) {
 // Clear the (Session) canvas to the blank colour
 function clearCanvasBlank(user = true) {
   if (user) {
-    sendMessage({
+    Client.sendMessage({
       type: "clear-blank"
     });
   }
@@ -301,7 +301,7 @@ function importPicture(event) {
   reader.onload = (event) => {
     const img = new Image();
     img.addEventListener("load", () => {
-      sendMessage({
+      Client.sendMessage({
         type: "import-picture",
         image: img.src
       });
