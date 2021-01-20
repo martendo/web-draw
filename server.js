@@ -4,21 +4,24 @@ const WebSocket = require("ws");
 
 const wss = new WebSocket.Server({ port: process.env.PORT || 3000 });
 
-const sessions = new Map;
-const clients = new Map;
+const sessions = new Map();
+const clients = new Map();
 
-function createId(len = 4, chars = "bcdfghjklmnpqrstvwxyz0123456789") {
-  var id = "";
-  while (len--) {
-    id += chars[Math.random() * chars.length | 0];
-  }
+function createUniqueId(map, len = 4, chars = "bcdfghjklmnpqrstvwxyz0123456789") {
+  var id;
+  do {
+    id = "";
+    for (var i = 0; i < len; i++) {
+      id += chars[(Math.random() * chars.length) | 0];
+    }
+  } while (map.has(id));
   return id;
 }
 
 class Session {
   constructor(id) {
     this.id = id;
-    this.clients = new Map;
+    this.clients = new Map();
     this.password = null;
     sessions.set(this.id, this);
     console.log(`Create session ${this.id} - ${sessions.size} sessions open`);
@@ -75,21 +78,22 @@ class Session {
     client.session = null;
     console.log(`Client ${client.id} left session ${this.id} - ${this.clients.size} clients in session`);
     
-    if (this.clients.size == 0) {
+    if (this.clients.size === 0) {
       sessions.delete(this.id);
-      delete this;
       console.log(`Delete session ${this.id} - ${sessions.size} sessions open`);
     }
   }
   
+  // Send a message to all clients in this session
+  broadcast(data) {
+    this.clients.forEach((client) => {
+      client.send(data);
+    });
+  }
+  
   setPassword(client, password) {
     this.password = password;
-    client.send({
-      type: "password-set",
-      password: this.password,
-      clientId: client.id
-    });
-    client.broadcast({
+    this.broadcast({
       type: "password-set",
       password: this.password,
       clientId: client.id
@@ -108,6 +112,7 @@ class Client {
     clients.set(this.id, this);
   }
   
+  // Send a message to all other clients in session except this client
   broadcast(data) {
     if (this.session) {
       this.session.clients.forEach((client) => {
@@ -116,6 +121,7 @@ class Client {
     }
   }
   
+  // Send a message to this client
   send(data) {
     const msg = JSON.stringify(data);
     this.connection.send(msg, (error) => {
@@ -126,8 +132,9 @@ class Client {
   ping() {
     if (!this.isAlive) return this.connection.terminate();
     this.isAlive = false;
-    this.pingTime = Date.now();
-    this.connection.ping();
+    this.connection.ping(() => {
+      this.pingTime = Date.now();
+    });
   }
 }
 
@@ -170,20 +177,17 @@ function checkSessionPassword(client, id, password) {
 }
 
 wss.on("connection", (socket) => {
-  let id = createId();
-  while (clients.has(id)) {
-    id = createId();
-  }
-  const client = new Client(socket, id);
+  const client = new Client(socket, createUniqueId(clients));
   client.send({
     type: "connection-established",
     id: client.id
   });
   console.log(`Client connect ${client.id} - ${clients.size} clients connected`);
   socket.on("pong", () => {
+    const latency = Date.now() - client.pingTime;
     client.send({
       type: "latency",
-      latency: Date.now() - client.pingTime
+      latency: latency
     });
     client.isAlive = true;
   });
@@ -203,11 +207,6 @@ wss.on("connection", (socket) => {
   socket.on("message", (msg) => {
     const data = JSON.parse(msg);
     switch (data.type) {
-      case "user-name": {
-        client.name = data.name;
-        client.send(data);
-        // Fallthrough
-      }
       case "fill":
       case "clear":
       case "clear-blank":
@@ -236,12 +235,18 @@ wss.on("connection", (socket) => {
         break;
       }
       case "chat-message": {
+        const timestamp = Date.now();
         if (data.message.slice(0, 3) === "to:") {
           const idList = data.message.split(" ")[0].slice(3);
           var ids = idList.split(",");
+          // Remove recipients who are not in client's session
           ids = ids.filter((id) => client.session.clients.has(id));
+          // Sending to nobody, end
           if (ids.length === 0) break;
+          
+          // Show sender the message
           ids.push(client.id);
+          // Remove duplicate recipients
           ids = [...new Set(ids)];
           ids.forEach((id) => {
             client.session.clients.get(id).send({
@@ -249,27 +254,27 @@ wss.on("connection", (socket) => {
               message: data.message.slice(3 + idList.length + 1),
               clientId: client.id,
               priv: ids,
-              timestamp: Date.now()
+              timestamp: timestamp
             });
           });
         } else {
-          data.timestamp = Date.now();
-          client.broadcast(data);
-          client.send(data);
+          data.timestamp = timestamp;
+          client.session.broadcast(data);
         }
         break;
+      }
+      case "user-name": {
+        client.name = data.name;
+        client.session.broadcast(data);
       }
       case "response-canvas": {
         client.session.clients.get(data.clientId).send(data);
         break;
       }
       case "create-session": {
-        let id = data.id;
-        if (id == "") {
-          id = createId();
-          while (sessions.has(id)) {
-            id = createId();
-          }
+        var id = data.id;
+        if (id === "") {
+          id = createUniqueId(sessions);
         }
         if (sessions.has(id)) {
           client.send({
@@ -320,12 +325,7 @@ wss.on("connection", (socket) => {
           sessions.delete(client.session.id);
           client.session.id = data.id;
           sessions.set(client.session.id, client.session);
-          client.send({
-            type: "session-id-changed",
-            id: data.id,
-            clientId: client.id
-          });
-          client.broadcast({
+          client.session.broadcast({
             type: "session-id-changed",
             id: data.id,
             clientId: client.id
@@ -338,7 +338,7 @@ wss.on("connection", (socket) => {
         break;
       }
       default: {
-        console.log(`Unknown message ${data.type}!`, data);
+        console.error(`Unknown message ${data.type}!`, data);
         break;
       }
     }
