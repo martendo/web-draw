@@ -58,7 +58,11 @@ function startTool(point) {
   const opacityInput = document.getElementById("opacityInput");
   var opacity = parseFloat(opacityInput.dataset.value);
   opacity *= 0.01;
+  const shapeOutline = document.getElementById("shapeOutline").checked;
+  const shapeFill = document.getElementById("shapeFill").checked;
+  
   if (tool !== RECT_SELECT_TOOL) Selection.remove();
+  
   switch (tool) {
     case PEN_TOOL: {
       const size = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
@@ -165,6 +169,7 @@ function startTool(point) {
       break;
     }
     case RECT_TOOL: {
+      if (!shapeOutline && !shapeFill) break;
       currentAction = {
         type: "rect",
         data: {
@@ -179,13 +184,14 @@ function startTool(point) {
           lineWidth: parseInt(document.getElementById("penWidthInput").dataset.value, 10),
           opacity: opacity,
           compOp: parseInt(document.getElementById("compositeSelect").value, 10),
-          outline: document.getElementById("shapeOutline").checked,
-          fill: document.getElementById("shapeFill").checked
+          outline: shapeOutline,
+          fill: shapeFill
         }
       };
       break;
     }
     case ELLIPSE_TOOL: {
+      if (!shapeOutline && !shapeFill) break;
       currentAction = {
         type: "ellipse",
         data: {
@@ -200,8 +206,8 @@ function startTool(point) {
           lineWidth: parseInt(document.getElementById("penWidthInput").dataset.value, 10),
           opacity: opacity,
           compOp: parseInt(document.getElementById("compositeSelect").value, 10),
-          outline: document.getElementById("shapeOutline").checked,
-          fill: document.getElementById("shapeFill").checked
+          outline: shapeOutline,
+          fill: shapeFill
         }
       };
       break;
