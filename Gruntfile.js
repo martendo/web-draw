@@ -8,6 +8,21 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     
+    concat: {
+      build: {
+        options: {
+          separator: "\n",
+          main: "src/script.js",
+          // Immediately Invoked Function Expression
+          start: "\"use strict\";\n(() => {",
+          end: "})();"
+        },
+        files: {
+          "public/script.js": ["src/**/*.js"]
+        }
+      }
+    },
+    
     htmlmin: {
       options: {
         collapseBooleanAttributes: true,
@@ -39,7 +54,7 @@ module.exports = function(grunt) {
     uglify: {
       build: {
         files: {
-          "public/script.js": "src/script.js"
+          "public/script.js": "public/script.js"
         }
       }
     },
@@ -129,5 +144,27 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["htmlmin", "cssmin", "uglify", "replace"]);
+  // concat
+  grunt.registerMultiTask("concat", function () {
+    const options = this.options();
+    this.files.forEach((file) => {
+      var result = "";
+      file.src.forEach((filename) => {
+        if (filename === options.main) return;
+        result += grunt.file.read(filename); + options.separator
+      });
+      result += grunt.file.read(options.main);
+      
+      if (options.start) {
+        result = options.start + result;
+      }
+      if (options.end) {
+        result += options.end;
+      }
+      
+      grunt.file.write(file.dest, result);
+    });
+  });
+  
+  grunt.registerTask("build", ["concat", "htmlmin", "cssmin", "uglify", "replace"]);
 };
