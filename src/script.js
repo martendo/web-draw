@@ -1841,10 +1841,14 @@ const ActionHistory = {
   clearUndo() {
     this.undoActions = [];
     this.undoBtn.disabled = true;
+    // KeyboardEvents do not fire when a disabled button is focused
+    this.undoBtn.blur();
   },
   clearRedo() {
     this.redoActions = [];
     this.redoBtn.disabled = true;
+    // KeyboardEvents do not fire when a disabled button is focused
+    this.redoBtn.blur();
   }
 };
 
@@ -2732,56 +2736,11 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.target.tagName !== "BODY") {
-    if (!event.ctrlKey) {
-      switch (event.key) {
-        case "F1": {
-          Modal.open("helpModal");
-          break;
-        }
-        case "Escape": {
-          Chat.toggle();
-          break;
-        }
-        default: return;
-      }
-      return;
-    } else {
-      return;
-    }
-  }
+  // Keyboard shortcuts that can be used anywhere
   if (!event.ctrlKey) {
     switch (event.key) {
       case "F1": {
         Modal.open("helpModal");
-        break;
-      }
-      case "1": {
-        Canvas.setZoom(1);
-        break;
-      }
-      case "2": {
-        Canvas.setZoom(2);
-        break;
-      }
-      case "3": {
-        Canvas.setZoom(4);
-        break;
-      }
-      case "4": {
-        Canvas.setZoom(8);
-        break;
-      }
-      case "5": {
-        Canvas.setZoom(16);
-        break;
-      }
-      case "=": {
-        Canvas.changeZoom(0.1);
-        break;
-      }
-      case "-": {
-        Canvas.changeZoom(-0.1);
         break;
       }
       case "Escape": {
@@ -2790,33 +2749,70 @@ document.addEventListener("keydown", (event) => {
       }
       default: return;
     }
-  } else {
-    switch (event.key) {
-      case "z": {
-        ActionHistory.doUndo();
-        break;
+  }
+  // Keyboard shortcuts that can only be used when not currently typing or on the canvas
+  const tagName = event.target.tagName;
+  if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 99) {
+    if (!event.ctrlKey) {
+      switch (event.key) {
+        case "1": {
+          Canvas.setZoom(1);
+          break;
+        }
+        case "2": {
+          Canvas.setZoom(2);
+          break;
+        }
+        case "3": {
+          Canvas.setZoom(4);
+          break;
+        }
+        case "4": {
+          Canvas.setZoom(8);
+          break;
+        }
+        case "5": {
+          Canvas.setZoom(16);
+          break;
+        }
+        case "=": {
+          Canvas.changeZoom(0.1);
+          break;
+        }
+        case "-": {
+          Canvas.changeZoom(-0.1);
+          break;
+        }
+        default: return;
       }
-      case "Z":
-      case "y": {
-        ActionHistory.doRedo();
-        break;
+    } else {
+      switch (event.key) {
+        case "z": {
+          ActionHistory.doUndo();
+          break;
+        }
+        case "Z":
+        case "y": {
+          ActionHistory.doRedo();
+          break;
+        }
+        case "c": {
+          if (tool !== RECT_SELECT_TOOL) return;
+          Selection.doCopy();
+          break;
+        }
+        case "x": {
+          if (tool !== RECT_SELECT_TOOL) return;
+          Selection.doCut();
+          break;
+        }
+        case "v": {
+          if (tool !== RECT_SELECT_TOOL) return;
+          Selection.doPaste();
+          break;
+        }
+        default: return;
       }
-      case "c": {
-        if (tool !== RECT_SELECT_TOOL) return;
-        Selection.doCopy();
-        break;
-      }
-      case "x": {
-        if (tool !== RECT_SELECT_TOOL) return;
-        Selection.doCut();
-        break;
-      }
-      case "v": {
-        if (tool !== RECT_SELECT_TOOL) return;
-        Selection.doPaste();
-        break;
-      }
-      default: return;
     }
   }
   event.preventDefault();
