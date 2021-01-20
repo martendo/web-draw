@@ -21,6 +21,8 @@ jobs:
       
       - name: Build
         run: grunt build
+        env:
+          TZ: America/Toronto
       
       - name: Install deploy dependencies
         run: npm install -g firebase-tools
