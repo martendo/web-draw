@@ -8,14 +8,34 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     
+    copy: {
+      build: {
+        files: {
+          "public/index.html": "src/index.html",
+          "public/style.css": "src/style.css",
+          "public/404.html": "src/404.html"
+        }
+      }
+    },
+    
     concat: {
       build: {
         options: {
           separator: "\n",
           main: "src/script.js",
           // Immediately Invoked Function Expression
-          start: "\"use strict\";\n(() => {",
+          start: "\"use strict\";(() => {",
           end: "})();"
+        },
+        files: {
+          "public/script.js": ["src/**/*.js"]
+        }
+      },
+      debug: {
+        options: {
+          separator: "\n",
+          main: "src/script.js",
+          start: "\"use strict\";"
         },
         files: {
           "public/script.js": ["src/**/*.js"]
@@ -45,8 +65,8 @@ module.exports = function(grunt) {
       },
       build: {
         files: {
-          "public/index.html": "src/index.html",
-          "public/404.html": "src/404.html"
+          "public/index.html": "public/index.html",
+          "public/404.html": "public/404.html"
         }
       }
     },
@@ -65,7 +85,7 @@ module.exports = function(grunt) {
           level: 2
         },
         files: {
-          "public/style.css": "src/style.css"
+          "public/style.css": "public/style.css"
         }
       }
     },
@@ -166,5 +186,13 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["concat", "htmlmin", "cssmin", "uglify", "replace"]);
+  // copy
+  grunt.registerMultiTask("copy", function () {
+    this.files.forEach((file) => {
+      grunt.file.write(file.dest, grunt.file.read(file.src));
+    });
+  });
+  
+  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace"]);
+  grunt.registerTask("debug", ["copy", "concat:debug", "replace"]);
 };
