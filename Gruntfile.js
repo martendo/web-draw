@@ -8,6 +8,15 @@ module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
     
+    cssOptions: {
+      level: 2
+    },
+    jsOptions: {
+      mangle: {
+        toplevel: true
+      }
+    },
+    
     copy: {
       build: {
         files: {
@@ -58,10 +67,8 @@ module.exports = function(grunt) {
         sortAttributes: true,
         sortClassName: true,
         useShortDoctype: true,
-        minifyCSS: {
-          level: 2
-        },
-        minifyJS: true
+        minifyCSS: "<%= cssOptions %>",
+        minifyJS: "<%= jsOptions %>"
       },
       build: {
         files: {
@@ -73,6 +80,7 @@ module.exports = function(grunt) {
     
     uglify: {
       build: {
+        options: "<%= jsOptions %>",
         files: {
           "public/script.js": "public/script.js"
         }
@@ -81,9 +89,7 @@ module.exports = function(grunt) {
     
     cssmin: {
       build: {
-        options: {
-          level: 2
-        },
+        options: "<%= cssOptions %>",
         files: {
           "public/style.css": "public/style.css"
         }
