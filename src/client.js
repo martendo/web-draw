@@ -13,9 +13,10 @@ const Client = {
     this.socket = new WebSocket(WSS_URL);
     
     // Show error modal on error
-    this.socket.onerror = () => {
+    this.socket.onerror = (event) => {
       Modal.open("errorModal");
       Session.leave();
+      console.error("WebSocket error:", event);
     };
     this.socket.onopen = () => {
       document.getElementById("connectionInfo").style.display = "none";

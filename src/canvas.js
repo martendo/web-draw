@@ -72,15 +72,16 @@ const Canvas = {
   open(event) {
     const file = event.currentTarget.files[0];
     const reader = new FileReader();
-    reader.onerror = () => {
-      window.alert("There was an error reading the file.");
+    reader.onerror = (event) => {
+      window.alert("There was an error reading the file.\n\n" + reader.error);
+      console.error(`Error reading file ${file}:`, event);
     };
     reader.onload = (event) => {
       Modal.open("retrieveModal");
       try {
         this.setup(JSON.parse(event.target.result));
       } catch (err) {
-        console.log("Error setting up canvas: " + err);
+        console.error("Error setting up canvas: " + err);
         ActionHistory.clearUndo();
         ActionHistory.clearRedo();
         Modal.close("retrieveModal");
@@ -201,8 +202,9 @@ const Canvas = {
   importPicture(event) {
     const file = event.currentTarget.files[0];
     const reader = new FileReader();
-    reader.onerror = () => {
-      window.alert("There was an error reading the file.");
+    reader.onerror = (event) => {
+      window.alert("There was an error reading the file.\n\n" + reader.error);
+      console.error(`Error reading file ${file}:`, event);
     };
     reader.onload = (event) => {
       const img = new Image();
