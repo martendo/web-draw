@@ -218,7 +218,6 @@ function startTool(point) {
 function mouseMove(event) {
   const point = Canvas.getCursorPos(event);
   document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
-  Slider.update(event);
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
@@ -436,7 +435,6 @@ function clearMouseHold(event) {
       break;
     }
   }
-  Slider.current = null;
   currentAction.type = null;
 }
 

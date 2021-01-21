@@ -360,11 +360,7 @@ const Client = {
           ActionHistory.clearUndo();
           ActionHistory.clearRedo();
           
-          // Set up tool variables and inputs
-          TOOL_SETTINGS_SLIDERS.forEach((input) => {
-            const slider = document.getElementById(input.id + "Input");
-            Slider.setValue(input.id, input.defaultVal, false);
-          });
+          Slider.init();
           
           changeColour(START_COLOURS[0], 0, false);
           changeColour(START_COLOURS[1], 1, false);

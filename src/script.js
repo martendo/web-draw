@@ -241,12 +241,6 @@ document.addEventListener("keyup", (event) => {
   if (event.key === "Control") ctrlKey = false;
 });
 
-var upTimeout, downTimeout;
-document.addEventListener("pointerup", () => {
-  clearTimeout(upTimeout);
-  clearTimeout(downTimeout);
-});
-
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
 Canvas.container.addEventListener("pointerdown", (event) => mouseHold(event));
 Canvas.container.addEventListener("wheel", (event) => {
@@ -259,44 +253,6 @@ Canvas.container.addEventListener("wheel", (event) => {
 // Set up inputs
 document.getElementById("createSessionBtn").addEventListener("click", () => Session.create());
 document.getElementById("joinSessionBtn").addEventListener("click", () => Session.join());
-
-TOOL_SETTINGS_SLIDERS.forEach((input) => {
-  const slider = document.getElementById(input.id + "Input");
-  document.getElementById(input.id + "Value").addEventListener("keydown", (event) => {
-    if (event.key !== "Enter") return;
-    event.preventDefault();
-    var value = parseFloat(event.target.textContent);
-    if (typeof value !== "number" || isNaN(value)) return;
-    if (value > slider.dataset.max) {
-      value = parseFloat(slider.dataset.max);
-    } else if (value < slider.dataset.min) {
-      value = parseFloat(slider.dataset.min);
-    }
-    Slider.setValue(input.id, value);
-  });
-  const up = document.getElementById(input.id + "ValueUp");
-  const down = document.getElementById(input.id + "ValueDown");
-  up.addEventListener("pointerdown", (event) => {
-    Slider.doArrow(input.id, "up");
-    upTimeout = setTimeout(function repeatUp() {
-      Slider.doArrow(input.id, "up");
-      upTimeout = setTimeout(() => repeatUp(), 30);
-    }, 300);
-    event.stopPropagation();
-  });
-  down.addEventListener("pointerdown", (event) => {
-    Slider.doArrow(input.id, "down");
-    downTimeout = setTimeout(function repeatDown() {
-      Slider.doArrow(input.id, "down");
-      downTimeout = setTimeout(() => repeatDown(), 30);
-    }, 300);
-    event.stopPropagation();
-  });
-  slider.addEventListener("pointerdown", (event) => {
-    Slider.current = input.id;
-    Slider.update(event);
-  });
-});
 
 const colourPicker = document.getElementById("colourPicker");
 colourPicker.addEventListener("input", (event) => {
