@@ -51,16 +51,16 @@ const Chat = {
   addMessage(msg) {
     // Replace characters that can interfere with HTML, and do markdown styling
     msg.message = msg.message
-      .replaceAll("&", "&#38;")
-      .replaceAll("<", "&#60;")
-      .replaceAll(">", "&#62;")
+      .replace(/&/g, "&#38;")
+      .replace(/</g, "&#60;")
+      .replace(/>/g, "&#62;")
       .replace(/(^|[^\\])((?:\\{2})*)\*\*([\s\S]*?[^\\](?:\\{2})*)\*\*/mg, "$1$2<strong>$3</strong>") // **bold**
       .replace(/(^|[^\\])((?:\\{2})*)__([\s\S]*?[^\\](?:\\{2})*)__/mg, "$1$2<u>$3</u>")               // __underlined__
       .replace(/(^|[^\\])((?:\\{2})*)~~([\s\S]*?[^\\](?:\\{2})*)~~/mg, "$1$2<s>$3</s>")               // ~~strikethrough~~
       .replace(/(^|[^\\*])((?:\\{2})*)\*([\s\S]*?[^\\*](?:\\{2})*)\*/mg, "$1$2<em>$3</em>")           // *italicized*
       .replace(/(^|[^\\_])((?:\\{2})*)_([\s\S]*?[^\\_](?:\\{2})*)_/mg, "$1$2<em>$3</em>")             // _italicized_
       .replace(/\\([\s\S])/mg, "$1")
-      .replaceAll("\\", "&#92;");
+      .replace(/\\/g, "&#92;");
     const client = clients.get(msg.clientId);
     const box = document.getElementById("chatMessages");
     var bubble;
