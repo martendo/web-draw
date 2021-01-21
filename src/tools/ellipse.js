@@ -19,6 +19,8 @@ const Ellipse = {
     if (ellipse.outline) {
       ctx.strokeStyle = ellipse.colours.outline;
       ctx.lineWidth = ellipse.lineWidth;
+      // If line caps are square, there's a weird protrusion on the right side; make sure that doesn't happen
+      ctx.lineCap = "butt";
       ctx.stroke();
     }
     
