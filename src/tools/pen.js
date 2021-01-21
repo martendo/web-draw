@@ -20,7 +20,7 @@ const Pen = {
   },
   // Commit a stroke to the session canvas (copy it then erase it)
   commitStroke(srcCanvas, stroke, user = true) {
-    this.drawStroke(sessionCtx, stroke, false);
+    Canvas.update(stroke.compOp, true);
     srcCanvas.getContext("2d").clearRect(0, 0, srcCanvas.width, srcCanvas.height);
     if (user) {
       ActionHistory.addToUndo({
@@ -40,7 +40,6 @@ const Pen = {
     ctx.lineCap = CAPS[stroke.caps];
     ctx.lineWidth = stroke.size;
     ctx.globalAlpha = stroke.opacity;
-    ctx.globalCompositeOperation = user ? DEFAULT_COMP_OP : COMP_OPS[stroke.compOp];
     
     ctx.beginPath();
     ctx.moveTo(stroke.points[0][0], stroke.points[0][1]);
@@ -57,6 +56,7 @@ const Pen = {
     ctx.stroke();
     
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = DEFAULT_COMP_OP;
+    
+    Canvas.update(stroke.compOp);
   }
 };

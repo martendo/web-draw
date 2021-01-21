@@ -506,18 +506,12 @@ label {
 #connectingText, #retrieveText {
   text-align: center;
 }
-.sessionCanvas {
-  z-index: 0;
+#displayCanvas {
   background-size: 16px;
-}
-.sessionCanvas {
   background: url("/img/transparent.png");
 }
-.clientCanvas {
-  z-index: 1;
-}
-.thisCanvas {
-  z-index: 2;
+#sessionCanvas, #thisCanvas, .clientCanvas {
+  display: none;
 }
 table {
   border-collapse: collapse;

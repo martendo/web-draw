@@ -9,6 +9,8 @@ const Canvas = {
   zoom: null,
   
   container: document.getElementById("canvasContainer"),
+  canvas: document.getElementById("displayCanvas"),
+  ctx: document.getElementById("displayCanvas").getContext("2d"),
   
   // Zoom the canvas with the mouse wheel
   changeZoom(delta) {
@@ -44,6 +46,18 @@ const Canvas = {
     clientCanvasses.forEach((clientCanvas) => {
       clientCanvas.style.transform = `scale(${this.zoom})`;
     });
+  },
+  
+  update(compOp = currentAction.data.compOp, save = false) {
+    this.canvas.width = sessionCanvas.width;
+    this.canvas.height = sessionCanvas.height;
+    this.ctx.drawImage(sessionCanvas, 0, 0);
+    this.ctx.globalCompositeOperation = COMP_OPS[compOp];
+    this.ctx.drawImage(thisCanvas, 0, 0);
+    if (save) {
+      sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+      sessionCtx.drawImage(this.canvas, 0, 0);
+    }
   },
   
   // Export canvas image
@@ -143,8 +157,8 @@ const Canvas = {
       };
     }
     return {
-      x: (((mouse.x + Canvas.container.scrollLeft) - (thisCanvas.offsetLeft + (thisCanvas.clientLeft * Canvas.zoom))) / Canvas.zoom) | 0,
-      y: (((mouse.y + Canvas.container.scrollTop) - (thisCanvas.offsetTop + (thisCanvas.clientTop * Canvas.zoom))) / Canvas.zoom) | 0
+      x: (((mouse.x + Canvas.container.scrollLeft) - (this.canvas.offsetLeft + (this.canvas.clientLeft * Canvas.zoom))) / Canvas.zoom) | 0,
+      y: (((mouse.y + Canvas.container.scrollTop) - (this.canvas.offsetTop + (this.canvas.clientTop * Canvas.zoom))) / Canvas.zoom) | 0
     };
   },
   

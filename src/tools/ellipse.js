@@ -1,5 +1,5 @@
 const Ellipse = {
-  draw(ellipse, ctx, user = true) {
+  draw(ellipse, ctx) {
     if (!ellipse.outline && !ellipse.fill) return;
     
     const x = (ellipse.x + (ellipse.x + ellipse.width)) / 2;
@@ -8,7 +8,6 @@ const Ellipse = {
     const radiusY = Math.abs(y - ellipse.y);
     
     ctx.globalAlpha = ellipse.opacity;
-    ctx.globalCompositeOperation = user ? DEFAULT_COMP_OP : COMP_OPS[ellipse.compOp];
     
     ctx.beginPath();
     ctx.ellipse(x, y, radiusX, radiusY, 0, 0, 2 * Math.PI);
@@ -23,6 +22,7 @@ const Ellipse = {
     }
     
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = DEFAULT_COMP_OP;
+    
+    Canvas.update(ellipse.compOp);
   }
 };

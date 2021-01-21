@@ -6,7 +6,7 @@ const NUM_TOOLS = TOOLS.length;
 
 // Handle mousedown on canvas
 function mouseHold(event) {
-  if (event.target.id !== "thisCanvas") return;
+  if (event.target.tagName !== "CANVAS") return;
   if (event.button) {
     switch (event.button) {
       case 0: {
@@ -378,8 +378,8 @@ function clearMouseHold(event) {
         line: currentAction.data,
         clientId: Client.id
       });
+      Canvas.update(currentAction.data.compOp, true);
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
-      Line.draw(currentAction.data, sessionCtx, false);
       ActionHistory.addToUndo({
         type: "line",
         line: currentAction.data
@@ -393,8 +393,8 @@ function clearMouseHold(event) {
         rect: currentAction.data,
         clientId: Client.id
       });
+      Canvas.update(currentAction.data.compOp, true);
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
-      Rect.draw(currentAction.data, sessionCtx, false);
       ActionHistory.addToUndo({
         type: "rect",
         rect: currentAction.data
@@ -408,8 +408,8 @@ function clearMouseHold(event) {
         ellipse: currentAction.data,
         clientId: Client.id
       });
+      Canvas.update(currentAction.data.compOp, true);
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
-      Ellipse.draw(currentAction.data, sessionCtx, false);
       ActionHistory.addToUndo({
         type: "ellipse",
         ellipse: currentAction.data
