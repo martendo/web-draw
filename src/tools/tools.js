@@ -375,7 +375,7 @@ function clearMouseHold(event) {
         line: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(currentAction.data.compOp, true);
+      Canvas.update(thisCanvas, currentAction.data.compOp, true);
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       ActionHistory.addToUndo({
         type: "line",
@@ -390,7 +390,7 @@ function clearMouseHold(event) {
         rect: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(currentAction.data.compOp, true);
+      Canvas.update(thisCanvas, currentAction.data.compOp, true);
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       ActionHistory.addToUndo({
         type: "rect",
@@ -405,7 +405,7 @@ function clearMouseHold(event) {
         ellipse: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(currentAction.data.compOp, true);
+      Canvas.update(thisCanvas, currentAction.data.compOp, true);
       thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       ActionHistory.addToUndo({
         type: "ellipse",

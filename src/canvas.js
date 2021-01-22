@@ -48,12 +48,12 @@ const Canvas = {
     });
   },
   
-  update(compOp = currentAction.data.compOp, save = false) {
+  update(canvas, compOp = currentAction.data.compOp, save = false) {
     this.canvas.width = sessionCanvas.width;
     this.canvas.height = sessionCanvas.height;
     this.ctx.drawImage(sessionCanvas, 0, 0);
     this.ctx.globalCompositeOperation = COMP_OPS[compOp];
-    this.ctx.drawImage(thisCanvas, 0, 0);
+    this.ctx.drawImage(canvas, 0, 0);
     if (save) {
       sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
       sessionCtx.drawImage(this.canvas, 0, 0);

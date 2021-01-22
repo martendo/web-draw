@@ -57,7 +57,7 @@ const ActionHistory = {
   doAction(action) {
     switch (action.type) {
       case "stroke": {
-        Pen.drawStroke(sessionCtx, action.stroke, false);
+        Pen.drawStroke(thisCtx, action.stroke, true);
         break;
       }
       case "fill": {
@@ -88,15 +88,15 @@ const ActionHistory = {
         break;
       }
       case "line": {
-        Line.draw(action.line, sessionCtx, false);
+        Line.draw(action.line, thisCtx, true);
         break;
       }
       case "rect": {
-        Rect.draw(action.rect, sessionCtx, false);
+        Rect.draw(action.rect, thisCtx, true);
         break;
       }
       case "ellipse": {
-        Ellipse.draw(action.ellipse, sessionCtx, false);
+        Ellipse.draw(action.ellipse, thisCtx, true);
         break;
       }
     }

@@ -1,13 +1,12 @@
 const Rect = {
-  draw(rect, ctx, user = true) {
+  draw(rect, ctx, save) {
     if (!rect.outline && !rect.fill) return;
-    if (user) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     const x = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;
     const y = rect.lineWidth % 2 !== 0 ? rect.y + 0.5 : rect.y;
     
     ctx.globalAlpha = rect.opacity;
-    if (!user) ctx.globalCompositeOperation = COMP_OPS[rect.compOp];
     
     ctx.beginPath();
     ctx.rect(x, y, rect.width, rect.height);
@@ -22,8 +21,7 @@ const Rect = {
     }
     
     ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     
-    Canvas.update(rect.compOp);
+    Canvas.update(ctx.canvas, rect.compOp, save);
   }
 };
