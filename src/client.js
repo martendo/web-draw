@@ -160,15 +160,14 @@ const Client = {
         }
         // Another user has cleared the canvas
         case "clear": {
-          sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+          Canvas.clear(false);
           ActionHistory.addToUndo({
             type: "clear"
           });
           break;
         }
         case "clear-blank": {
-          sessionCtx.fillStyle = BLANK_COLOUR;
-          sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+          Canvas.clearBlank(false);
           ActionHistory.addToUndo({
             type: "clear-blank"
           });
@@ -428,9 +427,8 @@ const Client = {
           // Resize if too big
           Canvas.setZoom(Canvas.DEFAULT_ZOOM);
           Canvas.zoomToWindow("fit", false);
-          // Fill canvas with white
-          sessionCtx.fillStyle = BLANK_COLOUR;
-          sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+          // Start with the canvas cleared
+          Canvas.clearBlank(false);
           
           Session.addUsers(data.clients, data.total);
           

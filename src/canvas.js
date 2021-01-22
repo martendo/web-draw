@@ -242,6 +242,8 @@ const Canvas = {
     }
     sessionCtx.fillStyle = BLANK_COLOUR;
     sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    this.ctx.fillStyle = BLANK_COLOUR;
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     if (user) {
       ActionHistory.addToUndo({
         type: "clear-blank"
@@ -257,6 +259,7 @@ const Canvas = {
       });
     }
     sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (user) {
       ActionHistory.addToUndo({
         type: "clear"

@@ -65,12 +65,11 @@ const ActionHistory = {
         break;
       }
       case "clear": {
-        sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+        Canvas.clear(false);
         break;
       }
       case "clear-blank": {
-        sessionCtx.fillStyle = BLANK_COLOUR;
-        sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+        Canvas.clearBlank(false);
         break;
       }
       case "selection-clear": {
