@@ -323,8 +323,8 @@ const Client = {
           if (data.outside) {
             cursor.style.display = "none";
           } else {
-            const x = (data.pos[0] * Canvas.zoom) + (sessionCanvas.offsetLeft + (sessionCanvas.clientLeft * Canvas.zoom)) - Canvas.container.scrollLeft;
-            const y = (data.pos[1] * Canvas.zoom) + (sessionCanvas.offsetTop + (sessionCanvas.clientTop * Canvas.zoom)) - Canvas.container.scrollTop;
+            const x = (data.pos[0] * Canvas.zoom) + (Canvas.canvas.offsetLeft + (Canvas.canvas.clientLeft * Canvas.zoom)) - Canvas.container.scrollLeft;
+            const y = (data.pos[1] * Canvas.zoom) + (Canvas.canvas.offsetTop + (Canvas.canvas.clientTop * Canvas.zoom)) - Canvas.container.scrollTop;
             cursor.style.left = x + "px";
             cursor.style.top = y + "px";
             cursor.style.display = "block";
