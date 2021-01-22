@@ -423,6 +423,8 @@ const Client = {
           sessionCanvas.height = Canvas.CANVAS_HEIGHT;
           thisCanvas.width = Canvas.CANVAS_WIDTH;
           thisCanvas.height = Canvas.CANVAS_HEIGHT;
+          Canvas.canvas.width = Canvas.CANVAS_WIDTH;
+          Canvas.canvas.height = Canvas.CANVAS_HEIGHT;
           // Resize if too big
           Canvas.setZoom(Canvas.DEFAULT_ZOOM);
           Canvas.zoomToWindow("fit", false);
