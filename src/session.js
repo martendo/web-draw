@@ -21,6 +21,7 @@ const Session = {
         clientCanvas.style.transform = `scale(${Canvas.zoom})`;
         Canvas.container.appendChild(clientCanvas);
         clientCanvasses.set(client.id, clientCanvas);
+        clientActions.set(client.id, { type: null });
       }
     });
     this.updateUserInfo(total);
@@ -32,6 +33,7 @@ const Session = {
       img.remove();
       document.getElementById("clientCanvas-" + client.id).remove();
       clientCanvasses.delete(client.id);
+      clientActions.delete(client.id);
     }
     this.updateUserInfo(total);
   },

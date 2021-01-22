@@ -81,7 +81,7 @@ function startTool(point) {
       Client.sendMessage({
         type: "start-stroke",
         clientId: Client.id,
-        data: currentAction.data
+        action: currentAction
       });
       Pen.draw(point.x, point.y);
       break;

@@ -84,8 +84,6 @@ var tool = PEN_TOOL;
 
 var clients = new Map;
 
-var clientSelections = new Map;
-
 // Whether mouse has moved or not since last update was sent to server
 var mouseMoved = {
   moved: false,
@@ -94,8 +92,8 @@ var mouseMoved = {
 // Most recent custom colours
 var customColours = [];
 
-// Current strokes of other clients in the session
-var clientStrokes = new Map;
+// `currentAction`s of other clients in the session
+var clientActions = new Map;
 
 // Temporary canvasses for all other clients in the session
 const clientCanvasses = new Map;

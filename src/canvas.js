@@ -100,10 +100,36 @@ const Canvas = {
       clientCanvas.width = data.width;
       clientCanvas.height = data.height;
     });
-    if (data.strokes) {
-      clientStrokes = new Map(Object.entries(data.strokes));
-      clientStrokes.forEach((stroke, clientId) => {
-        Pen.commitStroke(clientCanvasses.get(clientId), stroke, false);
+    if (data.actions) {
+      clientActions = new Map(Object.entries(data.actions));
+      clientActions.forEach((action, clientId) => {
+        console.log(action, clientId);
+        const clientCanvas = clientCanvasses.get(clientId);
+        const clientCtx = clientCanvas.getContext("2d");
+        switch (action.type) {
+          case "stroke": {
+            Pen.commitStroke(clientCanvas, action.data, false);
+            break;
+          }
+          case "line": {
+            Line.draw(action.data, clientCtx);
+            break;
+          }
+          case "rect": {
+            Rect.draw(action.data, clientCtx);
+            break;
+          }
+          case "ellipse": {
+            Ellipse.draw(action.data, clientCtx);
+            break;
+          }
+          case "selecting":
+          case "selection-move":
+          case "selection-resize": {
+            Selection.draw(clientCtx, action.data, false);
+            break;
+          }
+        }
       });
     }
     // Zoom canvas to fit in canvasContainer if it doesn't already
