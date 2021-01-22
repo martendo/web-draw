@@ -232,7 +232,6 @@ function mouseMove(event) {
         clientId: Client.id,
         line: currentAction.data
       });
-      thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       Line.draw(currentAction.data, thisCtx);
       break;
     }
@@ -245,7 +244,6 @@ function mouseMove(event) {
         clientId: Client.id,
         rect: currentAction.data
       });
-      thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       Rect.draw(currentAction.data, thisCtx);
       break;
     }
@@ -258,7 +256,6 @@ function mouseMove(event) {
         clientId: Client.id,
         ellipse: currentAction.data
       });
-      thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
       Ellipse.draw(currentAction.data, thisCtx);
       break;
     }

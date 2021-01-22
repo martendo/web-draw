@@ -1,5 +1,6 @@
 const Line = {
-  draw(line, ctx) {
+  draw(line, ctx, user = true) {
+    if (user) ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     ctx.strokeStyle = line.colour;
     ctx.lineCap = CAPS[line.caps];
     ctx.lineWidth = line.width;
