@@ -5,6 +5,7 @@ const Line = {
     ctx.lineCap = CAPS[line.caps];
     ctx.lineWidth = line.width;
     ctx.globalAlpha = line.opacity;
+    if (!user) ctx.globalCompositeOperation = COMP_OPS[line.compOp];
     
     ctx.beginPath();
     ctx.moveTo(line.x0, line.y0);
@@ -12,6 +13,7 @@ const Line = {
     ctx.stroke();
     
     ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     
     Canvas.update(line.compOp);
   }

@@ -40,6 +40,7 @@ const Pen = {
     ctx.lineCap = CAPS[stroke.caps];
     ctx.lineWidth = stroke.size;
     ctx.globalAlpha = stroke.opacity;
+    if (!user) ctx.globalCompositeOperation = COMP_OPS[stroke.compOp];
     
     ctx.beginPath();
     ctx.moveTo(stroke.points[0][0], stroke.points[0][1]);
@@ -56,6 +57,7 @@ const Pen = {
     ctx.stroke();
     
     ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     
     Canvas.update(stroke.compOp);
   }

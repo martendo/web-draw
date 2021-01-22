@@ -7,6 +7,7 @@ const Rect = {
     const y = rect.lineWidth % 2 !== 0 ? rect.y + 0.5 : rect.y;
     
     ctx.globalAlpha = rect.opacity;
+    if (!user) ctx.globalCompositeOperation = COMP_OPS[rect.compOp];
     
     ctx.beginPath();
     ctx.rect(x, y, rect.width, rect.height);
@@ -21,6 +22,7 @@ const Rect = {
     }
     
     ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     
     Canvas.update(rect.compOp);
   }
