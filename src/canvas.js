@@ -41,6 +41,7 @@ const Canvas = {
   setZoom(zoom) {
     this.zoom = zoom;
     document.getElementById("canvasZoom").value = Math.round(this.zoom * 100);
+    this.canvas.style.transform = `scale(${this.zoom})`;
     thisCanvas.style.transform = `scale(${this.zoom})`;
     sessionCanvas.style.transform = `scale(${this.zoom})`;
     clientCanvasses.forEach((clientCanvas) => {
