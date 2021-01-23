@@ -49,8 +49,7 @@ const Fill = {
     const fillCtx = document.createElement("canvas").getContext("2d");
     fillCtx.canvas.width = canvasWidth;
     fillCtx.canvas.height = canvasHeight;
-    var fillData = fillCtx.getImageData(0, 0, canvasWidth, canvasHeight),
-        fillPixels = fillData.data;
+    var fillPixels = new Uint8ClampedArray(canvasWidth * canvasHeight * 4);
     const originalColour = [
       pixels[pixelPos],
       pixels[pixelPos + 1],
@@ -103,10 +102,8 @@ const Fill = {
         pixelPos += canvasWidth * 4;
       }
     }
-    fillCtx.putImageData(fillData, 0, 0);
-    sessionCtx.globalCompositeOperation = COMP_OPS[compOp];
-    sessionCtx.drawImage(fillCtx.canvas, 0, 0);
-    sessionCtx.globalCompositeOperation = DEFAULT_COMP_OP;
+    fillCtx.putImageData(new ImageData(fillPixels, canvasWidth, canvasHeight), 0, 0);
+    Canvas.update(fillCtx.canvas, compOp, true);
     if (user) {
       ActionHistory.addToUndo({
         type: "fill",
