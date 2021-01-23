@@ -150,20 +150,6 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  // Keyboard shortcuts that can be used anywhere
-  if (!event.ctrlKey) {
-    switch (event.key) {
-      case "F1": {
-        Modal.open("helpModal");
-        break;
-      }
-      case "Escape": {
-        Chat.toggle();
-        break;
-      }
-      default: return;
-    }
-  }
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
   if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 99) {
@@ -223,6 +209,21 @@ document.addEventListener("keydown", (event) => {
         case "v": {
           if (tool !== RECT_SELECT_TOOL) return;
           Selection.doPaste();
+          break;
+        }
+        default: return;
+      }
+    }
+  } else {
+    // Keyboard shortcuts that can be used anywhere
+    if (!event.ctrlKey) {
+      switch (event.key) {
+        case "F1": {
+          Modal.open("helpModal");
+          break;
+        }
+        case "Escape": {
+          Chat.toggle();
           break;
         }
         default: return;
