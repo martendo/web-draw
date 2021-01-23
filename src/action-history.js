@@ -116,9 +116,13 @@ const ActionHistory = {
   clearUndo() {
     this.undoActions = [];
     this.undoBtn.disabled = true;
+    // KeyboardEvents do not fire when a disabled button is focused
+    this.undoBtn.blur();
   },
   clearRedo() {
     this.redoActions = [];
     this.redoBtn.disabled = true;
+    // KeyboardEvents do not fire when a disabled button is focused
+    this.redoBtn.blur();
   }
 };
