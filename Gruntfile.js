@@ -108,6 +108,26 @@ module.exports = function(grunt) {
           }]
         }
       }
+    },
+    
+    banner: {
+      build: {
+        options: {
+          banner: {
+            normal: "/*\n" +
+                    " * Web Draw v<%= pkg.version %> (<%= pkg.homepage %>)\n" +
+                    " * Copyright (C) 2020-<%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
+                    " * Licensed under the GNU General Public License v3.0\n" +
+                    " */\n",
+            html: "<!--\n" +
+                  "  Web Draw v<%= pkg.version %> (<%= pkg.homepage %>)\n" +
+                  "  Copyright (C) 2020-<%= grunt.template.today('yyyy') %> <%= pkg.author %>\n" +
+                  "  Licensed under the GNU General Public License v3.0\n" +
+                  "-->\n"
+          }
+        },
+        src: ["public/*.{js,html,css}"]
+      }
     }
   });
   
@@ -199,6 +219,23 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace"]);
+  // banner
+  grunt.registerMultiTask("banner", function () {
+    const options = this.options();
+    this.files.forEach((file) => {
+      file.src.forEach((src) => {
+        const ext = /\.?([^.]+)$/.exec(src)[1];
+        var banner;
+        if (options.banner[ext]) {
+          banner = options.banner[ext];
+        } else {
+          banner = options.banner.normal;
+        }
+        grunt.file.write(src, banner + grunt.file.read(src));
+      });
+    });
+  });
+  
+  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace", "banner"]);
   grunt.registerTask("debug", ["copy", "concat:debug", "replace"]);
 };
