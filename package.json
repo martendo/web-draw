@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/martendo7/web-draw/issues"
   },
-  "homepage": "https://github.com/martendo7/web-draw#readme",
+  "homepage": "https://github.com/martendo7/web-draw",
   "dependencies": {
     "ws": "^7.4.2"
   },
