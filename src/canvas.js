@@ -50,6 +50,7 @@ const Canvas = {
   
   update(canvas, compOp = currentAction.data.compOp, save = false) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     this.ctx.drawImage(sessionCanvas, 0, 0);
     this.ctx.globalCompositeOperation = COMP_OPS[compOp];
     this.ctx.drawImage(canvas, 0, 0);

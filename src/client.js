@@ -229,7 +229,7 @@ const Client = {
         case "commit-line": {
           const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Line.draw(data.line, sessionCtx, false);
+          Line.draw(data.line, clientCtx, true);
           ActionHistory.addToUndo({
             type: "line",
             line: data.line
@@ -245,7 +245,7 @@ const Client = {
         case "commit-rect": {
           const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Rect.draw(data.rect, sessionCtx, false);
+          Rect.draw(data.rect, clientCtx, true);
           ActionHistory.addToUndo({
             type: "rect",
             rect: data.rect
@@ -261,7 +261,7 @@ const Client = {
         case "commit-ellipse": {
           const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Ellipse.draw(data.ellipse, sessionCtx, false);
+          Ellipse.draw(data.ellipse, clientCtx, true);
           ActionHistory.addToUndo({
             type: "ellipse",
             ellipse: data.ellipse
