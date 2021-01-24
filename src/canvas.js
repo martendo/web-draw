@@ -45,7 +45,6 @@ const Canvas = {
   },
   // Set the canvas zoom to whatever fits in the container, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {
-    thisCanvas.style.transform = "scale(0)";
     sessionCanvas.style.transform = "scale(0)";
     for (const client of Object.values(clients)) {
       client.canvas.style.transform = "scale(0)";
@@ -62,7 +61,6 @@ const Canvas = {
     this.zoom = zoom;
     document.getElementById("canvasZoom").value = Math.round(this.zoom * 100);
     this.canvas.style.transform = `scale(${this.zoom})`;
-    thisCanvas.style.transform = `scale(${this.zoom})`;
     sessionCanvas.style.transform = `scale(${this.zoom})`;
     for (const client of Object.values(clients)) {
       client.canvas.style.transform = `scale(${this.zoom})`;
@@ -129,8 +127,6 @@ const Canvas = {
   setup(data) {
     sessionCanvas.width = data.width;
     sessionCanvas.height = data.height;
-    thisCanvas.width = data.width;
-    thisCanvas.height = data.height;
     for (const client of Object.values(clients)) {
       client.canvas.width = data.width;
       client.canvas.height = data.height;
@@ -219,7 +215,6 @@ const Canvas = {
       return newCanvas;
     }
     
-    const thisCanvasCopy = copyCanvas(thisCanvas);
     const sessionCanvasCopy = copyCanvas(sessionCanvas);
     const clientCanvasCopies = new Map;
     for (const client of Object.entries(clients)) {
@@ -227,7 +222,7 @@ const Canvas = {
     }
     var changed = false;
     if (width != sessionCanvas.width) {
-      thisCanvas.width = width;
+      Client.canvas.width = width;
       sessionCanvas.width = width;
       for (const client of Object.values(clients)) {
         client.canvas.width = width;
@@ -235,7 +230,7 @@ const Canvas = {
       changed = true;
     }
     if (height != sessionCanvas.height) {
-      thisCanvas.height = height;
+      Client.canvas.height = height;
       sessionCanvas.height = height;
       for (const client of Object.values(clients)) {
         client.canvas.height = height;
@@ -247,9 +242,6 @@ const Canvas = {
       sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
       // Canvas already filled with background colour
       sessionCtx.drawImage(sessionCanvasCopy, 0, 0);
-      
-      // Canvas already cleared from size change
-      thisCtx.drawImage(thisCanvasCopy, 0, 0);
       
       for (const client of Object.values(clients)) {
         // Canvas already cleared from size change

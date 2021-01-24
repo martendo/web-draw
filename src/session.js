@@ -26,26 +26,26 @@ const Session = {
   // Add/Remove a user canvas and mouse and update the total
   addUsers(c, total) {
     c.forEach((client) => {
-      clients[client.id] = {
-        name: client.name
-      };
       if (client.id !== Client.id) {
         const img = document.createElement("img");
         img.src = "/img/cursor.png";
         img.classList.add("cursorIcon");
         img.id = "cursorIcon-" + client.id;
         document.body.appendChild(img);
-        const clientCanvas = document.createElement("canvas");
-        clientCanvas.classList.add("clientCanvas");
-        clientCanvas.id = "clientCanvas-" + client.id;
-        clientCanvas.width = sessionCanvas.width;
-        clientCanvas.height = sessionCanvas.height;
-        clientCanvas.style.transform = `scale(${Canvas.zoom})`;
-        Canvas.container.appendChild(clientCanvas);
-        clients[client.id].canvas = clientCanvas;
-        clients[client.id].ctx = clientCanvas.getContext("2d");
-        clients[client.id].action = { type: null };
       }
+      const clientCanvas = document.createElement("canvas");
+      clientCanvas.classList.add("clientCanvas");
+      clientCanvas.id = "clientCanvas-" + client.id;
+      clientCanvas.width = sessionCanvas.width;
+      clientCanvas.height = sessionCanvas.height;
+      clientCanvas.style.transform = `scale(${Canvas.zoom})`;
+      Canvas.container.appendChild(clientCanvas);
+      clients[client.id] = {
+        name: client.name,
+        canvas: clientCanvas,
+        ctx: clientCanvas.getContext("2d"),
+        action: { type: null }
+      };
     });
     this.updateUserInfo(total);
   },

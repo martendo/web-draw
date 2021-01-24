@@ -86,7 +86,7 @@ const Selection = {
     return handle;
   },
   draw(ctx, sel, handles, drawOld = true) {
-    ctx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
+    ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
     
     // Previously selected area
     if (sel.old && drawOld) {
@@ -175,7 +175,7 @@ const Selection = {
     }
   },
   update(handles) {
-    this.draw(thisCtx, currentAction.data, handles);
+    this.draw(Client.ctx, currentAction.data, handles);
     
     // Pos & size
     document.getElementById("selectPos").textContent = `${currentAction.data.x}, ${currentAction.data.y}`;
@@ -257,7 +257,7 @@ const Selection = {
       type: "selection-copy",
       clientId: Client.id
     });
-    this.copy(thisCtx, currentAction.data);
+    this.copy(Client.ctx, currentAction.data);
   },
   doCut() {
     if (!currentAction.data.selected) return;
@@ -266,7 +266,7 @@ const Selection = {
       colour: penColours[1],
       clientId: Client.id
     });
-    this.cut(thisCtx, currentAction.data, penColours[1]);
+    this.cut(Client.ctx, currentAction.data, penColours[1]);
   },
   doPaste() {
     if (!currentAction.data.selected || !currentAction.data.data) return;
@@ -282,7 +282,7 @@ const Selection = {
       clientId: Client.id
     });
     currentAction = NO_ACTION;
-    thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
+    Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
   },
   adjustSizeAbsolute() {
     if (currentAction.data.width < 0) {

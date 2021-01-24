@@ -252,7 +252,7 @@ function mouseMove(event) {
         clientId: Client.id,
         line: currentAction.data
       });
-      Line.draw(currentAction.data, thisCtx);
+      Line.draw(currentAction.data, Client.ctx);
       break;
     }
     case "rect": {
@@ -264,7 +264,7 @@ function mouseMove(event) {
         clientId: Client.id,
         rect: currentAction.data
       });
-      Rect.draw(currentAction.data, thisCtx);
+      Rect.draw(currentAction.data, Client.ctx);
       break;
     }
     case "ellipse": {
@@ -276,7 +276,7 @@ function mouseMove(event) {
         clientId: Client.id,
         ellipse: currentAction.data
       });
-      Ellipse.draw(currentAction.data, thisCtx);
+      Ellipse.draw(currentAction.data, Client.ctx);
       break;
     }
     case "selecting": {
@@ -357,14 +357,14 @@ function mouseMove(event) {
       "nesw-resize", "ns-resize", "nwse-resize"
     ]);
     if (cursor !== null) {
-      thisCanvas.style.cursor = cursor;
+      Canvas.canvas.style.cursor = cursor;
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
-      thisCanvas.style.cursor = "move";
+      Canvas.canvas.style.cursor = "move";
     } else {
-      thisCanvas.style.cursor = "auto";
+      Canvas.canvas.style.cursor = "auto";
     }
   } else {
-    thisCanvas.style.cursor = "auto";
+    Canvas.canvas.style.cursor = "auto";
   }
   mouseMoved.moved = true;
   if (event.target.tagName != "CANVAS") {
@@ -385,7 +385,7 @@ function clearMouseHold(event) {
         type: "end-stroke",
         clientId: Client.id
       });
-      Pen.commitStroke(thisCanvas, currentAction.data);
+      Pen.commitStroke(Client.canvas, currentAction.data);
       break;
     }
     case "line": {
@@ -395,8 +395,8 @@ function clearMouseHold(event) {
         line: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(thisCanvas, currentAction.data.compOp, true);
-      thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
+      Canvas.update(Client.canvas, currentAction.data.compOp, true);
+      Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "line",
         line: currentAction.data
@@ -410,8 +410,8 @@ function clearMouseHold(event) {
         rect: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(thisCanvas, currentAction.data.compOp, true);
-      thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
+      Canvas.update(Client.canvas, currentAction.data.compOp, true);
+      Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "rect",
         rect: currentAction.data
@@ -425,8 +425,8 @@ function clearMouseHold(event) {
         ellipse: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(thisCanvas, currentAction.data.compOp, true);
-      thisCtx.clearRect(0, 0, thisCanvas.width, thisCanvas.height);
+      Canvas.update(Client.canvas, currentAction.data.compOp, true);
+      Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "ellipse",
         ellipse: currentAction.data
@@ -438,7 +438,7 @@ function clearMouseHold(event) {
       if (currentAction.data.width && currentAction.data.height) {
         currentAction.data.selected = true;
         Selection.adjustSizeAbsolute();
-        Selection.draw(thisCtx, currentAction.data, true);
+        Selection.draw(Client.ctx, currentAction.data, true);
       } else {
         Selection.remove();
       }
@@ -447,7 +447,7 @@ function clearMouseHold(event) {
     case "selection-move":
     case "selection-resize": {
       delete currentAction.data.old;
-      Selection.draw(thisCtx, currentAction.data, true);
+      Selection.draw(Client.ctx, currentAction.data, true);
       event.preventDefault();
       break;
     }

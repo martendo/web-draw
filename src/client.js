@@ -22,6 +22,9 @@ const Client = {
   id: null,
   socket: null,
   
+  canvas: null,
+  ctx: null,
+  
   // Send a message to the server
   sendMessage(data) {
     const msg = JSON.stringify(data);
@@ -399,9 +402,6 @@ const Client = {
           document.getElementById("shapeOutline").checked = true;
           document.getElementById("shapeFill").checked = false;
           
-          // Select pen tool
-          switchTool(PEN_TOOL);
-          
           // Set up quick colour select colours
           const quickColourSelect = document.getElementById("quickColourSelect");
           const children = quickColourSelect.children;
@@ -440,8 +440,6 @@ const Client = {
           // Set canvas size
           sessionCanvas.width = Canvas.CANVAS_WIDTH;
           sessionCanvas.height = Canvas.CANVAS_HEIGHT;
-          thisCanvas.width = Canvas.CANVAS_WIDTH;
-          thisCanvas.height = Canvas.CANVAS_HEIGHT;
           Canvas.canvas.width = Canvas.CANVAS_WIDTH;
           Canvas.canvas.height = Canvas.CANVAS_HEIGHT;
           // Resize if too big
@@ -451,6 +449,12 @@ const Client = {
           Canvas.clearBlank(false);
           
           Session.addUsers(data.clients, data.total);
+          
+          this.canvas = clients[this.id].canvas;
+          this.ctx = clients[this.id].ctx;
+          
+          // Select pen tool
+          switchTool(PEN_TOOL);
           
           break;
         }

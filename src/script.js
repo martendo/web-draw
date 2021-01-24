@@ -110,9 +110,6 @@ var customColours = [];
 // Session canvas (permanent)
 const sessionCanvas = document.getElementById("sessionCanvas");
 const sessionCtx = sessionCanvas.getContext("2d");
-// User's temporary canvas
-const thisCanvas = document.getElementById("thisCanvas");
-const thisCtx = thisCanvas.getContext("2d");
 
 // Check if a point is within an area
 function isPointInside(x, y, rect) {

@@ -30,7 +30,7 @@ const Pen = {
       pos: [x, y]
     });
     currentAction.data.points.push([x, y]);
-    this.drawStroke(thisCtx, currentAction.data);
+    this.drawStroke(Client.ctx, currentAction.data);
   },
   // Add a point to another client's current stroke and draw it
   drawClientStroke(clientId) {
