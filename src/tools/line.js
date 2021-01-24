@@ -34,6 +34,6 @@ const Line = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update(ctx.canvas, line.compOp, save);
+    Canvas.update({ save });
   }
 };

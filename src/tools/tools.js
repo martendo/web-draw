@@ -395,7 +395,12 @@ function clearMouseHold(event) {
         line: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(Client.canvas, currentAction.data.compOp, true);
+      Canvas.update({
+        overrides: {
+          [Client.id]: currentAction.data.compOp
+        },
+        save: true
+      });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "line",
@@ -410,7 +415,12 @@ function clearMouseHold(event) {
         rect: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(Client.canvas, currentAction.data.compOp, true);
+      Canvas.update({
+        overrides: {
+          [Client.id]: currentAction.data.compOp
+        },
+        save: true
+      });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "rect",
@@ -425,7 +435,12 @@ function clearMouseHold(event) {
         ellipse: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update(Client.canvas, currentAction.data.compOp, true);
+      Canvas.update({
+        overrides: {
+          [Client.id]: currentAction.data.compOp
+        },
+        save: true
+      });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "ellipse",

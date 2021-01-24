@@ -123,7 +123,7 @@ const Fill = {
       }
     }
     fillCtx.putImageData(new ImageData(fillPixels, canvasWidth, canvasHeight), 0, 0);
-    Canvas.update(fillCtx.canvas, compOp, true);
+    Canvas.update({ save: true });
     if (user) {
       ActionHistory.addToUndo({
         type: "fill",

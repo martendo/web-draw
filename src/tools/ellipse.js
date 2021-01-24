@@ -46,6 +46,6 @@ const Ellipse = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update(ctx.canvas, ellipse.compOp, save);
+    Canvas.update({ save });
   }
 };

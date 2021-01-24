@@ -67,12 +67,19 @@ const Canvas = {
     }
   },
   
-  update(canvas, compOp = currentAction.data.compOp, save = false) {
+  update({ overrides = {}, save = false } = {}) {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.drawImage(sessionCanvas, 0, 0);
-    this.ctx.globalCompositeOperation = COMP_OPS[compOp];
-    this.ctx.drawImage(canvas, 0, 0);
-    this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
+    for (const [clientId, client] of Object.entries(clients)) {
+      if (overrides[clientId]) {
+        this.ctx.globalCompositeOperation = COMP_OPS[overrides[clientId]];
+      } else {
+        if (client.action.type === null) continue;
+        this.ctx.globalCompositeOperation = COMP_OPS[client.action.data.compOp];
+      }
+      this.ctx.drawImage(client.canvas, 0, 0);
+      this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
+    }
     if (save) {
       sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
       sessionCtx.drawImage(this.canvas, 0, 0);

@@ -40,7 +40,7 @@ const Pen = {
   },
   // Commit a stroke to the session canvas (copy it then erase it)
   commitStroke(srcCanvas, stroke, user = true) {
-    Canvas.update(srcCanvas, stroke.compOp, true);
+    Canvas.update({ save: true });
     srcCanvas.getContext("2d").clearRect(0, 0, srcCanvas.width, srcCanvas.height);
     if (user) {
       ActionHistory.addToUndo({
@@ -77,6 +77,6 @@ const Pen = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update(ctx.canvas, stroke.compOp, save);
+    Canvas.update({ save });
   }
 };

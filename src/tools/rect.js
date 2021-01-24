@@ -42,6 +42,6 @@ const Rect = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update(ctx.canvas, rect.compOp, save);
+    Canvas.update({ save });
   }
 };
