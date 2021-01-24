@@ -1,3 +1,23 @@
+/*
+ * This file is part of Web Draw.
+ *
+ * Web Draw - A little real-time online drawing program.
+ * Copyright (C) 2020-2021 martendo7
+ *
+ * Web Draw is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Web Draw is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 const Canvas = {
   // Starting canvas dimensions
   CANVAS_WIDTH:  800,
@@ -115,10 +135,36 @@ const Canvas = {
       clientCanvas.width = data.width;
       clientCanvas.height = data.height;
     });
-    if (data.strokes) {
-      clientStrokes = new Map(Object.entries(data.strokes));
-      clientStrokes.forEach((stroke, clientId) => {
-        Pen.commitStroke(clientCanvasses.get(clientId), stroke, false);
+    if (data.actions) {
+      clientActions = new Map(Object.entries(data.actions));
+      clientActions.forEach((action, clientId) => {
+        console.log(action, clientId);
+        const clientCanvas = clientCanvasses.get(clientId);
+        const clientCtx = clientCanvas.getContext("2d");
+        switch (action.type) {
+          case "stroke": {
+            Pen.commitStroke(clientCanvas, action.data, false);
+            break;
+          }
+          case "line": {
+            Line.draw(action.data, clientCtx);
+            break;
+          }
+          case "rect": {
+            Rect.draw(action.data, clientCtx);
+            break;
+          }
+          case "ellipse": {
+            Ellipse.draw(action.data, clientCtx);
+            break;
+          }
+          case "selecting":
+          case "selection-move":
+          case "selection-resize": {
+            Selection.draw(clientCtx, action.data, false);
+            break;
+          }
+        }
       });
     }
     // Zoom canvas to fit in canvasContainer if it doesn't already

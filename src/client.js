@@ -1,3 +1,23 @@
+/*
+ * This file is part of Web Draw.
+ *
+ * Web Draw - A little real-time online drawing program.
+ * Copyright (C) 2020-2021 martendo7
+ *
+ * Web Draw is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Web Draw is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 const Client = {
   id: null,
   socket: null,
@@ -126,12 +146,12 @@ const Client = {
         }
         // Another user has started a stroke
         case "start-stroke": {
-          clientStrokes.set(data.clientId, data.data);
+          clientActions.set(data.clientId, data.action);
           break;
         }
         // Another user has added a point in their current stroke
         case "add-stroke": {
-          clientStrokes.get(data.clientId).points.push([data.pos[0], data.pos[1]]);
+          clientActions.get(data.clientId).data.points.push([data.pos[0], data.pos[1]]);
           Pen.drawClientStroke(data.clientId);
           break;
         }
@@ -139,9 +159,9 @@ const Client = {
         case "end-stroke": {
           Pen.commitStroke(
             clientCanvasses.get(data.clientId),
-            clientStrokes.get(data.clientId)
+            clientActions.get(data.clientId).data
           );
-          clientStrokes.delete(data.clientId);
+          clientActions.get(data.clientId).type = null;
           break;
         }
         // Another user has undone/redone an action
@@ -183,18 +203,21 @@ const Client = {
           break;
         }
         case "create-selection": {
-          clientSelections.set(data.clientId, {});
+          clientActions.set(data.clientId, {
+            type: "selecting",
+            data: {}
+          });
           break;
         }
         case "remove-selection": {
-          clientSelections.delete(data.clientId);
+          clientActions.get(data.clientId).type = null;
           const canvas = clientCanvasses.get(data.clientId);
           canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
           break;
         }
         // Another user has changed their selection
         case "selection-update": {
-          const sel = clientSelections.get(data.clientId);
+          const sel = clientActions.get(data.clientId).data;
           sel.selected = data.selection.selected;
           sel.x = data.selection.x;
           sel.y = data.selection.y;
@@ -205,19 +228,19 @@ const Client = {
           break;
         }
         case "selection-copy": {
-          Selection.copy(clientCanvasses.get(data.clientId).getContext("2d"), clientSelections.get(data.clientId));
+          Selection.copy(clientCanvasses.get(data.clientId).getContext("2d"), clientActions.get(data.clientId).data);
           break;
         }
         case "selection-cut": {
-          Selection.cut(clientCanvasses.get(data.clientId).getContext("2d"), clientSelections.get(data.clientId), data.colour);
+          Selection.cut(clientCanvasses.get(data.clientId).getContext("2d"), clientActions.get(data.clientId).data, data.colour);
           break;
         }
         case "selection-paste": {
-          Selection.paste(clientSelections.get(data.clientId));
+          Selection.paste(clientActions.get(data.clientId).data);
           break;
         }
         case "selection-clear": {
-          Selection.clear(clientSelections.get(data.clientId), data.colour);
+          Selection.clear(clientActions.get(data.clientId).data, data.colour);
           break;
         }
         case "line": {
@@ -288,14 +311,11 @@ const Client = {
         }
         // The server needs a copy of the canvas to send to a new user
         case "request-canvas": {
-          const sendClientStrokes = currentAction.type === "stroke"
-            ? Object.fromEntries([...clientStrokes, [this.id, currentAction.data]])
-            : Object.fromEntries([...clientStrokes]);
           this.sendMessage({
             type: "response-canvas",
             width: sessionCanvas.width,
             height: sessionCanvas.height,
-            strokes: sendClientStrokes,
+            actions: Object.fromEntries([...[...clientActions].filter(([id, action]) => id !== data.clientId), [this.id, currentAction]]),
             undoActions: ActionHistory.undoActions,
             redoActions: ActionHistory.redoActions,
             clientId: data.clientId

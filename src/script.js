@@ -1,7 +1,22 @@
-//------------------------------------------------------------------------------
-// Web Draw
-// A little real-time online drawing program.
-//------------------------------------------------------------------------------
+/*
+ * This file is part of Web Draw.
+ *
+ * Web Draw - A little real-time online drawing program.
+ * Copyright (C) 2020-2021 martendo7
+ *
+ * Web Draw is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Web Draw is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
+ */
 
 // The URL of the WebSockets server
 const WSS_URL = "wss://web-draw.herokuapp.com";
@@ -84,8 +99,6 @@ var tool = PEN_TOOL;
 
 var clients = new Map;
 
-var clientSelections = new Map;
-
 // Whether mouse has moved or not since last update was sent to server
 var mouseMoved = {
   moved: false,
@@ -94,8 +107,8 @@ var mouseMoved = {
 // Most recent custom colours
 var customColours = [];
 
-// Current strokes of other clients in the session
-var clientStrokes = new Map;
+// `currentAction`s of other clients in the session
+var clientActions = new Map;
 
 // Temporary canvasses for all other clients in the session
 const clientCanvasses = new Map;
@@ -152,20 +165,6 @@ document.addEventListener("click", (event) => {
 });
 
 document.addEventListener("keydown", (event) => {
-  // Keyboard shortcuts that can be used anywhere
-  if (!event.ctrlKey) {
-    switch (event.key) {
-      case "F1": {
-        Modal.open("helpModal");
-        break;
-      }
-      case "Escape": {
-        Chat.toggle();
-        break;
-      }
-      default: return;
-    }
-  }
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
   if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 99) {
@@ -225,6 +224,21 @@ document.addEventListener("keydown", (event) => {
         case "v": {
           if (tool !== RECT_SELECT_TOOL) return;
           Selection.doPaste();
+          break;
+        }
+        default: return;
+      }
+    }
+  } else {
+    // Keyboard shortcuts that can be used anywhere
+    if (!event.ctrlKey) {
+      switch (event.key) {
+        case "F1": {
+          Modal.open("helpModal");
+          break;
+        }
+        case "Escape": {
+          Chat.toggle();
           break;
         }
         default: return;

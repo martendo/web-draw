@@ -1,3 +1,23 @@
+/*
+ * This file is part of Web Draw.
+ *
+ * Web Draw - A little real-time online drawing program.
+ * Copyright (C) 2020-2021 martendo7
+ *
+ * Web Draw is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Web Draw is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 const Pen = {
   // Add a point to the current stroke and draw it
   draw(x, y) {
@@ -14,9 +34,10 @@ const Pen = {
   },
   // Add a point to another client's current stroke and draw it
   drawClientStroke(clientId) {
+    const action = clientActions.get(clientId);
+    if (action.type !== "stroke") return false;
     const ctx = clientCanvasses.get(clientId).getContext("2d");
-    const stroke = clientStrokes.get(clientId);
-    this.drawStroke(ctx, stroke);
+    this.drawStroke(ctx, action.data);
   },
   // Commit a stroke to the session canvas (copy it then erase it)
   commitStroke(srcCanvas, stroke, user = true) {
