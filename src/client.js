@@ -247,6 +247,10 @@ const Client = {
           break;
         }
         case "line": {
+          clients[data.clientId].action = {
+            type: "line",
+            data: data.line
+          };
           const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Line.draw(data.line, clientCtx);
@@ -263,6 +267,10 @@ const Client = {
           break;
         }
         case "rect": {
+          clients[data.clientId].action = {
+            type: "rect",
+            data: data.rect
+          };
           const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Rect.draw(data.rect, clientCtx);
@@ -279,6 +287,10 @@ const Client = {
           break;
         }
         case "ellipse": {
+          clients[data.clientId].action = {
+            type: "ellipse",
+            data: data.ellipse
+          };
           const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Ellipse.draw(data.ellipse, clientCtx);
