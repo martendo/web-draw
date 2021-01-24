@@ -44,6 +44,7 @@ function mouseHold(event) {
   }
   event.preventDefault();
   const point = Canvas.getCursorPos(event);
+  const currentAction = clients[Client.id].action;
   if (currentAction.data && currentAction.data.selected) {
     const handle = Selection.getResizeHandle(point, [0, 1, 2, 3, 4, 5, 6, 7]);
     if (handle !== null) {
@@ -65,6 +66,7 @@ function mouseHold(event) {
         y: point.y
       };
       currentAction.type = "selection-move";
+      clients[Client.id].action = currentAction;
     } else {
       startTool(point);
     }
@@ -74,7 +76,7 @@ function mouseHold(event) {
   return false;
 }
 function startTool(point) {
-  currentAction.type = null;
+  clients[Client.id].action.type = null;
   
   const size         = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
   const opacity      = parseFloat(document.getElementById("opacityInput").dataset.value) / 100;
@@ -87,7 +89,7 @@ function startTool(point) {
   
   switch (tool) {
     case PEN_TOOL: {
-      currentAction = {
+      clients[Client.id].action = {
         type: "stroke",
         data: {
           points: [],
@@ -101,7 +103,7 @@ function startTool(point) {
       Client.sendMessage({
         type: "start-stroke",
         clientId: Client.id,
-        action: currentAction
+        action: clients[Client.id].action
       });
       Pen.draw(point.x, point.y);
       break;
@@ -153,7 +155,7 @@ function startTool(point) {
         type: "create-selection",
         clientId: Client.id
       });
-      currentAction = {
+      clients[Client.id].action = {
         type: "selecting",
         data: {
           selected: false,
@@ -172,7 +174,7 @@ function startTool(point) {
       break;
     }
     case LINE_TOOL: {
-      currentAction = {
+      clients[Client.id].action = {
         type: "line",
         data: {
           x0: point.x,
@@ -190,7 +192,7 @@ function startTool(point) {
     }
     case RECT_TOOL: {
       if (!shapeOutline && !shapeFill) break;
-      currentAction = {
+      clients[Client.id].action = {
         type: "rect",
         data: {
           x: point.x,
@@ -212,7 +214,7 @@ function startTool(point) {
     }
     case ELLIPSE_TOOL: {
       if (!shapeOutline && !shapeFill) break;
-      currentAction = {
+      clients[Client.id].action = {
         type: "ellipse",
         data: {
           x: point.x,
@@ -238,6 +240,7 @@ function startTool(point) {
 function mouseMove(event) {
   const point = Canvas.getCursorPos(event);
   document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
+  const currentAction = clients[Client.id].action;
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
@@ -252,6 +255,7 @@ function mouseMove(event) {
         clientId: Client.id,
         line: currentAction.data
       });
+      clients[Client.id].action = currentAction;
       Line.draw(currentAction.data, Client.ctx);
       break;
     }
@@ -264,6 +268,7 @@ function mouseMove(event) {
         clientId: Client.id,
         rect: currentAction.data
       });
+      clients[Client.id].action = currentAction;
       Rect.draw(currentAction.data, Client.ctx);
       break;
     }
@@ -276,6 +281,7 @@ function mouseMove(event) {
         clientId: Client.id,
         ellipse: currentAction.data
       });
+      clients[Client.id].action = currentAction;
       Ellipse.draw(currentAction.data, Client.ctx);
       break;
     }
@@ -283,6 +289,7 @@ function mouseMove(event) {
       event.preventDefault();
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
+      clients[Client.id].action = currentAction;
       Selection.update(false);
       break;
     }
@@ -292,6 +299,7 @@ function mouseMove(event) {
       currentAction.data.y += point.y - currentAction.data.move.y;
       currentAction.data.move.x = point.x;
       currentAction.data.move.y = point.y;
+      clients[Client.id].action = currentAction;
       Selection.update(true);
       break;
     }
@@ -345,6 +353,7 @@ function mouseMove(event) {
       currentAction.data.y -= dy * changeY;
       currentAction.data.resize.x = point.x;
       currentAction.data.resize.y = point.y;
+      clients[Client.id].action = currentAction;
       Selection.adjustSizeAbsolute();
       Selection.update(true);
       break;
@@ -376,6 +385,7 @@ function mouseMove(event) {
 }
 // Handle mouseup
 function clearMouseHold(event) {
+  const currentAction = clients[Client.id].action;
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
@@ -452,8 +462,9 @@ function clearMouseHold(event) {
       event.preventDefault();
       if (currentAction.data.width && currentAction.data.height) {
         currentAction.data.selected = true;
+        clients[Client.id].action = currentAction;
         Selection.adjustSizeAbsolute();
-        Selection.draw(Client.ctx, currentAction.data, true);
+        Selection.draw(Client.ctx, clients[Client.id].action.data, true);
       } else {
         Selection.remove();
       }
@@ -461,13 +472,13 @@ function clearMouseHold(event) {
     }
     case "selection-move":
     case "selection-resize": {
-      delete currentAction.data.old;
-      Selection.draw(Client.ctx, currentAction.data, true);
+      delete clients[Client.id].action.data.old;
+      Selection.draw(Client.ctx, clients[Client.id].action.data, true);
       event.preventDefault();
       break;
     }
   }
-  currentAction.type = null;
+  clients[Client.id].action.type = null;
 }
 
 // Switch the current tool

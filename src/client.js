@@ -318,7 +318,7 @@ const Client = {
             type: "response-canvas",
             width: sessionCanvas.width,
             height: sessionCanvas.height,
-            actions: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action]), [this.id, currentAction]),
+            actions: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action])),
             undoActions: ActionHistory.undoActions,
             redoActions: ActionHistory.redoActions,
             clientId: data.clientId

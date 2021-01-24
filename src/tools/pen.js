@@ -21,6 +21,7 @@
 const Pen = {
   // Add a point to the current stroke and draw it
   draw(x, y) {
+    const currentAction = clients[Client.id].action;
     if (currentAction.type !== "stroke") return false;
     const lastPoint = currentAction.data.points[currentAction.data.points.length - 1];
     if (currentAction.data.points.length > 0 && x === lastPoint[0] && y === lastPoint[1]) return;
@@ -31,6 +32,7 @@ const Pen = {
     });
     currentAction.data.points.push([x, y]);
     this.drawStroke(Client.ctx, currentAction.data);
+    clients[Client.id].action = currentAction;
   },
   // Add a point to another client's current stroke and draw it
   drawClientStroke(clientId) {

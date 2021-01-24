@@ -24,60 +24,62 @@ const Selection = {
   HANDLE_GRAB_SIZE: 15,
   
   getResizeHandle(point, handles) {
-    if (!currentAction.data.selected) return false;
+    const selection = clients[Client.id].action;
+    
+    if (!selection.data.selected) return false;
     var handle = null;
     if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x - (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.data.x - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[0];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x + (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y - (this.HANDLE_GRAB_SIZE / 2),
-      width: currentAction.data.width - this.HANDLE_GRAB_SIZE,
+      x: selection.data.x + (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y - (this.HANDLE_GRAB_SIZE / 2),
+      width: selection.data.width - this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[1];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x + currentAction.data.width - (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.data.x + selection.data.width - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[2];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x - (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y + (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.data.x - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: currentAction.data.height - this.HANDLE_GRAB_SIZE
+      height: selection.data.height - this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[3];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x + currentAction.data.width - (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y + (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.data.x + selection.data.width - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: currentAction.data.height - this.HANDLE_GRAB_SIZE
+      height: selection.data.height - this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[4];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x - (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y + currentAction.data.height - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.data.x - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y + selection.data.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[5];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x + (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y + currentAction.data.height - (this.HANDLE_GRAB_SIZE / 2),
-      width: currentAction.data.width - this.HANDLE_GRAB_SIZE,
+      x: selection.data.x + (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y + selection.data.height - (this.HANDLE_GRAB_SIZE / 2),
+      width: selection.data.width - this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[6];
     } else if (isPointInside(point.x, point.y, {
-      x: currentAction.data.x + currentAction.data.width - (this.HANDLE_GRAB_SIZE / 2),
-      y: currentAction.data.y + currentAction.data.height - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.data.x + selection.data.width - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.data.y + selection.data.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
@@ -175,22 +177,24 @@ const Selection = {
     }
   },
   update(handles) {
-    this.draw(Client.ctx, currentAction.data, handles);
+    const selection = clients[Client.id].action;
+    
+    this.draw(Client.ctx, selection.data, handles);
     
     // Pos & size
-    document.getElementById("selectPos").textContent = `${currentAction.data.x}, ${currentAction.data.y}`;
-    document.getElementById("selectSize").textContent = `${currentAction.data.width}x${currentAction.data.height}`;
+    document.getElementById("selectPos").textContent = `${selection.data.x}, ${selection.data.y}`;
+    document.getElementById("selectSize").textContent = `${selection.data.width}x${selection.data.height}`;
     
     // Send to other clients (remove unnecessary info too)
     Client.sendMessage({
       type: "selection-update",
       selection: {
-        selected: currentAction.data.selected,
-        x: currentAction.data.x,
-        y: currentAction.data.y,
-        width: currentAction.data.width,
-        height: currentAction.data.height,
-        flipped: currentAction.data.flipped
+        selected: selection.data.selected,
+        x: selection.data.x,
+        y: selection.data.y,
+        width: selection.data.width,
+        height: selection.data.height,
+        flipped: selection.data.flipped
       },
       clientId: Client.id
     });
@@ -252,104 +256,107 @@ const Selection = {
     }
   },
   doCopy() {
-    if (!currentAction.data.selected) return;
+    if (!clients[Client.id].action.data.selected) return;
     Client.sendMessage({
       type: "selection-copy",
       clientId: Client.id
     });
-    this.copy(Client.ctx, currentAction.data);
+    this.copy(Client.ctx, clients[Client.id].action.data);
   },
   doCut() {
-    if (!currentAction.data.selected) return;
+    if (!clients[Client.id].action.data.selected) return;
     Client.sendMessage({
       type: "selection-cut",
       colour: penColours[1],
       clientId: Client.id
     });
-    this.cut(Client.ctx, currentAction.data, penColours[1]);
+    this.cut(Client.ctx, clients[Client.id].action.data, penColours[1]);
   },
   doPaste() {
-    if (!currentAction.data.selected || !currentAction.data.data) return;
+    if (!clients[Client.id].action.data.selected || !clients[Client.id].action.data.data) return;
     Client.sendMessage({
       type: "selection-paste",
       clientId: Client.id
     });
-    this.paste(currentAction.data);
+    this.paste(clients[Client.id].action.data);
   },
   remove() {
     Client.sendMessage({
       type: "remove-selection",
       clientId: Client.id
     });
-    currentAction = NO_ACTION;
+    clients[Client.id].action = NO_ACTION;
     Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
   },
   adjustSizeAbsolute() {
-    if (currentAction.data.width < 0) {
-      currentAction.data.x += currentAction.data.width;
-      currentAction.data.width = Math.abs(currentAction.data.width);
-      if (currentAction.data.data) currentAction.data.flipped.x = !currentAction.data.flipped.x;
-      if (currentAction.type === "selection-resize") {
-        switch (currentAction.data.resize.handle) {
+    const selection = clients[Client.id].action;
+    
+    if (selection.data.width < 0) {
+      selection.data.x += selection.data.width;
+      selection.data.width = Math.abs(selection.data.width);
+      if (selection.data.data) selection.data.flipped.x = !selection.data.flipped.x;
+      if (selection.type === "selection-resize") {
+        switch (selection.data.resize.handle) {
           case 0: {
-            currentAction.data.resize.handle = 2;
+            selection.data.resize.handle = 2;
             break;
           }
           case 2: {
-            currentAction.data.resize.handle = 0;
+            selection.data.resize.handle = 0;
             break;
           }
           case 3: {
-            currentAction.data.resize.handle = 4;
+            selection.data.resize.handle = 4;
             break;
           }
           case 4: {
-            currentAction.data.resize.handle = 3;
+            selection.data.resize.handle = 3;
             break;
           }
           case 5: {
-            currentAction.data.resize.handle = 7;
+            selection.data.resize.handle = 7;
             break;
           }
           case 7: {
-            currentAction.data.resize.handle = 5;
+            selection.data.resize.handle = 5;
             break;
           }
         }
       }
     }
-    if (currentAction.data.height < 0) {
-      currentAction.data.y += currentAction.data.height;
-      currentAction.data.height = Math.abs(currentAction.data.height);
-      if (currentAction.data.data) currentAction.data.flipped.y = !currentAction.data.flipped.y;
-      if (currentAction.type === "selection-resize") {
-        switch (currentAction.data.resize.handle) {
+    if (selection.data.height < 0) {
+      selection.data.y += selection.data.height;
+      selection.data.height = Math.abs(selection.data.height);
+      if (selection.data.data) selection.data.flipped.y = !selection.data.flipped.y;
+      if (selection.type === "selection-resize") {
+        switch (selection.data.resize.handle) {
           case 0: {
-            currentAction.data.resize.handle = 5;
+            selection.data.resize.handle = 5;
             break;
           }
           case 5: {
-            currentAction.data.resize.handle = 0;
+            selection.data.resize.handle = 0;
             break;
           }
           case 1: {
-            currentAction.data.resize.handle = 6;
+            selection.data.resize.handle = 6;
             break;
           }
           case 6: {
-            currentAction.data.resize.handle = 1;
+            selection.data.resize.handle = 1;
             break;
           }
           case 2: {
-            currentAction.data.resize.handle = 7;
+            selection.data.resize.handle = 7;
             break;
           }
           case 7: {
-            currentAction.data.resize.handle = 2;
+            selection.data.resize.handle = 2;
             break;
           }
         }
       }
     }
+    clients[Client.id].action = selection;
   }
 };

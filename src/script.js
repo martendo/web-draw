@@ -93,7 +93,7 @@ const NO_ACTION = {
 };
 
 // Drawing and tool variables
-var currentAction = NO_ACTION, penColours = START_COLOURS.slice();
+var penColours = START_COLOURS.slice();
 var currentPen = 0;
 var tool = PEN_TOOL;
 
@@ -458,7 +458,7 @@ document.getElementById("selectClearBtn").addEventListener("click", () => {
     colour: penColours[1],
     clientId: Client.id
   });
-  Selection.clear(currentAction.data, penColours[1]);
+  Selection.clear(clients[Client.id].action.data, penColours[1]);
 });
 
 window.addEventListener("beforeunload", () => {
