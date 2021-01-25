@@ -68,8 +68,10 @@ const Canvas = {
   },
   
   update({ overrides = {}, extras = [], save = false } = {}) {
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.canvas.width = sessionCanvas.width;
+    this.canvas.height = sessionCanvas.height;
     this.ctx.drawImage(sessionCanvas, 0, 0);
+    
     for (const [clientId, client] of Object.entries(clients)) {
       const type = client.action.type;
       // Selections are not part of the actual image
@@ -240,7 +242,7 @@ const Canvas = {
     
     const sessionCanvasCopy = copyCanvas(sessionCanvas);
     const clientCanvasCopies = new Map;
-    for (const client of Object.entries(clients)) {
+    for (const client of Object.values(clients)) {
       clientCanvasCopies.set(client.canvas, copyCanvas(client.canvas));
     }
     var changed = false;
@@ -271,6 +273,7 @@ const Canvas = {
         client.ctx.drawImage(clientCanvasCopies.get(client.canvas), 0, 0);
       }
     }
+    Canvas.update();
   },
   
   // Import image and put on canvas
