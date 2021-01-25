@@ -34,10 +34,9 @@ const Pen = {
   },
   // Add a point to another client's current stroke and draw it
   drawClientStroke(clientId) {
-    const action = clientActions.get(clientId);
+    const action = clients[clientId].action;
     if (action.type !== "stroke") return false;
-    const ctx = clientCanvasses.get(clientId).getContext("2d");
-    this.drawStroke(ctx, action.data);
+    this.drawStroke(clients[clientId].ctx, action.data);
   },
   // Commit a stroke to the session canvas (copy it then erase it)
   commitStroke(srcCanvas, stroke, user = true) {

@@ -146,22 +146,22 @@ const Client = {
         }
         // Another user has started a stroke
         case "start-stroke": {
-          clientActions.set(data.clientId, data.action);
+          clients[data.clientId].action = data.action;
           break;
         }
         // Another user has added a point in their current stroke
         case "add-stroke": {
-          clientActions.get(data.clientId).data.points.push([data.pos[0], data.pos[1]]);
+          clients[data.clientId].action.data.points.push([data.pos[0], data.pos[1]]);
           Pen.drawClientStroke(data.clientId);
           break;
         }
         // Another user has ended their stroke
         case "end-stroke": {
           Pen.commitStroke(
-            clientCanvasses.get(data.clientId),
-            clientActions.get(data.clientId).data
+            clients[data.clientId].canvas,
+            clients[data.clientId].action.data
           );
-          clientActions.get(data.clientId).type = null;
+          clients[data.clientId].action.type = null;
           break;
         }
         // Another user has undone/redone an action
@@ -203,54 +203,54 @@ const Client = {
           break;
         }
         case "create-selection": {
-          clientActions.set(data.clientId, {
+          clients[data.clientId].action = {
             type: "selecting",
             data: {}
-          });
+          };
           break;
         }
         case "remove-selection": {
-          clientActions.get(data.clientId).type = null;
-          const canvas = clientCanvasses.get(data.clientId);
-          canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
+          clients[data.clientId].action.type = null;
+          const canvas = clients[data.clientId];
+          clients[data.clientId].ctx.clearRect(0, 0, canvas.width, canvas.height);
           break;
         }
         // Another user has changed their selection
         case "selection-update": {
-          const sel = clientActions.get(data.clientId).data;
+          const sel = clients[data.clientId].action.data;
           sel.selected = data.selection.selected;
           sel.x = data.selection.x;
           sel.y = data.selection.y;
           sel.width = data.selection.width;
           sel.height = data.selection.height;
           sel.flipped = data.selection.flipped;
-          Selection.draw(clientCanvasses.get(data.clientId).getContext("2d"), sel, false, false);
+          Selection.draw(clients[data.clientId].ctx, sel, false, false);
           break;
         }
         case "selection-copy": {
-          Selection.copy(clientCanvasses.get(data.clientId).getContext("2d"), clientActions.get(data.clientId).data);
+          Selection.copy(clients[data.clientId].ctx, clients[data.clientId].action.data);
           break;
         }
         case "selection-cut": {
-          Selection.cut(clientCanvasses.get(data.clientId).getContext("2d"), clientActions.get(data.clientId).data, data.colour);
+          Selection.cut(clients[data.clientId].ctx, clients[data.clientId].action.data, data.colour);
           break;
         }
         case "selection-paste": {
-          Selection.paste(clientActions.get(data.clientId).data);
+          Selection.paste(clients[data.clientId].action.data);
           break;
         }
         case "selection-clear": {
-          Selection.clear(clientActions.get(data.clientId).data, data.colour);
+          Selection.clear(clients[data.clientId].action.data, data.colour);
           break;
         }
         case "line": {
-          const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
+          const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Line.draw(data.line, clientCtx);
           break;
         }
         case "commit-line": {
-          const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
+          const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Line.draw(data.line, clientCtx, true);
           ActionHistory.addToUndo({
@@ -260,13 +260,13 @@ const Client = {
           break;
         }
         case "rect": {
-          const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
+          const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Rect.draw(data.rect, clientCtx);
           break;
         }
         case "commit-rect": {
-          const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
+          const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Rect.draw(data.rect, clientCtx, true);
           ActionHistory.addToUndo({
@@ -276,13 +276,13 @@ const Client = {
           break;
         }
         case "ellipse": {
-          const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
+          const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Ellipse.draw(data.ellipse, clientCtx);
           break;
         }
         case "commit-ellipse": {
-          const clientCtx = clientCanvasses.get(data.clientId).getContext("2d");
+          const clientCtx = clients[data.clientId].ctx;
           clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
           Ellipse.draw(data.ellipse, clientCtx, true);
           ActionHistory.addToUndo({
@@ -315,7 +315,7 @@ const Client = {
             type: "response-canvas",
             width: sessionCanvas.width,
             height: sessionCanvas.height,
-            actions: Object.fromEntries([...[...clientActions].filter(([id, action]) => id !== data.clientId), [this.id, currentAction]]),
+            actions: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action]), [this.id, currentAction]),
             undoActions: ActionHistory.undoActions,
             redoActions: ActionHistory.redoActions,
             clientId: data.clientId

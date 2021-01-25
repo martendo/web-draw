@@ -47,9 +47,9 @@ const Canvas = {
   zoomToWindow(type = "fit", allowLarger = true) {
     thisCanvas.style.transform = "scale(0)";
     sessionCanvas.style.transform = "scale(0)";
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.style.transform = "scale(0)";
-    });
+    for (const client of Object.values(clients)) {
+      client.canvas.style.transform = "scale(0)";
+    }
     
     const widthZoom = (this.container.clientWidth - (15 * 2)) / sessionCanvas.width;
     const heightZoom = (this.container.clientHeight - (15 * 2)) / sessionCanvas.height;
@@ -64,9 +64,9 @@ const Canvas = {
     this.canvas.style.transform = `scale(${this.zoom})`;
     thisCanvas.style.transform = `scale(${this.zoom})`;
     sessionCanvas.style.transform = `scale(${this.zoom})`;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.style.transform = `scale(${this.zoom})`;
-    });
+    for (const client of Object.values(clients)) {
+      client.canvas.style.transform = `scale(${this.zoom})`;
+    }
   },
   
   update(canvas, compOp = currentAction.data.compOp, save = false) {
@@ -131,16 +131,16 @@ const Canvas = {
     sessionCanvas.height = data.height;
     thisCanvas.width = data.width;
     thisCanvas.height = data.height;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvas.width = data.width;
-      clientCanvas.height = data.height;
-    });
+    for (const client of Object.values(clients)) {
+      client.canvas.width = data.width;
+      client.canvas.height = data.height;
+    }
     if (data.actions) {
-      clientActions = new Map(Object.entries(data.actions));
-      clientActions.forEach((action, clientId) => {
+      for (const [clientId, action] of Object.entries(data.actions)) {
         console.log(action, clientId);
-        const clientCanvas = clientCanvasses.get(clientId);
-        const clientCtx = clientCanvas.getContext("2d");
+        clients[clientId].action = action;
+        const clientCanvas = clients[clientId].canvas;
+        const clientCtx = clients[clientId].ctx;
         switch (action.type) {
           case "stroke": {
             Pen.commitStroke(clientCanvas, action.data, false);
@@ -165,7 +165,7 @@ const Canvas = {
             break;
           }
         }
-      });
+      }
     }
     // Zoom canvas to fit in canvasContainer if it doesn't already
     this.zoomToWindow("fit", false);
@@ -222,24 +222,24 @@ const Canvas = {
     const thisCanvasCopy = copyCanvas(thisCanvas);
     const sessionCanvasCopy = copyCanvas(sessionCanvas);
     const clientCanvasCopies = new Map;
-    clientCanvasses.forEach((clientCanvas) => {
-      clientCanvasCopies.set(clientCanvas, copyCanvas(clientCanvas));
-    });
+    for (const client of Object.entries(clients)) {
+      clientCanvasCopies.set(client.canvas, copyCanvas(client.canvas));
+    }
     var changed = false;
     if (width != sessionCanvas.width) {
       thisCanvas.width = width;
       sessionCanvas.width = width;
-      clientCanvasses.forEach((clientCanvas) => {
-        clientCanvas.width = width;
-      });
+      for (const client of Object.values(clients)) {
+        client.canvas.width = width;
+      }
       changed = true;
     }
     if (height != sessionCanvas.height) {
       thisCanvas.height = height;
       sessionCanvas.height = height;
-      clientCanvasses.forEach((clientCanvas) => {
-        clientCanvas.height = height;
-      });
+      for (const client of Object.values(clients)) {
+        client.canvas.height = height;
+      }
       changed = true;
     }
     if (changed) {
@@ -251,11 +251,10 @@ const Canvas = {
       // Canvas already cleared from size change
       thisCtx.drawImage(thisCanvasCopy, 0, 0);
       
-      clientCanvasses.forEach((clientCanvas) => {
-        const clientCtx = clientCanvas.getContext("2d");
+      for (const client of Object.values(clients)) {
         // Canvas already cleared from size change
-        clientCtx.drawImage(clientCanvasCopies.get(clientCanvas), 0, 0);
-      });
+        client.ctx.drawImage(clientCanvasCopies.get(client.canvas), 0, 0);
+      }
     }
   },
   

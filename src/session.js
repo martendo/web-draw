@@ -26,7 +26,9 @@ const Session = {
   // Add/Remove a user canvas and mouse and update the total
   addUsers(c, total) {
     c.forEach((client) => {
-      clients.set(client.id, client);
+      clients[client.id] = {
+        name: client.name
+      };
       if (client.id !== Client.id) {
         const img = document.createElement("img");
         img.src = "/img/cursor.png";
@@ -40,20 +42,19 @@ const Session = {
         clientCanvas.height = sessionCanvas.height;
         clientCanvas.style.transform = `scale(${Canvas.zoom})`;
         Canvas.container.appendChild(clientCanvas);
-        clientCanvasses.set(client.id, clientCanvas);
-        clientActions.set(client.id, { type: null });
+        clients[client.id].canvas = clientCanvas;
+        clients[client.id].ctx = clientCanvas.getContext("2d");
+        clients[client.id].action = { type: null };
       }
     });
     this.updateUserInfo(total);
   },
   removeUsers(client, total) {
-    clients.delete(client.id);
+    delete clients[client.id];
     if (client.id !== Client.id) {
       const img = document.getElementById("cursorIcon-" + client.id);
       img.remove();
       document.getElementById("clientCanvas-" + client.id).remove();
-      clientCanvasses.delete(client.id);
-      clientActions.delete(client.id);
     }
     this.updateUserInfo(total);
   },
@@ -72,24 +73,23 @@ const Session = {
   },
   
   updateClientTable() {
-    const clientList = [...clients.values()];
     const table = document.getElementById("sessionInfoClientBody");
     for (var i = table.children.length - 1; i >= 0; i--) {
       table.removeChild(table.children[i]);
     }
-    for (let i = 0; i < clients.size; i++) {
+    for (const [clientId, client] of Object.entries(clients)) {
       const row = table.insertRow(-1),
             idCell = row.insertCell(0),
             nameCell = row.insertCell(1);
-      idCell.textContent = clientList[i].id;
-      nameCell.textContent = clientList[i].name;
+      idCell.textContent = clientId;
+      nameCell.textContent = client.name;
       row.classList.add("sessionInfoClient");
-      if (clientList[i].id === Client.id) row.classList.add("sessionInfoThisClient");
+      if (clientId === Client.id) row.classList.add("sessionInfoThisClient");
       row.title = "Click to send private message";
       row.addEventListener("click", () => {
         Chat.box.classList.remove("displayNone");
         Chat.open();
-        Chat.addMessageTo(clientList[i].id);
+        Chat.addMessageTo(client.id);
         Modal.close("sessionInfoModal");
       });
     }

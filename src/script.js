@@ -97,7 +97,7 @@ var currentAction = NO_ACTION, penColours = START_COLOURS.slice();
 var currentPen = 0;
 var tool = PEN_TOOL;
 
-var clients = new Map;
+var clients = {};
 
 // Whether mouse has moved or not since last update was sent to server
 var mouseMoved = {
@@ -107,11 +107,6 @@ var mouseMoved = {
 // Most recent custom colours
 var customColours = [];
 
-// `currentAction`s of other clients in the session
-var clientActions = new Map;
-
-// Temporary canvasses for all other clients in the session
-const clientCanvasses = new Map;
 // Session canvas (permanent)
 const sessionCanvas = document.getElementById("sessionCanvas");
 const sessionCtx = sessionCanvas.getContext("2d");
@@ -354,7 +349,7 @@ document.getElementById("helpInfoBtn").addEventListener("click", () => Modal.ope
 document.getElementById("helpBtn").addEventListener("click", () => Modal.open("helpModal"));
 document.getElementById("infoBtn").addEventListener("click", () => Modal.open("infoModal"));
 document.getElementById("userBtn").addEventListener("click", () => {
-  document.getElementById("userNameInput").value = clients.get(Client.id).name || "";
+  document.getElementById("userNameInput").value = client[Client.id].name || "";
   Modal.open("userModal");
 });
 document.getElementById("chatBtn").addEventListener("click", () => Chat.toggle());

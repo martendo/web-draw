@@ -81,7 +81,6 @@ const Chat = {
       .replace(/(^|[^\\_])((?:\\{2})*)_([\s\S]*?[^\\_](?:\\{2})*)_/mg, "$1$2<em>$3</em>")             // _italicized_
       .replace(/\\([\s\S])/mg, "$1")
       .replace(/\\/g, "&#92;");
-    const client = clients.get(msg.clientId);
     const box = document.getElementById("chatMessages");
     var bubble;
     const last = box.children[box.children.length - 1];
@@ -90,18 +89,18 @@ const Chat = {
     const isAtBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + (last ? last.children[last.children.length - 1].getBoundingClientRect().height : 0) + 14;
     // Create new message bubble if last message was not from the same person or is not of the same type or it was 3 or more minutes ago
     if (!last || parseInt(last.children[last.children.length - 1].dataset.timestamp, 10) + 1000*60*3 <= msg.timestamp ||
-      (msg.priv ? (!last.classList.contains("chatMessage-" + client.id) || !last.classList.contains("chatMessagePrivate-" + msg.priv))
-                : (!last.classList.contains("chatMessage-" + client.id) || last.classList.contains("chatMessagePrivate")))) {
+      (msg.priv ? (!last.classList.contains("chatMessage-" + msg.clientId) || !last.classList.contains("chatMessagePrivate-" + msg.priv))
+                : (!last.classList.contains("chatMessage-" + msg.clientId) || last.classList.contains("chatMessagePrivate")))) {
       bubble = document.createElement("div");
-      bubble.classList.add("chatMessageBubble", "chatMessage-" + client.id);
+      bubble.classList.add("chatMessageBubble", "chatMessage-" + msg.clientId);
       const nameRow = document.createElement("div");
       nameRow.classList.add("chatMessageNameRow");
       const name = document.createElement("a");
-      name.classList.add("chatMessageName", "chatMessageName-" + client.id);
-      name.textContent = client.name || client.id;
-      name.title = client.id;
+      name.classList.add("chatMessageName", "chatMessageName-" + msg.clientId);
+      name.textContent = clients[msg.clientId].name || msg.clientId;
+      name.title = msg.clientId;
       name.href = "javascript:void(0)";
-      name.addEventListener("click", () => this.addMessageTo(client.id));
+      name.addEventListener("click", () => this.addMessageTo(msg.clientId));
       nameRow.appendChild(name);
       const time = document.createElement("span");
       time.classList.add("chatMessageTime");
@@ -124,7 +123,7 @@ const Chat = {
       bubble.appendChild(nameRow);
     } else {
       // Message is the same type as the last, just add to the bottom of the previous bubble
-      bubble = document.getElementsByClassName("chatMessage-" + client.id);
+      bubble = document.getElementsByClassName("chatMessage-" + msg.clientId);
       bubble = bubble[bubble.length - 1];
     }
     const msgText = document.createElement("div");
@@ -160,8 +159,7 @@ const Chat = {
       if (ids[i] === Client.id) {
         clientName = "you";
       } else {
-        const toClient = clients.get(ids[i]);
-        clientName = (toClient.name || toClient.id);
+        clientName = (clients[ids[i]].name || ids[i]);
       }
       title += clientName;
       if (i <= ids.length - 2 && ids.length === 2) {
