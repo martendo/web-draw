@@ -154,15 +154,15 @@ const Canvas = {
       client.canvas.width = data.width;
       client.canvas.height = data.height;
     }
+    Canvas.clearBlank(false);
     if (data.actions) {
       for (const [clientId, action] of Object.entries(data.actions)) {
-        console.log(action, clientId);
         clients[clientId].action = action;
         const clientCanvas = clients[clientId].canvas;
         const clientCtx = clients[clientId].ctx;
         switch (action.type) {
           case "stroke": {
-            Pen.commitStroke(clientCanvas, action.data, false);
+            Pen.drawStroke(clientCtx, action.data);
             break;
           }
           case "line": {
