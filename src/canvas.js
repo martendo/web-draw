@@ -71,10 +71,16 @@ const Canvas = {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.drawImage(sessionCanvas, 0, 0);
     for (const [clientId, client] of Object.entries(clients)) {
+      const type = client.action.type;
+      // Selections are not part of the actual image
+      if (save && (type === "selecting" || type === "selection-move" || type === "selection-resize")) continue;
+      
       if (overrides.hasOwnProperty(clientId)) {
         this.ctx.globalCompositeOperation = COMP_OPS[overrides[clientId]];
       } else {
-        if (client.action.type === null) continue;
+        if (client.action.type === null &&
+            // Still draw the current selection (not currently changing it) if it exists, but don't if saving
+            (save || !client.action.data || !client.action.data.hasOwnProperty("selected"))) continue;
         this.ctx.globalCompositeOperation = COMP_OPS[client.action.data.compOp] || DEFAULT_COMP_OP;
       }
       this.ctx.drawImage(client.canvas, 0, 0);
@@ -87,6 +93,12 @@ const Canvas = {
     if (save) {
       sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
       sessionCtx.drawImage(this.canvas, 0, 0);
+      // Update display canvas
+      this.update({
+        overrides,
+        extras,
+        save: false
+      });
     }
   },
   

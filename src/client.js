@@ -213,9 +213,8 @@ const Client = {
           break;
         }
         case "remove-selection": {
-          clients[data.clientId].action.type = null;
-          const canvas = clients[data.clientId];
-          clients[data.clientId].ctx.clearRect(0, 0, canvas.width, canvas.height);
+          clients[data.clientId].action = NO_ACTION;
+          Canvas.update();
           break;
         }
         // Another user has changed their selection

@@ -288,7 +288,7 @@ const Selection = {
       clientId: Client.id
     });
     clients[Client.id].action = NO_ACTION;
-    Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
+    Canvas.update();
   },
   adjustSizeAbsolute() {
     const selection = clients[Client.id].action;
