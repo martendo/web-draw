@@ -212,6 +212,7 @@ const Selection = {
     const y = sel.y * (sel.flipped.y ? -1 : 1);
     ctx.drawImage(tempCanvas, x, y, sel.width, sel.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
+    Canvas.update();
   },
   cut(ctx, sel, colour) {
     this.copy(ctx, sel);
@@ -256,6 +257,7 @@ const Selection = {
         colour: colour
       });
     }
+    Canvas.update();
   },
   doCopy() {
     if (!clients[Client.id].action.data.selected) return;
