@@ -44,7 +44,7 @@ const Session = {
         name: client.name,
         canvas: clientCanvas,
         ctx: clientCanvas.getContext("2d"),
-        action: { type: null }
+        action: NO_ACTION
       };
     });
     this.updateUserInfo(total);
@@ -89,7 +89,7 @@ const Session = {
       row.addEventListener("click", () => {
         Chat.box.classList.remove("displayNone");
         Chat.open();
-        Chat.addMessageTo(client.id);
+        Chat.addMessageTo(clientId);
         Modal.close("sessionInfoModal");
       });
     }

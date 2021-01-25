@@ -238,6 +238,9 @@ function startTool(point) {
 }
 // Handle mousemove (prepare update and add point to stroke if drawing)
 function mouseMove(event) {
+  // If not on the drawing "page", ignore
+  if (!document.getElementById("drawScreen").contains(event.target)) return;
+  
   const point = Canvas.getCursorPos(event);
   document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
   const currentAction = clients[Client.id].action;
@@ -385,6 +388,8 @@ function mouseMove(event) {
 }
 // Handle mouseup
 function clearMouseHold(event) {
+  if (!clients.hasOwnProperty(Client.id)) return;
+  
   const currentAction = clients[Client.id].action;
   switch (currentAction.type) {
     case "stroke": {
