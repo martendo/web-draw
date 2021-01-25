@@ -19,7 +19,7 @@
  */
 
 const Ellipse = {
-  draw(ellipse, ctx, save) {
+  draw(ellipse, ctx, options) {
     if (!ellipse.outline && !ellipse.fill) return;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
@@ -46,6 +46,6 @@ const Ellipse = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update({ save });
+    Canvas.update(options);
   }
 };

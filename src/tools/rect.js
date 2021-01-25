@@ -19,7 +19,7 @@
  */
 
 const Rect = {
-  draw(rect, ctx, save) {
+  draw(rect, ctx, options) {
     if (!rect.outline && !rect.fill) return;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
@@ -42,6 +42,6 @@ const Rect = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update({ save });
+    Canvas.update(options);
   }
 };

@@ -53,7 +53,7 @@ const Pen = {
   },
   
   // Draw a full stroke
-  drawStroke(ctx, stroke, save) {
+  drawStroke(ctx, stroke, options) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     var p0 = stroke.points[0],
         p1 = stroke.points[1];
@@ -79,6 +79,6 @@ const Pen = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update({ save });
+    Canvas.update(options);
   }
 };

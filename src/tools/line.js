@@ -19,7 +19,7 @@
  */
 
 const Line = {
-  draw(line, ctx, save) {
+  draw(line, ctx, options) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     ctx.strokeStyle = line.colour;
@@ -34,6 +34,6 @@ const Line = {
     
     ctx.globalAlpha = 1;
     
-    Canvas.update({ save });
+    Canvas.update(options);
   }
 };

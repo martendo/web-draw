@@ -77,7 +77,12 @@ const ActionHistory = {
   doAction(action) {
     switch (action.type) {
       case "stroke": {
-        Pen.drawStroke(Client.ctx, action.stroke, true);
+        Pen.drawStroke(Client.ctx, action.stroke, {
+          overrides: {
+            [Client.id]: action.stroke.compOp
+          },
+          save: true
+        });
         break;
       }
       case "fill": {
@@ -107,15 +112,30 @@ const ActionHistory = {
         break;
       }
       case "line": {
-        Line.draw(action.line, Client.ctx, true);
+        Line.draw(action.line, Client.ctx, {
+          overrides: {
+            [Client.id]: action.line.compOp
+          },
+          save: true
+        });
         break;
       }
       case "rect": {
-        Rect.draw(action.rect, Client.ctx, true);
+        Rect.draw(action.rect, Client.ctx, {
+          overrides: {
+            [Client.id]: action.rect.compOp
+          },
+          save: true
+        });
         break;
       }
       case "ellipse": {
-        Ellipse.draw(action.ellipse, Client.ctx, true);
+        Ellipse.draw(action.ellipse, Client.ctx, {
+          overrides: {
+            [Client.id]: action.ellipse.compOp
+          },
+          save: true
+        });
         break;
       }
     }
