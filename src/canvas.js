@@ -93,14 +93,15 @@ const Canvas = {
     }
     this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     if (save) {
-      sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-      sessionCtx.drawImage(this.canvas, 0, 0);
+      const tempCanvas = this._copyCanvas(this.canvas);
       // Update display canvas
       this.update({
         overrides,
         extras,
         save: false
       });
+      sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+      sessionCtx.drawImage(tempCanvas, 0, 0);
     }
   },
   
@@ -230,20 +231,20 @@ const Canvas = {
     };
   },
   
+  _copyCanvas(canvas) {
+    const newCanvas = document.createElement("canvas");
+    newCanvas.width = canvas.width;
+    newCanvas.height = canvas.height;
+    newCanvas.getContext("2d").drawImage(canvas, 0, 0);
+    return newCanvas;
+  },
+  
   // Set the canvas size
   resize(width, height, bgColour) {
-    function copyCanvas(canvas) {
-      const newCanvas = document.createElement("canvas");
-      newCanvas.width = canvas.width;
-      newCanvas.height = canvas.height;
-      newCanvas.getContext("2d").drawImage(canvas, 0, 0);
-      return newCanvas;
-    }
-    
-    const sessionCanvasCopy = copyCanvas(sessionCanvas);
+    const sessionCanvasCopy = this._copyCanvas(sessionCanvas);
     const clientCanvasCopies = new Map;
     for (const client of Object.values(clients)) {
-      clientCanvasCopies.set(client.canvas, copyCanvas(client.canvas));
+      clientCanvasCopies.set(client.canvas, this._copyCanvas(client.canvas));
     }
     var changed = false;
     if (width != sessionCanvas.width) {
