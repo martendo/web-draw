@@ -306,7 +306,7 @@ const Client = {
           break;
         }
         case "user-name": {
-          clients.get(data.clientId).name = data.name;
+          clients[data.clientId].name = data.name;
           [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name);
           [...document.getElementsByClassName("chatPrivateText-" + data.clientId)].forEach((text) => {
             Chat.writePrivateTextTitle(text, [...text.className.matchAll(/chatPrivateText-([a-z\d]{4})/g)].map((name) => name[1]));

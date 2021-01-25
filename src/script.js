@@ -346,7 +346,7 @@ document.getElementById("helpInfoBtn").addEventListener("click", () => Modal.ope
 document.getElementById("helpBtn").addEventListener("click", () => Modal.open("helpModal"));
 document.getElementById("infoBtn").addEventListener("click", () => Modal.open("infoModal"));
 document.getElementById("userBtn").addEventListener("click", () => {
-  document.getElementById("userNameInput").value = client[Client.id].name || "";
+  document.getElementById("userNameInput").value = clients[Client.id].name || "";
   Modal.open("userModal");
 });
 document.getElementById("chatBtn").addEventListener("click", () => Chat.toggle());

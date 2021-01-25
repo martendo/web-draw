@@ -187,7 +187,7 @@ const Session = {
   
   saveUserSettings() {
     const name = document.getElementById("userNameInput").value;
-    if (name !== clients.get(Client.id).name) {
+    if (name !== clients[Client.id].name) {
       Client.sendMessage({
         type: "user-name",
         name: name,
