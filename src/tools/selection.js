@@ -175,6 +175,8 @@ const Selection = {
       ctx.strokeRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
     }
+    
+    Canvas.update();
   },
   update(handles) {
     const selection = clients[Client.id].action;
