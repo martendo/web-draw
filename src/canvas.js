@@ -45,11 +45,6 @@ const Canvas = {
   },
   // Set the canvas zoom to whatever fits in the container, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {
-    sessionCanvas.style.transform = "scale(0)";
-    for (const client of Object.values(clients)) {
-      client.canvas.style.transform = "scale(0)";
-    }
-    
     const widthZoom = (this.container.clientWidth - (15 * 2)) / sessionCanvas.width;
     const heightZoom = (this.container.clientHeight - (15 * 2)) / sessionCanvas.height;
     const fitZoom = type === "fit" ? Math.min(widthZoom, heightZoom) : Math.max(widthZoom, heightZoom);
@@ -61,10 +56,6 @@ const Canvas = {
     this.zoom = zoom;
     document.getElementById("canvasZoom").value = Math.round(this.zoom * 100);
     this.canvas.style.transform = `scale(${this.zoom})`;
-    sessionCanvas.style.transform = `scale(${this.zoom})`;
-    for (const client of Object.values(clients)) {
-      client.canvas.style.transform = `scale(${this.zoom})`;
-    }
   },
   
   update({ overrides = {}, extras = [], save = false } = {}) {
@@ -158,6 +149,25 @@ const Canvas = {
       client.canvas.height = data.height;
     }
     Canvas.clearBlank(false);
+    // Zoom canvas to fit in canvasContainer if it doesn't already
+    this.zoomToWindow("fit", false);
+    sessionCtx.fillStyle = BLANK_COLOUR;
+    sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    ActionHistory.undoActions = data.undoActions;
+    if (ActionHistory.undoActions.length) {
+      ActionHistory.enableUndo();
+    } else {
+      ActionHistory.clearUndo();
+    }
+    ActionHistory.redoActions = data.redoActions;
+    if (ActionHistory.redoActions.length) {
+      ActionHistory.enableRedo();
+    } else {
+      ActionHistory.clearRedo();
+    }
+    for (var i = 0; i < ActionHistory.undoActions.length; i++) {
+      ActionHistory.doAction(ActionHistory.undoActions[i]);
+    }
     if (data.actions) {
       for (const [clientId, action] of Object.entries(data.actions)) {
         clients[clientId].action = action;
@@ -188,25 +198,6 @@ const Canvas = {
           }
         }
       }
-    }
-    // Zoom canvas to fit in canvasContainer if it doesn't already
-    this.zoomToWindow("fit", false);
-    sessionCtx.fillStyle = BLANK_COLOUR;
-    sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-    ActionHistory.undoActions = data.undoActions;
-    if (ActionHistory.undoActions.length) {
-      ActionHistory.enableUndo();
-    } else {
-      ActionHistory.clearUndo();
-    }
-    ActionHistory.redoActions = data.redoActions;
-    if (ActionHistory.redoActions.length) {
-      ActionHistory.enableRedo();
-    } else {
-      ActionHistory.clearRedo();
-    }
-    for (var i = 0; i < ActionHistory.undoActions.length; i++) {
-      ActionHistory.doAction(ActionHistory.undoActions[i]);
     }
     Modal.close("retrieveModal");
   },
@@ -247,7 +238,7 @@ const Canvas = {
       clientCanvasCopies.set(client.canvas, this._copyCanvas(client.canvas));
     }
     var changed = false;
-    if (width != sessionCanvas.width) {
+    if (width !== sessionCanvas.width) {
       Client.canvas.width = width;
       sessionCanvas.width = width;
       for (const client of Object.values(clients)) {
@@ -255,7 +246,7 @@ const Canvas = {
       }
       changed = true;
     }
-    if (height != sessionCanvas.height) {
+    if (height !== sessionCanvas.height) {
       Client.canvas.height = height;
       sessionCanvas.height = height;
       for (const client of Object.values(clients)) {

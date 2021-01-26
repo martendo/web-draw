@@ -122,7 +122,7 @@ function changeColourValue(event, num) {
         alpha = parseInt(a+a, 16);
       }
     }
-    if (value.slice(0, 1) != "#") value = "#" + value;
+    if (value.slice(0, 1) !== "#") value = "#" + value;
     if (value.length > 6+1) {
       alpha = parseInt(value.slice(-2), 16);
       value = value.slice(0, -2);

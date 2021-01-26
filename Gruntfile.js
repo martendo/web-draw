@@ -13,7 +13,10 @@ module.exports = function(grunt) {
     },
     jsOptions: {
       mangle: {
-        toplevel: true
+        toplevel: true,
+        properties: {
+          regex: /^_/
+        }
       }
     },
     

@@ -52,7 +52,7 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 ## What's where
 ```
 ./
-├── .github/workflows
+├── .github/workflows/
 │   └── build-deploy.yaml
 ├── public/
 │   ├── img/

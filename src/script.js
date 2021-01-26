@@ -122,7 +122,7 @@ if (!("WebSocket" in window)) Modal.open("noWsModal");
 
 const waitConnect = () => {
   const wait = document.getElementById("connectionInfoWait");
-  if (wait.textContent.length == 3) wait.textContent = "";
+  if (wait.textContent.length === 3) wait.textContent = "";
   wait.innerHTML += "&#183;";
 };
 const connectionWait = setInterval(() => waitConnect(), 500);
@@ -149,7 +149,7 @@ document.addEventListener("contextmenu", (event) => {
   event.stopPropagation();
 });
 document.addEventListener("click", (event) => {
-  if (event.target.tagName == "LI") return;
+  if (event.target.tagName === "LI") return;
   const selected = document.getElementsByClassName("menuSelected");
   for (var i = 0; i < selected.length; i++) {
     selected[i].classList.remove("menuSelected");
@@ -159,7 +159,7 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
-  if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 99) {
+  if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
     if (!event.ctrlKey) {
       switch (event.key) {
         case "1": {
@@ -362,7 +362,7 @@ Chat.input.addEventListener("keydown", (event) => {
 });
 Chat.input.addEventListener("input", () => {
   const box = document.getElementById("chatMessages");
-  const isAtBottom = box.scrollTop == box.scrollHeight - box.clientHeight;
+  const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
   elementFitHeight(Chat.input);
   if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
 });

@@ -286,6 +286,7 @@ wss.on("connection", (socket) => {
       case "user-name": {
         client.name = data.name;
         client.session.broadcast(data);
+        break;
       }
       case "response-canvas": {
         client.session.clients.get(data.clientId).send(data);

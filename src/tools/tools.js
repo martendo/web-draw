@@ -379,7 +379,7 @@ function mouseMove(event) {
     Canvas.canvas.style.cursor = "auto";
   }
   mouseMoved.moved = true;
-  if (event.target.tagName != "CANVAS") {
+  if (event.target.tagName !== "CANVAS") {
     mouseMoved.x = -1;
   } else {
     mouseMoved.x = point.x;

@@ -23,7 +23,7 @@ const ActionHistory = {
   undoActions: [],
   redoActions: [],
   
-  // Push an action onto this.undoActions, enable the undo button, disable the redo button
+  // Push an action onto this.undoActions, enable the undo button, clear this.redoActions
   addToUndo(data) {
     this.undoActions.push(data);
     this.enableUndo();
@@ -141,27 +141,27 @@ const ActionHistory = {
     }
   },
   
-  undoBtn: document.getElementById("undoBtn"),
-  redoBtn: document.getElementById("redoBtn"),
+  _undoBtn: document.getElementById("undoBtn"),
+  _redoBtn: document.getElementById("redoBtn"),
   
   // Enable undo/redo buttons
   enableUndo() {
-    this.undoBtn.disabled = false;
+    this._undoBtn.disabled = false;
   },
   enableRedo() {
-    this.redoBtn.disabled = false;
+    this._redoBtn.disabled = false;
   },
   // Disable undo/redo buttons and clear the actions just in case
   clearUndo() {
     this.undoActions = [];
-    this.undoBtn.disabled = true;
+    this._undoBtn.disabled = true;
     // KeyboardEvents do not fire when a disabled button is focused
-    this.undoBtn.blur();
+    this._undoBtn.blur();
   },
   clearRedo() {
     this.redoActions = [];
-    this.redoBtn.disabled = true;
+    this._redoBtn.disabled = true;
     // KeyboardEvents do not fire when a disabled button is focused
-    this.redoBtn.blur();
+    this._redoBtn.blur();
   }
 };

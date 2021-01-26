@@ -19,7 +19,7 @@
 -->
 
 <!DOCTYPE html>
-<html id="html" lang="en">
+<html lang="en">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -79,10 +79,10 @@
     <br><br><br><br><br>
     
     <p><b>404</b> - Can't find that thing.</p>
-    <p id="text"></p>
+    <p id="t"></p>
     
     <script>
-      document.getElementById("text").innerHTML = `<code>${decodeURI(location.pathname.slice(1))}</code>?? What even is that???`;
+      document.getElementById("t").innerHTML=`<code>${decodeURI(location.pathname.slice(1))}</code>?? What even is that???`;
     </script>
   </body>
 </html>

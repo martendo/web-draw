@@ -28,7 +28,7 @@ const Chat = {
     if (msg.trim() === "" || (msg.slice(0, 3) === "to:" && (msg.slice(indexSpace).trim() === "" || indexSpace === -1))) return;
     this.input.value = "";
     const box = document.getElementById("chatMessages");
-    const isAtBottom = box.scrollTop == box.scrollHeight - box.clientHeight;
+    const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
     elementFitHeight(this.input);
     if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
     Client.sendMessage({

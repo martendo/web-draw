@@ -35,11 +35,8 @@ const Session = {
       }
       const clientCanvas = document.createElement("canvas");
       clientCanvas.classList.add("clientCanvas");
-      clientCanvas.id = "clientCanvas-" + client.id;
       clientCanvas.width = sessionCanvas.width;
       clientCanvas.height = sessionCanvas.height;
-      clientCanvas.style.transform = `scale(${Canvas.zoom})`;
-      Canvas.container.appendChild(clientCanvas);
       clients[client.id] = {
         name: client.name,
         canvas: clientCanvas,
@@ -54,14 +51,13 @@ const Session = {
     if (client.id !== Client.id) {
       const img = document.getElementById("cursorIcon-" + client.id);
       img.remove();
-      document.getElementById("clientCanvas-" + client.id).remove();
     }
     this.updateUserInfo(total);
   },
   // Update the total number of users connected to the current session
   updateUserInfo(num) {
     var isAre = "are", s = "s";
-    if (num == 1) {
+    if (num === 1) {
       isAre = "is";
       s = "";
     }

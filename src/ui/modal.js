@@ -20,13 +20,13 @@
 
 const Modal = {
   // Current modal z-index - newest modal should always show up at the top
-  index: 99,
+  index: 100,
   
   open(id) {
     const modal = document.getElementById(id);
     // `grid` centres content without translate but others don't...
     modal.style.display = "grid";
-    modal.style.zIndex = ++this.index;
+    modal.style.zIndex = this.index++;
   },
   close(id) {
     document.getElementById(id).style.display = "none";
@@ -35,6 +35,6 @@ const Modal = {
       const modal = modals[i];
       if (modal.style.display !== "none" && modal.style.display !== "") return;
     }
-    this.index = 99;
+    this.index = 100;
   }
 };

@@ -250,15 +250,11 @@ const Client = {
             type: "line",
             data: data.line
           };
-          const clientCtx = clients[data.clientId].ctx;
-          clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Line.draw(data.line, clientCtx);
+          Line.draw(data.line, clients[data.clientId].ctx);
           break;
         }
         case "commit-line": {
-          const clientCtx = clients[data.clientId].ctx;
-          clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Line.draw(data.line, clientCtx, { save: true });
+          Line.draw(data.line, clients[data.clientId].ctx, { save: true });
           ActionHistory.addToUndo({
             type: "line",
             line: data.line
@@ -270,15 +266,11 @@ const Client = {
             type: "rect",
             data: data.rect
           };
-          const clientCtx = clients[data.clientId].ctx;
-          clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Rect.draw(data.rect, clientCtx);
+          Rect.draw(data.rect, clients[data.clientId].ctx);
           break;
         }
         case "commit-rect": {
-          const clientCtx = clients[data.clientId].ctx;
-          clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Rect.draw(data.rect, clientCtx, { save: true });
+          Rect.draw(data.rect, clients[data.clientId].ctx, { save: true });
           ActionHistory.addToUndo({
             type: "rect",
             rect: data.rect
@@ -290,15 +282,11 @@ const Client = {
             type: "ellipse",
             data: data.ellipse
           };
-          const clientCtx = clients[data.clientId].ctx;
-          clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Ellipse.draw(data.ellipse, clientCtx);
+          Ellipse.draw(data.ellipse, clients[data.clientId].ctx);
           break;
         }
         case "commit-ellipse": {
-          const clientCtx = clients[data.clientId].ctx;
-          clientCtx.clearRect(0, 0, clientCtx.canvas.width, clientCtx.canvas.height);
-          Ellipse.draw(data.ellipse, clientCtx, { save: true });
+          Ellipse.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
           ActionHistory.addToUndo({
             type: "ellipse",
             ellipse: data.ellipse
@@ -310,7 +298,7 @@ const Client = {
           [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name);
           [...document.getElementsByClassName("chatPrivateText-" + data.clientId)].forEach((text) => {
             Chat.writePrivateTextTitle(text, [...text.className.matchAll(/chatPrivateText-([a-z\d]{4})/g)].map((name) => name[1]));
-          })
+          });
           Session.updateClientTable();
           break;
         }
@@ -336,7 +324,7 @@ const Client = {
           });
           break;
         }
-        // The server has recieved a copy of the canvas from the first user
+        // The server has received a copy of the canvas from the first user
         case "response-canvas": {
           Canvas.setup(data);
           break;
@@ -385,8 +373,8 @@ const Client = {
         case "session-joined": {
           Modal.close("enterSessionPasswordModal");
           
-          document.getElementById("menuScreen").style.display = "none";
           document.getElementById("drawScreen").style.display = "grid";
+          document.getElementById("menuScreen").style.display = "none";
           if (data.total !== 1) Modal.open("retrieveModal");
           Session.updateId(data.id);
           Session.updatePassword(data.password);
