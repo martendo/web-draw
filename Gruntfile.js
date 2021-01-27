@@ -104,7 +104,7 @@ module.exports = function(grunt) {
         files: {
           "public/index.html": [{
             from: /{{ DATE }}/g,
-            to: "<%= grunt.template.today(\"mmm d, 'yy\") %>"
+            to: "<%= grunt.template.today(\"mediumDate\") %>"
           }, {
             from: /{{ VERSION }}/g,
             to: "v<%= pkg.version %>"
