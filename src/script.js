@@ -330,6 +330,7 @@ document.getElementById("editResizeBtn").addEventListener("click", () => {
   document.getElementById("canvasResizeHeight").value = sessionCanvas.height;
   Modal.open("canvasResizeModal");
 });
+document.getElementById("editSettingsBtn").addEventListener("click", () => Modal.open("settingsModal"));
 document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
 document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
 document.getElementById("viewFillZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fill"));
@@ -402,6 +403,26 @@ document.getElementById("resizeModalCancelBtn").addEventListener("click", () => 
 document.getElementById("canvasResizeModal").addEventListener("keydown", () => {
   if (event.key === "Enter") {
     document.getElementById("resizeModalOkBtn").click();
+  }
+});
+
+document.getElementById("settingsModalDoneBtn").addEventListener("click", () => Modal.close("settingsModal"));
+document.getElementById("sendMouseMovements").addEventListener("input", (event) => {
+  Client.sendMessage({
+    type: "send-mouse",
+    value: event.target.checked
+  });
+  Client.sendMouse = event.target.checked;
+});
+document.getElementById("receiveMouseMovements").addEventListener("input", (event) => {
+  const value = event.target.checked;
+  Client.sendMessage({
+    type: "receive-mouse",
+    value: value
+  });
+  for (const clientId in clients) {
+    if (clientId === Client.id) continue;
+    document.getElementById("cursorIcon-" + clientId).style.display = value ? "block" : "none";
   }
 });
 

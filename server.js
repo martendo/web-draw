@@ -129,16 +129,22 @@ class Client {
     this.name = null;
     this.session = null;
     this.isAlive = true;
+    this.receiveMouse = true;
     clients.set(this.id, this);
   }
   
   // Send a message to all other clients in session except this client
-  broadcast(data) {
-    if (this.session) {
-      this.session.clients.forEach((client) => {
-        if (client !== this) client.send(data);
-      });
-    }
+  broadcast(data, callback = null) {
+    if (!this.session) return;
+    
+    this.session.clients.forEach((client) => {
+      if (client !== this) {
+        if (typeof callback === "function") {
+          if (!callback(client)) return;
+        }
+        client.send(data);
+      }
+    });
   }
   
   // Send a message to this client
@@ -237,7 +243,6 @@ wss.on("connection", (socket) => {
       case "start-stroke":
       case "add-stroke":
       case "end-stroke":
-      case "mouse-move":
       case "create-selection":
       case "remove-selection":
       case "selection-update":
@@ -252,6 +257,10 @@ wss.on("connection", (socket) => {
       case "ellipse":
       case "commit-ellipse": {
         client.broadcast(data);
+        break;
+      }
+      case "mouse-move": {
+        client.broadcast(data, (c) => c.receiveMouse);
         break;
       }
       case "chat-message": {
@@ -356,6 +365,18 @@ wss.on("connection", (socket) => {
       }
       case "session-password": {
         client.session.setPassword(client, data.password);
+        break;
+      }
+      case "send-mouse": {
+        client.broadcast({
+          type: "display-cursor",
+          clientId: client.id,
+          value: data.value
+        });
+        break;
+      }
+      case "receive-mouse": {
+        client.receiveMouse = data.value;
         break;
       }
       default: {

@@ -108,6 +108,8 @@
             <li id="editClearTransparentBtn" title="Clear the canvas to transparent">Clear Transparent</li>
             <li class="separator"></li>
             <li id="editResizeBtn" title="Change the size of the canvas">Resize Canvas</li>
+            <li class="separator"></li>
+            <li id="editSettingsBtn" title="View and modify Web Draw settings">Settings</li>
           </ul>
         </li><li id="viewMenu" class="menuItem">
           <div class="menuLabel">View</div>
@@ -1040,6 +1042,27 @@
         </div>
         <div class="modalFooter">
           <button id="sessionInfoModalDoneBtn">Done</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="settingsModal" class="modal">
+      <div class="modalContent">
+        <div class="modalHeader"><h3>Settings</h3></div>
+        <div class="modalBody">
+          <table class="table">
+            <tr>
+              <td><input type="checkbox" id="sendMouseMovements" checked></td>
+              <td><label for="sendMouseMovements">Send mouse movements</label></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="receiveMouseMovements" checked></td>
+              <td><label for="receiveMouseMovements">Receive mouse movements</label></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modalFooter">
+          <button id="settingsModalDoneBtn">Done</button>
         </div>
       </div>
     </div>

@@ -22,6 +22,8 @@ const Client = {
   id: null,
   socket: null,
   
+  sendMouse: true,
+  
   canvas: null,
   ctx: null,
   
@@ -64,8 +66,14 @@ const Client = {
       window.history.replaceState({}, "Web Draw", "/");
       // Query string also removed
       
+      // Send settings
+      document.getElementById("sendMouseMovements").dispatchEvent(new Event("input"));
+      document.getElementById("receiveMouseMovements").dispatchEvent(new Event("input"));
+      
       // Send mouse movements if mouse has moved
       setInterval(() => {
+        if (!this.sendMouse) return;
+        
         if (mouseMoved.moved) {
           const outside = mouseMoved.x < 0 || mouseMoved.x > sessionCanvas.width || mouseMoved.y < 0 || mouseMoved.y > sessionCanvas.height;
           if (outside && !mouseMoved.outside) {
@@ -351,6 +359,10 @@ const Client = {
             cursor.style.top = y + "px";
             cursor.style.display = "block";
           }
+          break;
+        }
+        case "display-cursor": {
+          document.getElementById("cursorIcon-" + data.clientId).style.display = data.value ? "block" : "none";
           break;
         }
         case "password-set": {
