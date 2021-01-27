@@ -457,8 +457,8 @@
         <div class="modalHeader"><h3>Help</h3></div>
         <div class="modalBody">
           <h4>Contents</h4>
-          <a><label for="helpContentsCollapse" class="collapseLabel">Show/Hide</label></a><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
-          <section class="collapseContent">
+          <label for="helpContentsCollapse" class="collapseLabel"><a>Show/Hide</a></label><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
+          <div class="collapseContent">
             <ul>
               <li><a href="#help-sessions">Sessions</a><ul>
                 <li><a href="#help-sessions-links">Session Links</a></li>
@@ -514,7 +514,7 @@
                 <li><a href="#help-keyboard_shortcuts-other">Other</a></li>
               </ul></li>
             </ul>
-          </section>
+          </div>
           <h4 id="help-sessions">Sessions</h4>
           Imagine a session is the room you're in. Everybody in the same room sees and works on the same drawing.<br>
           If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
@@ -907,12 +907,12 @@
               <tr>
                 <td><input type="checkbox" id="sessionLinkPasswordInput" class="check" checked></td>
                 <td>
-                  <label for="sessionLinkPasswordInput">
-                    <div class="checkLabel">
+                  <div class="checkLabel">
+                    <label for="sessionLinkPasswordInput">
                       Include Password<br>
                       <small>Include the session's password in the link so whoever uses it doesn't need to type it in and can automatically join.</small>
-                    </div>
-                  </label>
+                    </label>
+                  </div>
                 </td>
               </tr>
             </table>
