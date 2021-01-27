@@ -108,7 +108,7 @@ var mouseMoved = {
 var customColours = [];
 
 // Session canvas (permanent)
-const sessionCanvas = document.getElementById("sessionCanvas");
+const sessionCanvas = document.createElement("canvas");
 const sessionCtx = sessionCanvas.getContext("2d");
 
 // Check if a point is within an area
