@@ -1,7 +1,8 @@
 # [Web Draw](https://w-draw.web.app) ![Pen Logo](/public/img/pen.png)
-[![version](https://img.shields.io/github/tag/martendo7/web-draw.svg?style=flat&label=version)](https://github.com/martendo7/web-draw/tags)
+[![Version](https://img.shields.io/github/v/tag/martendo7/web-draw?label=version)](https://github.com/martendo7/web-draw/tags)
+[![Website](https://img.shields.io/website?down_color=inactive&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fw-draw.web.app)](https://w-draw.web.app)
 
-A little real-time online drawing program. [https://w-draw.web.app]()
+A little real-time online drawing program. https://w-draw.web.app
 
 ## What is it?
 Web Draw is a web app that lets you draw on a shared canvas with other people in real time!
