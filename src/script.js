@@ -407,24 +407,8 @@ document.getElementById("canvasResizeModal").addEventListener("keydown", () => {
 });
 
 document.getElementById("settingsModalDoneBtn").addEventListener("click", () => Modal.close("settingsModal"));
-document.getElementById("sendMouseMovements").addEventListener("input", (event) => {
-  Client.sendMessage({
-    type: "send-mouse",
-    value: event.target.checked
-  });
-  Client.sendMouse = event.target.checked;
-});
-document.getElementById("receiveMouseMovements").addEventListener("input", (event) => {
-  const value = event.target.checked;
-  Client.sendMessage({
-    type: "receive-mouse",
-    value: value
-  });
-  for (const clientId in clients) {
-    if (clientId === Client.id) continue;
-    document.getElementById("cursorIcon-" + clientId).style.display = value ? "block" : "none";
-  }
-});
+document.getElementById("sendMouseMovements").addEventListener("input", (event) => Client.setSendMouse(event.target.checked));
+document.getElementById("receiveMouseMovements").addEventListener("input", (event) => Client.setReceiveMouse(event.target.checked));
 
 document.getElementById("helpModalDoneBtn").addEventListener("click", () => {
   Modal.close("helpModal");

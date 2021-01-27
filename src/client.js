@@ -23,6 +23,7 @@ const Client = {
   socket: null,
   
   sendMouse: true,
+  mouseInterval: null,
   
   canvas: null,
   ctx: null,
@@ -31,6 +32,61 @@ const Client = {
   sendMessage(data) {
     const msg = JSON.stringify(data);
     this.socket.send(msg);
+  },
+  
+  sendMouseMove() {
+    if (!mouseMoved.moved) return;
+    
+    const outside = mouseMoved.x < 0 || mouseMoved.x > sessionCanvas.width || mouseMoved.y < 0 || mouseMoved.y > sessionCanvas.height;
+    if (outside && !mouseMoved.outside) {
+      // Just went outside
+      this.sendMessage({
+        type: "mouse-move",
+        outside: true,
+        clientId: this.id
+      });
+      mouseMoved.outside = true;
+    } else if (!outside) {
+      // Inside
+      this.sendMessage({
+        type: "mouse-move",
+        pos: [
+          mouseMoved.x,
+          mouseMoved.y
+        ],
+        clientId: this.id
+      });
+      mouseMoved.outside = false;
+    }
+    // If already outside and still outside, don't do anything
+    
+    mouseMoved.moved = false;
+  },
+  
+  setSendMouse(value) {
+    this.sendMessage({
+      type: "send-mouse",
+      value: value
+    });
+    this.sendMouse = value;
+    if (this.sendMouse) {
+      if (this.mouseInterval == null) {
+        this.mouseInterval = setInterval(() => this.sendMouseMove(), MOUSEMOVE_UPDATE_INTERVAL);
+      }
+    } else {
+      clearInterval(this.mouseInterval);
+      this.mouseInterval = null;
+    }
+  },
+  setReceiveMouse(value) {
+    this.sendMessage({
+      type: "receive-mouse",
+      value: value
+    });
+    for (const clientId in clients) {
+      if (clientId === this.id) continue;
+      document.getElementById("cursorIcon-" + clientId).style.display = value ? "block" : "none";
+    }
   },
   
   init() {
@@ -66,37 +122,12 @@ const Client = {
       window.history.replaceState({}, "Web Draw", "/");
       // Query string also removed
       
+      // Send mouse movements if mouse has moved
+      this.mouseInterval = setInterval(() => this.sendMouseMove(), MOUSEMOVE_UPDATE_INTERVAL);
+      
       // Send settings
       document.getElementById("sendMouseMovements").dispatchEvent(new Event("input"));
       document.getElementById("receiveMouseMovements").dispatchEvent(new Event("input"));
-      
-      // Send mouse movements if mouse has moved
-      setInterval(() => {
-        if (!this.sendMouse) return;
-        
-        if (mouseMoved.moved) {
-          const outside = mouseMoved.x < 0 || mouseMoved.x > sessionCanvas.width || mouseMoved.y < 0 || mouseMoved.y > sessionCanvas.height;
-          if (outside && !mouseMoved.outside) {
-            this.sendMessage({
-              type: "mouse-move",
-              outside: true,
-              clientId: this.id
-            });
-            mouseMoved.outside = true;
-          } else if (!outside) {
-            this.sendMessage({
-              type: "mouse-move",
-              pos: [
-                mouseMoved.x,
-                mouseMoved.y
-              ],
-              clientId: this.id
-            });
-            mouseMoved.outside = false;
-          }
-          mouseMoved.moved = false;
-        }
-      }, MOUSEMOVE_UPDATE_INTERVAL);
     };
     
     // Tell the user when the this.socket has closed
