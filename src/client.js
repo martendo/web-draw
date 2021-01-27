@@ -431,6 +431,8 @@ const Client = {
           
           document.getElementById("lineCapSelect").value = 0;
           
+          document.getElementById("smoothenStrokes").checked = true;
+          
           document.getElementById("cursorPos").textContent = "0, 0";
           
           document.getElementById("compositeSelect").value = 0;

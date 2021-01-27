@@ -55,26 +55,32 @@ const Pen = {
   // Draw a full stroke
   drawStroke(ctx, stroke, options) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    var p0 = stroke.points[0],
-        p1 = stroke.points[1];
     
     ctx.strokeStyle = stroke.colour;
     ctx.lineCap = CAPS[stroke.caps];
+    ctx.lineJoin = "round";
     ctx.lineWidth = stroke.size;
     ctx.globalAlpha = stroke.opacity;
     
     ctx.beginPath();
     ctx.moveTo(stroke.points[0][0], stroke.points[0][1]);
     
-    for (var i = 0; i < stroke.points.length - 1; i++) {
-      const p0 = stroke.points[i], p1 = stroke.points[i + 1];
-      const midPoint = [
-        (p0[0] + p1[0]) / 2,
-        (p0[1] + p1[1]) / 2
-      ];
-      ctx.quadraticCurveTo(p0[0], p0[1], midPoint[0], midPoint[1]);
+    if (stroke.smoothen) {
+      for (var i = 0; i < stroke.points.length - 1; i++) {
+        const p0 = stroke.points[i], p1 = stroke.points[i + 1];
+        const midPoint = [
+          (p0[0] + p1[0]) / 2,
+          (p0[1] + p1[1]) / 2
+        ];
+        ctx.quadraticCurveTo(p0[0], p0[1], midPoint[0], midPoint[1]);
+      }
+      ctx.lineTo(stroke.points[i][0], stroke.points[i][1]);
+    } else {
+      for (var i = 0; i < stroke.points.length; i++) {
+        ctx.lineTo(stroke.points[i][0], stroke.points[i][1]);
+      }
     }
-    ctx.lineTo(stroke.points[i][0], stroke.points[i][1]);
+    
     ctx.stroke();
     
     ctx.globalAlpha = 1;

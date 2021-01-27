@@ -97,7 +97,8 @@ function startTool(point) {
           size: size,
           caps: caps,
           opacity: opacity,
-          compOp: compOp
+          compOp: compOp,
+          smoothen: document.getElementById("smoothenStrokes").checked
         }
       };
       Client.sendMessage({
