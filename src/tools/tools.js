@@ -477,9 +477,16 @@ function clearMouseHold(event) {
     }
     case "selection-move":
     case "selection-resize": {
+      event.preventDefault();
+      if (!(currentAction.data.width && currentAction.data.height)) {
+        currentAction.data.x = currentAction.data.old.x;
+        currentAction.data.y = currentAction.data.old.y;
+        currentAction.data.width = currentAction.data.old.width;
+        currentAction.data.height = currentAction.data.old.height;
+        clients[Client.id].action = currentAction;
+      }
       delete clients[Client.id].action.data.old;
       Selection.draw(Client.ctx, clients[Client.id].action.data, true);
-      event.preventDefault();
       break;
     }
   }
