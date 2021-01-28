@@ -107,15 +107,15 @@ const Canvas = {
   save() {
     const a = document.createElement("a");
     a.style.display = "none";
-    const file = new Blob([JSON.stringify({
+    const file = new Blob([msgpack.encode({
       width: sessionCanvas.width,
       height: sessionCanvas.height,
       undoActions: ActionHistory.undoActions,
       redoActions: ActionHistory.redoActions
-    })], { type: "application/json" });
+    })], { type: "application/octet-stream" });
     const url = URL.createObjectURL(file);
     a.href = url;
-    a.download = "image.json";
+    a.download = "image.bin";
     a.click();
     URL.revokeObjectURL(url);
   },
@@ -129,7 +129,7 @@ const Canvas = {
     reader.onload = (event) => {
       Modal.open("retrieveModal");
       try {
-        this.setup(JSON.parse(event.target.result));
+        this.setup(msgpack.decode(new Uint8Array(event.target.result)));
       } catch (err) {
         console.error("Error setting up canvas: " + err);
         ActionHistory.clearUndo();
@@ -138,7 +138,7 @@ const Canvas = {
         Modal.open("oldCanvasFileModal");
       }
     };
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
   },
   
   setup(data) {

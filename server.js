@@ -21,6 +21,7 @@
 "use strict";
 
 const WebSocket = require("ws");
+const msgpack   = require("msgpack-lite");
 
 const wss = new WebSocket.Server({ port: process.env.PORT || 3000 });
 
@@ -149,8 +150,8 @@ class Client {
   
   // Send a message to this client
   send(data) {
-    const msg = JSON.stringify(data);
-    this.connection.send(msg, (error) => {
+    const msg = msgpack.encode(data);
+    this.connection.send(msg, { binary: true }, (error) => {
       if (error) console.error("Message send failed", msg, error);
     });
   }
@@ -231,7 +232,7 @@ wss.on("connection", (socket) => {
     socket.close();
   });
   socket.on("message", (msg) => {
-    const data = JSON.parse(msg);
+    const data = msgpack.decode(msg);
     switch (data.type) {
       case "fill":
       case "clear":

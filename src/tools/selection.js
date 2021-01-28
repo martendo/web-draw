@@ -234,7 +234,7 @@ const Selection = {
           height: sel.height,
           flipped: sel.flipped,
           data: {
-            data: [...sel.data.data],
+            data: sel.data.data,
             width: sel.data.width,
             height: sel.data.height
           }

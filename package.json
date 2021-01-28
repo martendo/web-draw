@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/martendo7/web-draw",
   "dependencies": {
+    "msgpack-lite": "^0.1.26",
     "ws": "^7.4.2"
   },
   "optionalDependencies": {

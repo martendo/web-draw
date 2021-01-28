@@ -104,7 +104,7 @@ const ActionHistory = {
       case "selection-paste": {
         const sel = {...action.selection};
         sel.data = new ImageData(
-          new Uint8ClampedArray(action.selection.data.data),
+          action.selection.data.data,
           action.selection.data.width,
           action.selection.data.height
         );
