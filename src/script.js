@@ -159,7 +159,7 @@ document.addEventListener("click", (event) => {
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
-  if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
+  notTyping: if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
     if (!event.ctrlKey) {
       switch (event.key) {
         case "1": {
@@ -190,8 +190,10 @@ document.addEventListener("keydown", (event) => {
           Canvas.changeZoom(-0.1);
           break;
         }
-        default: return;
+        default: break notTyping;
       }
+      event.preventDefault();
+      return;
     } else {
       switch (event.key) {
         case "z": {
@@ -218,26 +220,27 @@ document.addEventListener("keydown", (event) => {
           Selection.doPaste();
           break;
         }
-        default: return;
+        default: break notTyping;
       }
-    }
-  } else {
-    // Keyboard shortcuts that can be used anywhere
-    if (!event.ctrlKey) {
-      switch (event.key) {
-        case "F1": {
-          Modal.open("helpModal");
-          break;
-        }
-        case "Escape": {
-          Chat.toggle();
-          break;
-        }
-        default: return;
-      }
+      event.preventDefault();
+      return;
     }
   }
-  event.preventDefault();
+  // Keyboard shortcuts that can be used anywhere
+  if (!event.ctrlKey) {
+    switch (event.key) {
+      case "F1": {
+        Modal.open("helpModal");
+        break;
+      }
+      case "Escape": {
+        Chat.toggle();
+        break;
+      }
+      default: return;
+    }
+    event.preventDefault();
+  }
 });
 
 document.addEventListener("keydown", (event) => {
