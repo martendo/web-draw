@@ -249,11 +249,7 @@ const Client = {
       }
       // Another user has imported a picture onto the canvas
       case "import-picture": {
-        const img = new Image();
-        img.addEventListener("load", () => {
-          sessionCtx.drawImage(img, 0, 0);
-        });
-        img.src = data.image;
+        Selection.importPicture(data.image, data.clientId);
         break;
       }
       case "create-selection": {

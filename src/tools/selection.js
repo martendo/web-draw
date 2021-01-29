@@ -87,6 +87,7 @@ const Selection = {
     }
     return handle;
   },
+  
   draw(ctx, sel, handles, drawOld = true) {
     ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
     
@@ -182,10 +183,7 @@ const Selection = {
     const selection = clients[Client.id].action;
     
     this.draw(Client.ctx, selection.data, handles);
-    
-    // Pos & size
-    document.getElementById("selectPos").textContent = `${selection.data.x}, ${selection.data.y}`;
-    document.getElementById("selectSize").textContent = `${selection.data.width}x${selection.data.height}`;
+    this.updateSizeAndPos();
     
     // Send to other clients (remove unnecessary info too)
     Client.sendMessage({
@@ -201,6 +199,11 @@ const Selection = {
       clientId: Client.id
     });
   },
+  updateSizeAndPos() {
+    const selection = clients[Client.id].action;
+    document.getElementById("selectPos").textContent = `${selection.data.x}, ${selection.data.y}`;
+    document.getElementById("selectSize").textContent = `${selection.data.width}x${selection.data.height}`;
+  },
   drawData(ctx, sel) {
     const tempCanvas = document.createElement("canvas");
     tempCanvas.width = sel.data.width;
@@ -214,6 +217,7 @@ const Selection = {
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     Canvas.update();
   },
+  
   cut(ctx, sel, colour) {
     this.copy(ctx, sel);
     this.clear(sel, colour);
@@ -292,6 +296,48 @@ const Selection = {
     clients[Client.id].action = NO_ACTION;
     Canvas.update();
   },
+  
+  importPicture(src, clientId) {
+    const img = new Image();
+    img.addEventListener("load", () => {
+      if (clientId === Client.id) {
+        Client.sendMessage({
+          type: "import-picture",
+          image: img.src,
+          clientId: Client.id
+        });
+      }
+      const tempCanvas = document.createElement("canvas");
+      const tempCtx = tempCanvas.getContext("2d");
+      tempCanvas.width = img.width;
+      tempCanvas.height = img.height;
+      tempCtx.drawImage(img, 0, 0);
+      const data = tempCtx.getImageData(0, 0, img.width, img.height);
+      
+      const selection = {
+        selected: true,
+        x: 0,
+        y: 0,
+        width: data.width,
+        height: data.height,
+        move: {},
+        resize: {},
+        flipped: {
+          x: false,
+          y: false
+        },
+        data: data
+      };
+      clients[clientId].action = {
+        type: null, // Not editing the selection, but it should exist
+        data: selection
+      };
+      this.draw(clients[clientId].ctx, selection, clientId === Client.id ? true : false, false);
+      if (clientId === Client.id) this.updateSizeAndPos();
+    });
+    img.src = src;
+  },
+  
   adjustSizeAbsolute() {
     const selection = clients[Client.id].action;
     

@@ -1,7 +1,5 @@
 # Web Draw To-Do
 ## Bug fixes
-- Image imports should start as selections with the image as the selection's data
-  - Allows them to be moved and resized
 - Canvas resizes and image imports should be undoable
 - When opening a canvas file, it should be sent to other clients in the session
 - Handle race conditions

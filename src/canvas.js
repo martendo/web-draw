@@ -270,23 +270,14 @@ const Canvas = {
   
   // Import image and put on canvas
   importPicture(event) {
+    switchTool(RECT_SELECT_TOOL);
     const file = event.currentTarget.files[0];
     const reader = new FileReader();
     reader.onerror = (event) => {
       window.alert("There was an error reading the file.\n\n" + reader.error);
       console.error(`Error reading file ${file}:`, event);
     };
-    reader.onload = (event) => {
-      const img = new Image();
-      img.addEventListener("load", () => {
-        Client.sendMessage({
-          type: "import-picture",
-          image: img.src
-        });
-        sessionCtx.drawImage(img, 0, 0);
-      });
-      img.src = event.target.result;
-    };
+    reader.onload = (event) => Selection.importPicture(event.target.result, Client.id);
     reader.readAsDataURL(file);
   },
   
