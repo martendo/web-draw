@@ -141,7 +141,7 @@ function startTool(point) {
       } else {
         colour = pixelColour;
       }
-      changeColour(Colour.rgbToHex(colour), currentPen);
+      Colour.change(currentPen, Colour.rgbToHex(colour));
       if (document.getElementById("colourPickerOpacity").checked) {
         var newOpacity = (pixelColour[3] / 255) * 100;
         if (merge) {

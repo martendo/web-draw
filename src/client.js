@@ -474,8 +474,8 @@ const Client = {
         
         Slider.init();
         
-        changeColour(START_COLOURS[0], 0, false);
-        changeColour(START_COLOURS[1], 1, false);
+        Colour.change(0, Colour.DEFAULTS[0], false);
+        Colour.change(1, Colour.DEFAULTS[1], false);
         
         document.getElementById("lineCapSelect").value = 0;
         
@@ -500,16 +500,16 @@ const Client = {
         for (var i = children.length - 1; i >= 0; i--) {
           children[i].remove();
         }
-        BASIC_COLOURS.values.forEach((row, rowNum) => {
+        Colour.BASICS.values.forEach((row, rowNum) => {
           const quickColourRow = document.createElement("tr");
           quickColourRow.classList.add("quickColourRow");
           row.forEach((col, colNum) => {
             const colour = document.createElement("td");
             colour.classList.add("quickColour");
             colour.style.backgroundColor = col;
-            colour.title = `${BASIC_COLOURS.names[rowNum][colNum]}\nLeft or right click to set colour`;
-            colour.addEventListener("click", (event) => setClickedPenColour(event, col));
-            colour.addEventListener("contextmenu", (event) => setClickedPenColour(event, col));
+            colour.title = `${Colour.BASICS.names[rowNum][colNum]}\nLeft or right click to set colour`;
+            colour.addEventListener("click", (event) => Colour.setClicked(event, col));
+            colour.addEventListener("contextmenu", (event) => Colour.setClicked(event, col));
             quickColourRow.appendChild(colour);
           });
           quickColourSelect.appendChild(quickColourRow);
@@ -517,7 +517,7 @@ const Client = {
         const customColourRow = document.createElement("tr");
         customColourRow.classList.add("quickColourRow");
         customColourRow.id = "customColourRow";
-        for (var i = 0; i < BASIC_COLOURS.values[0].length; i++) {
+        for (var i = 0; i < Colour.BASICS.values[0].length; i++) {
           const customColour = document.createElement("td");
           customColour.classList.add("quickColour", "customColour");
           customColourRow.appendChild(customColour);

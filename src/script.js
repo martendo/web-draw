@@ -93,7 +93,7 @@ const NO_ACTION = {
 };
 
 // Drawing and tool variables
-var penColours = START_COLOURS.slice();
+var penColours = Colour.DEFAULTS.slice();
 var currentPen = 0;
 var tool = PEN_TOOL;
 
@@ -265,10 +265,10 @@ document.getElementById("joinSessionBtn").addEventListener("click", () => Sessio
 
 const colourPicker = document.getElementById("colourPicker");
 colourPicker.addEventListener("input", (event) => {
-  updateColour(event.target.value, currentPen);
+  Colour.update(currentPen, event.target.value);
 });
 colourPicker.addEventListener("change", (event) => {
-  changeColour(event.target.value, currentPen);
+  Colour.change(currentPen, event.target.value);
 });
 
 const quickColourSelect = document.getElementById("quickColourSelect");
@@ -283,17 +283,17 @@ for (let i = 0; i < penColourBoxes.length; i++) {
   const penColourBox = penColourBoxes[i];
   penColourBox.addEventListener("click", () => {
     currentPen = i;
-    selectColour(i);
+    Colour.openPicker(i);
   });
   penColourBox.addEventListener("contextmenu", () => {
     currentPen = i;
-    selectColour(i);
+    Colour.openPicker(i);
   });
 }
 const penColourValues = document.getElementsByClassName("penColourValue");
 for (let i = 0; i < penColourValues.length; i++) {
   penColourValues[i].addEventListener("keydown", (event) => {
-    if (event.key === "Enter") changeColourValue(event, i);
+    if (event.key === "Enter") Colour.changeWithValue(i, event);
   });
 }
 for (let i = 0; i < NUM_TOOLS; i++) {
