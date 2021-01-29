@@ -46,6 +46,7 @@ const ActionHistory = {
         this.doAction(this.undoActions[i]);
       }
       this.enableRedo();
+      Client.drawCurrentAction();
     } else {
       this.clearUndo();
       return;
@@ -67,6 +68,7 @@ const ActionHistory = {
       this.undoActions.push(previousAction);
       this.doAction(previousAction);
       this.enableUndo();
+      Client.drawCurrentAction();
     } else {
       this.clearRedo();
       return;
