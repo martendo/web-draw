@@ -158,8 +158,8 @@ const Client = {
       reader.onerror = (event) => {
         console.error(`Error reading WebSockets data:`, event.data);
       };
-      reader.onload = (event) => {
-        this.handleMessage(new Uint8Array(event.target.result));
+      reader.onload = () => {
+        this.handleMessage(new Uint8Array(reader.result));
       };
       reader.readAsArrayBuffer(event.data);
     };

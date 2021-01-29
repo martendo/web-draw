@@ -126,10 +126,10 @@ const Canvas = {
       window.alert("There was an error reading the file.\n\n" + reader.error);
       console.error(`Error reading file ${file}:`, event);
     };
-    reader.onload = (event) => {
+    reader.onload = () => {
       Modal.open("retrieveModal");
       try {
-        this.setup(msgpack.decode(new Uint8Array(event.target.result)));
+        this.setup(msgpack.decode(new Uint8Array(reader.result)));
       } catch (err) {
         console.error("Error setting up canvas: " + err);
         ActionHistory.clearUndo();
@@ -277,7 +277,7 @@ const Canvas = {
       window.alert("There was an error reading the file.\n\n" + reader.error);
       console.error(`Error reading file ${file}:`, event);
     };
-    reader.onload = (event) => Selection.importPicture(event.target.result, Client.id);
+    reader.onload = () => Selection.importPicture(reader.result, Client.id);
     reader.readAsDataURL(file);
   },
   
