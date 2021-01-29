@@ -26,6 +26,7 @@ const Rect = {
     const x = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;
     const y = rect.lineWidth % 2 !== 0 ? rect.y + 0.5 : rect.y;
     
+    ctx.lineJoin = "miter";
     ctx.globalAlpha = rect.opacity;
     
     ctx.beginPath();
