@@ -256,6 +256,7 @@ const Canvas = {
     if (changed) {
       sessionCtx.fillStyle = bgColour;
       sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+      sessionCtx.clearRect(0, 0, sessionCanvasCopy.width, sessionCanvasCopy.height);
       // Canvas already filled with background colour
       sessionCtx.drawImage(sessionCanvasCopy, 0, 0);
       
