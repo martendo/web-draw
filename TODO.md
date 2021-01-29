@@ -1,6 +1,5 @@
 # Web Draw To-Do
 ## Bug fixes
-- Canvas resizes and image imports should be undoable
 - When opening a canvas file, it should be sent to other clients in the session
 - Handle race conditions
   - Timestamp? Action number?

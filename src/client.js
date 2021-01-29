@@ -399,8 +399,6 @@ const Client = {
       case "request-canvas": {
         this.sendMessage({
           type: "response-canvas",
-          width: sessionCanvas.width,
-          height: sessionCanvas.height,
           actions: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action])),
           undoActions: ActionHistory.undoActions,
           redoActions: ActionHistory.redoActions,
@@ -526,16 +524,11 @@ const Client = {
         elementFitHeight(Chat.input);
         Chat.box.classList.add("displayNone");
         
-        // Set canvas size
-        sessionCanvas.width = Canvas.CANVAS_WIDTH;
-        sessionCanvas.height = Canvas.CANVAS_HEIGHT;
-        Canvas.canvas.width = Canvas.CANVAS_WIDTH;
-        Canvas.canvas.height = Canvas.CANVAS_HEIGHT;
+        Canvas.init();
+        
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);
         Canvas.zoomToWindow("fit", false);
-        // Start with the canvas cleared
-        Canvas.clearBlank(false);
         
         Session.addUsers(data.clients, data.total);
         

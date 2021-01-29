@@ -32,6 +32,20 @@ const Canvas = {
   canvas: document.getElementById("displayCanvas"),
   ctx: document.getElementById("displayCanvas").getContext("2d"),
   
+  init() {
+    // Set canvas size
+    sessionCanvas.width = this.CANVAS_WIDTH;
+    sessionCanvas.height = this.CANVAS_HEIGHT;
+    this.canvas.width = this.CANVAS_WIDTH;
+    this.canvas.height = this.CANVAS_HEIGHT;
+    for (const client of Object.values(clients)) {
+      client.canvas.width = this.CANVAS_WIDTH;
+      client.canvas.height = this.CANVAS_HEIGHT;
+    }
+    // Start with the canvas cleared
+    this.clearBlank(false);
+  },
+  
   // Zoom the canvas with the mouse wheel
   changeZoom(delta) {
     if (this.zoom + delta >= this.MIN_ZOOM) {
@@ -107,8 +121,6 @@ const Canvas = {
     const a = document.createElement("a");
     a.style.display = "none";
     const file = new Blob([msgpack.encode({
-      width: sessionCanvas.width,
-      height: sessionCanvas.height,
       undoActions: ActionHistory.undoActions,
       redoActions: ActionHistory.redoActions
     })], { type: "application/octet-stream" });
@@ -141,13 +153,7 @@ const Canvas = {
   },
   
   setup(data) {
-    sessionCanvas.width = data.width;
-    sessionCanvas.height = data.height;
-    for (const client of Object.values(clients)) {
-      client.canvas.width = data.width;
-      client.canvas.height = data.height;
-    }
-    Canvas.clearBlank(false);
+    this.init();
     // Zoom canvas to fit in canvasContainer if it doesn't already
     this.zoomToWindow("fit", false);
     sessionCtx.fillStyle = BLANK_COLOUR;
@@ -230,11 +236,19 @@ const Canvas = {
   },
   
   // Set the canvas size
-  resize(width, height, bgColour) {
+  resize(width, height, bgColour, user = true) {
+    if (user) {
+      ActionHistory.addToUndo({
+        type: "resize-canvas",
+        width: width,
+        height: height,
+        colour: bgColour
+      });
+    }
     const sessionCanvasCopy = this._copyCanvas(sessionCanvas);
-    const clientCanvasCopies = new Map;
-    for (const client of Object.values(clients)) {
-      clientCanvasCopies.set(client.canvas, this._copyCanvas(client.canvas));
+    const clientCanvasCopies = {};
+    for (const [clientId, client] of Object.entries(clients)) {
+      clientCanvasCopies[clientId] = this._copyCanvas(client.canvas);
     }
     var changed = false;
     if (width !== sessionCanvas.width) {
@@ -260,9 +274,9 @@ const Canvas = {
       // Canvas already filled with background colour
       sessionCtx.drawImage(sessionCanvasCopy, 0, 0);
       
-      for (const client of Object.values(clients)) {
+      for (const [clientId, client] of Object.entries(clients)) {
         // Canvas already cleared from size change
-        client.ctx.drawImage(clientCanvasCopies.get(client.canvas), 0, 0);
+        client.ctx.drawImage(clientCanvasCopies[clientId], 0, 0);
       }
     }
     Canvas.update();

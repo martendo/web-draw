@@ -41,7 +41,7 @@ const ActionHistory = {
     const previousAction = this.undoActions.pop();
     if (previousAction) {
       this.redoActions.push(previousAction);
-      Canvas.clearBlank(false);
+      Canvas.init();
       for (var i = 0; i < this.undoActions.length; i++) {
         this.doAction(this.undoActions[i]);
       }
@@ -97,6 +97,10 @@ const ActionHistory = {
       }
       case "clear-blank": {
         Canvas.clearBlank(false);
+        break;
+      }
+      case "resize-canvas": {
+        Canvas.resize(action.width, action.height, action.colour, false);
         break;
       }
       case "selection-clear": {
