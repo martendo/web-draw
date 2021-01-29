@@ -236,13 +236,11 @@ const Canvas = {
   },
   
   // Set the canvas size
-  resize(width, height, bgColour, user = true) {
+  resize(options, user = true) {
     if (user) {
       ActionHistory.addToUndo({
         type: "resize-canvas",
-        width: width,
-        height: height,
-        colour: bgColour
+        options: options
       });
     }
     const sessionCanvasCopy = this._copyCanvas(sessionCanvas);
@@ -251,32 +249,34 @@ const Canvas = {
       clientCanvasCopies[clientId] = this._copyCanvas(client.canvas);
     }
     var changed = false;
-    if (width !== sessionCanvas.width) {
-      Client.canvas.width = width;
-      sessionCanvas.width = width;
+    if (options.width !== sessionCanvas.width) {
+      Client.canvas.width = options.width;
+      sessionCanvas.width = options.width;
       for (const client of Object.values(clients)) {
-        client.canvas.width = width;
+        client.canvas.width = options.width;
       }
       changed = true;
     }
-    if (height !== sessionCanvas.height) {
-      Client.canvas.height = height;
-      sessionCanvas.height = height;
+    if (options.height !== sessionCanvas.height) {
+      Client.canvas.height = options.height;
+      sessionCanvas.height = options.height;
       for (const client of Object.values(clients)) {
-        client.canvas.height = height;
+        client.canvas.height = options.height;
       }
       changed = true;
     }
     if (changed) {
-      sessionCtx.fillStyle = bgColour;
-      sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-      sessionCtx.clearRect(0, 0, sessionCanvasCopy.width, sessionCanvasCopy.height);
+      if (options.colour) {
+        sessionCtx.fillStyle = options.colour;
+        sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+        sessionCtx.clearRect(options.x, options.y, sessionCanvasCopy.width, sessionCanvasCopy.height);
+      }
       // Canvas already filled with background colour
-      sessionCtx.drawImage(sessionCanvasCopy, 0, 0);
+      sessionCtx.drawImage(sessionCanvasCopy, options.x, options.y);
       
       for (const [clientId, client] of Object.entries(clients)) {
         // Canvas already cleared from size change
-        client.ctx.drawImage(clientCanvasCopies[clientId], 0, 0);
+        client.ctx.drawImage(clientCanvasCopies[clientId], options.x, options.y);
       }
     }
     Canvas.update();

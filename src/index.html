@@ -542,7 +542,10 @@
           With the "Export" button, you can save your drawing as a PNG image!<br>
           And with "Import", you can upload an image to use in your drawing!
           <h5 id="help-menubar-resize_canvas">Resize Canvas</h5>
-          In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.
+          In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.<br>
+          <br>
+          When choosing a new size for your canvas, you may also choose an offset position for the original image on the new canvas and how to fill new canvas space.<br>
+          The "Centre" button will automatically set the offset position so that the original image will be centred on the new canvas.
           <h5 id="help-menubar-session_id_password">Session ID & Password</h5>
           Through the "Session" menu, you can change the current session's ID and set (or remove) a password.
           <h5 id="help-menubar-share_link">Share Link</h5>
@@ -799,21 +802,49 @@
       <div class="modalContent">
         <div class="modalHeader"><h3>Resize Canvas</h3></div>
         <div class="modalBody">
-          <table class="table">
-            <tr>
-              <td><label for="canvasResizeWidth">Width: </label></td>
-              <td><input id="canvasResizeWidth" type="number" min="1" step="1"></td>
-              <td><label for="canvasResizeWidth">px</label><br></td>
-            </tr>
-            <tr>
-              <td><label for="canvasResizeHeight">Height: </label></td>
-              <td><input id="canvasResizeHeight" type="number" min="1" step="1"></td>
-              <td><label for="canvasResizeHeight">px</label></td>
-            </tr>
-          </table>
+          <fieldset>
+            <legend>Canvas Size</legend>
+            <table class="table">
+              <tr>
+                <td><label for="canvasResizeWidth">Width: </label></td>
+                <td><input id="canvasResizeWidth" type="number" min="1" step="1"></td>
+                <td>px</td>
+              </tr>
+              <tr>
+                <td><label for="canvasResizeHeight">Height: </label></td>
+                <td><input id="canvasResizeHeight" type="number" min="1" step="1"></td>
+                <td>px</td>
+              </tr>
+            </table>
+          </fieldset>
+          <fieldset>
+            <legend>Offset</legend>
+            <table class="table">
+              <tr>
+                <td><label for="canvasResizeOffsetX">X: </label></td>
+                <td><input id="canvasResizeOffsetX" type="number" min="0" step="1"></td>
+                <td>px</td>
+              </tr>
+              <tr>
+                <td><label for="canvasResizeOffsetY">Y: </label></td>
+                <td><input id="canvasResizeOffsetY" type="number" min="0" step="1"></td>
+                <td>px</td>
+              </tr>
+              <tr>
+                <td colspan="3"><button id="canvasResizeOffsetCentre">Centre</button></td>
+              </tr>
+            </table>
+          </fieldset>
+          <label for="canvasResizeFill">Fill with:</label>
+          <select id="canvasResizeFill">
+            <option value="0">Colour 1 (foreground)</option>
+            <option value="1">Colour 2 (background)</option>
+            <option value="2">White</option>
+            <option value="3">Transparency</option>
+          </select>
         </div>
         <div class="modalFooter">
-          <button id="resizeModalOkBtn">OK</button><button id="resizeModalCancelBtn">Cancel</button>
+          <button id="resizeModalResizeBtn">Resize</button><button id="resizeModalCancelBtn">Cancel</button>
         </div>
       </div>
     </div>

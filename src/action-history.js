@@ -100,7 +100,7 @@ const ActionHistory = {
         break;
       }
       case "resize-canvas": {
-        Canvas.resize(action.width, action.height, action.colour, false);
+        Canvas.resize(action.options, false);
         break;
       }
       case "selection-clear": {

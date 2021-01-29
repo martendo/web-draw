@@ -328,11 +328,6 @@ document.getElementById("editUndoBtn").addEventListener("click", () => ActionHis
 document.getElementById("editRedoBtn").addEventListener("click", () => ActionHistory.doRedo());
 document.getElementById("editClearBtn").addEventListener("click", () => Canvas.clearBlank());
 document.getElementById("editClearTransparentBtn").addEventListener("click", () => Canvas.clear());
-document.getElementById("editResizeBtn").addEventListener("click", () => {
-  document.getElementById("canvasResizeWidth").value = sessionCanvas.width;
-  document.getElementById("canvasResizeHeight").value = sessionCanvas.height;
-  Modal.open("canvasResizeModal");
-});
 document.getElementById("editSettingsBtn").addEventListener("click", () => Modal.open("settingsModal"));
 document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
 document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
@@ -390,24 +385,72 @@ document.getElementById("allPingsLink").addEventListener("click", () => Modal.op
 
 document.getElementById("allPingsModalDoneBtn").addEventListener("click", () => Modal.close("allPingsModal"));
 
-document.getElementById("resizeModalOkBtn").addEventListener("click", () => {
+const resizeWidth = document.getElementById("canvasResizeWidth");
+const resizeHeight = document.getElementById("canvasResizeHeight");
+const offsetX = document.getElementById("canvasResizeOffsetX");
+const offsetY = document.getElementById("canvasResizeOffsetY");
+resizeWidth.addEventListener("input", () => {
+  const delta = resizeWidth.value - sessionCanvas.width;
+  offsetX.min = Math.min(delta, 0);
+  offsetX.max = Math.max(delta, 0);
+  offsetX.value = Math.max(Math.min(offsetX.value, offsetX.max), offsetX.min);
+});
+resizeHeight.addEventListener("input", () => {
+  const delta = resizeHeight.value - sessionCanvas.height;
+  offsetY.min = Math.min(delta, 0);
+  offsetY.max = Math.max(delta, 0);
+  offsetY.value = Math.max(Math.min(offsetY.value, offsetY.max), offsetY.min);
+});
+document.getElementById("editResizeBtn").addEventListener("click", () => {
+  resizeWidth.value = sessionCanvas.width;
+  resizeHeight.value = sessionCanvas.height;
+  offsetX.min = 0;
+  offsetX.max = 0;
+  offsetX.value = 0;
+  offsetY.min = 0;
+  offsetY.max = 0;
+  offsetY.value = 0;
+  Modal.open("canvasResizeModal");
+});
+document.getElementById("canvasResizeOffsetCentre").addEventListener("click", () => {
+  offsetX.value = Math.round((resizeWidth.value - sessionCanvas.width) / 2);
+  offsetY.value = Math.round((resizeHeight.value - sessionCanvas.height) / 2);
+});
+const resizeFill = document.getElementById("canvasResizeFill");
+resizeFill.value = 1;
+document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
   Modal.close("canvasResizeModal");
-  const width = document.getElementById("canvasResizeWidth").value;
-  const height = document.getElementById("canvasResizeHeight").value;
+  var bgColour = null;
+  switch (parseInt(resizeFill.value)) {
+    case 0: {
+      bgColour = penColours[0];
+      break;
+    }
+    case 1: {
+      bgColour = penColours[1];
+      break;
+    }
+    case 2: {
+      bgColour = "#ffffff";
+      break;
+    }
+    // 3: Transparency = null
+  }
+  console.log(bgColour);
+  const options = {
+    width: document.getElementById("canvasResizeWidth").value,
+    height: document.getElementById("canvasResizeHeight").value,
+    x: document.getElementById("canvasResizeOffsetX").value,
+    y: document.getElementById("canvasResizeOffsetY").value,
+    colour: bgColour
+  };
   Client.sendMessage({
     type: "resize-canvas",
-    width: width,
-    height: height,
-    colour: penColours[1]
+    options: options
   });
-  Canvas.resize(width, height, penColours[1]);
+  Canvas.resize(options);
 });
 document.getElementById("resizeModalCancelBtn").addEventListener("click", () => Modal.close("canvasResizeModal"));
-document.getElementById("canvasResizeModal").addEventListener("keydown", () => {
-  if (event.key === "Enter") {
-    document.getElementById("resizeModalOkBtn").click();
-  }
-});
 
 document.getElementById("settingsModalDoneBtn").addEventListener("click", () => Modal.close("settingsModal"));
 document.getElementById("sendMouseMovements").addEventListener("input", (event) => Client.setSendMouse(event.target.checked));

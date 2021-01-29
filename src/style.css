@@ -659,7 +659,7 @@ table.table.border.alternate tr:nth-child(even) {
 .toolSettings:not(.currentToolSettings) {
   display: none;
 }
-.sliderInput, select, .selectInput, .toolBtn {
+.sliderInput, .selectInput, .selectInput select, .toolBtn {
   display: block;
   width: 100%;
   margin: 3px 0;
@@ -674,12 +674,14 @@ table.table.border.alternate tr:nth-child(even) {
 .sliderInput {
   text-align: left;
 }
-select {
+.selectInput select {
   text-align: -webkit-right;
   text-align: right;
   text-align-last: right;
-  height: 30px;
   margin: 0;
+}
+select {
+  height: 30px;
 }
 .sliderBar {
   height: 30px;

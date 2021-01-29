@@ -392,7 +392,7 @@ const Client = {
       }
       // Another user has changed the canvas size
       case "resize-canvas": {
-        Canvas.resize(data.width, data.height, data.colour);
+        Canvas.resize(data.options);
         break;
       }
       // The server needs a copy of the canvas to send to a new user
