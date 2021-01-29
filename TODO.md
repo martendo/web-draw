@@ -1,6 +1,5 @@
 # Web Draw To-Do
 ## Bug fixes
-- When opening a canvas file, it should be sent to other clients in the session
 - Handle race conditions
   - Timestamp? Action number?
 ## (Hopefully) Coming in the near future

@@ -238,6 +238,7 @@ wss.on("connection", (socket) => {
       case "clear":
       case "clear-blank":
       case "import-picture":
+      case "open-canvas":
       case "resize-canvas":
       case "undo":
       case "redo":

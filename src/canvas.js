@@ -139,8 +139,14 @@ const Canvas = {
     };
     reader.onload = () => {
       Modal.open("retrieveModal");
+      const data = new Uint8Array(reader.result);
       try {
-        this.setup(msgpack.decode(new Uint8Array(reader.result)));
+        this.setup(msgpack.decode(data));
+        // Only send to other clients if setup was successful
+        Client.sendMessage({
+          type: "open-canvas",
+          file: data
+        });
       } catch (err) {
         console.error("Error setting up canvas: " + err);
         ActionHistory.clearUndo();

@@ -411,6 +411,11 @@ const Client = {
         Canvas.setup(data);
         break;
       }
+      // Another user has opened a canvas file
+      case "open-canvas": {
+        Canvas.setup(msgpack.decode(data.file));
+        break;
+      }
       // A new user has joined the session
       case "user-joined": {
         Session.addUsers([data.client], data.total);
