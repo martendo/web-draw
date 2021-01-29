@@ -139,6 +139,12 @@ const Canvas = {
     };
     reader.onload = () => {
       Modal.open("retrieveModal");
+      
+      const backupHistory = {
+        undo: ActionHistory.undoActions.slice(),
+        redo: ActionHistory.redoActions.slice()
+      };
+      
       const data = new Uint8Array(reader.result);
       try {
         this.setup(msgpack.decode(data));
@@ -149,8 +155,9 @@ const Canvas = {
         });
       } catch (err) {
         console.error("Error setting up canvas: " + err);
-        ActionHistory.clearUndo();
-        ActionHistory.clearRedo();
+        ActionHistory.undoActions = backupHistory.undo;
+        ActionHistory.redoActions = backupHistory.redo;
+        ActionHistory.doAllActions();
         Modal.close("retrieveModal");
         Modal.open("oldCanvasFileModal");
       }

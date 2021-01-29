@@ -147,6 +147,15 @@ const ActionHistory = {
     }
   },
   
+  doAllActions() {
+    Canvas.init();
+    for (var i = 0; i < this.undoActions.length; i++) {
+      this.doAction(this.undoActions[i]);
+    }
+    this.enableRedo();
+    Client.drawCurrentAction();
+  },
+  
   _undoBtn: document.getElementById("undoBtn"),
   _redoBtn: document.getElementById("redoBtn"),
   
