@@ -46,7 +46,7 @@ const ActionHistory = {
         this.doAction(this.undoActions[i]);
       }
       this.enableRedo();
-      Client.drawCurrentAction();
+      Session.drawCurrentActions();
     } else {
       this.clearUndo();
       return;
@@ -68,7 +68,7 @@ const ActionHistory = {
       this.undoActions.push(previousAction);
       this.doAction(previousAction);
       this.enableUndo();
-      Client.drawCurrentAction();
+      Session.drawCurrentActions();
     } else {
       this.clearRedo();
       return;
@@ -157,7 +157,7 @@ const ActionHistory = {
       this.doAction(this.undoActions[i]);
     }
     this.enableRedo();
-    Client.drawCurrentAction();
+    Session.drawCurrentActions();
   },
   
   _undoBtn: document.getElementById("undoBtn"),

@@ -89,43 +89,6 @@ const Client = {
     }
   },
   
-  drawCurrentAction() {
-    const currentAction = clients[this.id].action;
-    switch (currentAction.type) {
-      case "stroke": {
-        Pen.drawStroke(this.ctx, currentAction.data);
-        break;
-      }
-      case "line": {
-        Line.draw(currentAction.data, this.ctx);
-        break;
-      }
-      case "rect": {
-        Rect.draw(currentAction.data, this.ctx);
-        break;
-      }
-      case "ellipse": {
-        Ellipse.draw(currentAction.data, this.ctx);
-        break;
-      }
-      case "selecting": {
-        Selection.draw(this.ctx, currentAction.data, false);
-        break;
-      }
-      case "selection-move":
-      case "selection-resize": {
-        Selection.draw(this.ctx, currentAction.data, true);
-        break;
-      }
-      case null: {
-        if (currentAction.data && currentAction.data.hasOwnProperty("selected")) {
-          Selection.draw(this.ctx, currentAction.data, true);
-        }
-      }
-    }
-    Canvas.update();
-  },
-  
   init() {
     // Create WebSocket
     this.socket = new WebSocket(WSS_URL);

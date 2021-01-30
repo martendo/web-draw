@@ -103,6 +103,47 @@ const Session = {
     if (index !== -1) this.actionOrder.splice(index, 1);
   },
   
+  drawCurrentActions() {
+    for (const [clientId, client] of Object.entries(clients)) {
+      const action = client.action;
+      switch (action.type) {
+        case "stroke": {
+          Pen.drawStroke(client.ctx, action.data);
+          break;
+        }
+        case "line": {
+          Line.draw(action.data, client.ctx);
+          break;
+        }
+        case "rect": {
+          Rect.draw(action.data, client.ctx);
+          break;
+        }
+        case "ellipse": {
+          Ellipse.draw(action.data, client.ctx);
+          break;
+        }
+        case "selecting": {
+          Selection.draw(client.ctx, action.data, false);
+          break;
+        }
+        case "selection-move":
+        case "selection-resize": {
+          Selection.draw(client.ctx, action.data, clientId === Client.id);
+          break;
+        }
+        case null: {
+          // Only for this user - area is selected but currently not being modified
+          if (action.data && action.data.hasOwnProperty("selected")) {
+            Selection.draw(client.ctx, action.data, true);
+          }
+          break;
+        }
+      }
+    }
+    Canvas.update();
+  },
+  
   // Request to create a new session
   create() {
     Client.sendMessage({
