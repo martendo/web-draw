@@ -156,7 +156,16 @@ const ActionHistory = {
     for (var i = 0; i < this.undoActions.length; i++) {
       this.doAction(this.undoActions[i]);
     }
-    this.enableRedo();
+    if (this.undoActions.length) {
+      this.enableUndo();
+    } else {
+      this.clearUndo();
+    }
+    if (this.redoActions.length) {
+      this.enableRedo();
+    } else {
+      this.clearRedo();
+    }
     Session.drawCurrentActions();
   },
   

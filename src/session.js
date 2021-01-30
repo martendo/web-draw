@@ -105,6 +105,7 @@ const Session = {
   
   drawCurrentActions() {
     for (const [clientId, client] of Object.entries(clients)) {
+      const isThisClient = clientId === Client.id;
       const action = client.action;
       switch (action.type) {
         case "stroke": {
@@ -124,18 +125,18 @@ const Session = {
           break;
         }
         case "selecting": {
-          Selection.draw(client.ctx, action.data, false);
+          Selection.draw(client.ctx, action.data, false, isThisClient);
           break;
         }
         case "selection-move":
         case "selection-resize": {
-          Selection.draw(client.ctx, action.data, clientId === Client.id);
+          Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
           break;
         }
         case null: {
-          // Only for this user - area is selected but currently not being modified
+          // Area is selected but currently not being modified
           if (action.data && action.data.hasOwnProperty("selected")) {
-            Selection.draw(client.ctx, action.data, true);
+            Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
           }
           break;
         }

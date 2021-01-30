@@ -192,51 +192,14 @@ const Canvas = {
     sessionCtx.fillStyle = Colour.BLANK;
     sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
     ActionHistory.undoActions = data.undoActions;
-    if (ActionHistory.undoActions.length) {
-      ActionHistory.enableUndo();
-    } else {
-      ActionHistory.clearUndo();
-    }
     ActionHistory.redoActions = data.redoActions;
-    if (ActionHistory.redoActions.length) {
-      ActionHistory.enableRedo();
-    } else {
-      ActionHistory.clearRedo();
-    }
-    for (var i = 0; i < ActionHistory.undoActions.length; i++) {
-      ActionHistory.doAction(ActionHistory.undoActions[i]);
-    }
     if (data.actions) {
-      for (const [clientId, action] of Object.entries(data.actions)) {
+      for (const [clientId, action] of Object.entries(data.actions.clients)) {
         clients[clientId].action = action;
-        const clientCanvas = clients[clientId].canvas;
-        const clientCtx = clients[clientId].ctx;
-        switch (action.type) {
-          case "stroke": {
-            Pen.drawStroke(clientCtx, action.data);
-            break;
-          }
-          case "line": {
-            Line.draw(action.data, clientCtx);
-            break;
-          }
-          case "rect": {
-            Rect.draw(action.data, clientCtx);
-            break;
-          }
-          case "ellipse": {
-            Ellipse.draw(action.data, clientCtx);
-            break;
-          }
-          case "selecting":
-          case "selection-move":
-          case "selection-resize": {
-            Selection.draw(clientCtx, action.data, false);
-            break;
-          }
-        }
       }
+      Session.actionOrder = data.actions.order;
     }
+    ActionHistory.doAllActions();
     Modal.close("retrieveModal");
   },
   

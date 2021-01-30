@@ -367,7 +367,10 @@ const Client = {
       case "request-canvas": {
         this.sendMessage({
           type: "response-canvas",
-          actions: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action])),
+          actions: {
+            order: Session.actionOrder,
+            clients: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action]))
+          },
           undoActions: ActionHistory.undoActions,
           redoActions: ActionHistory.redoActions,
           clientId: data.clientId
