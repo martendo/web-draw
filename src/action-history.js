@@ -80,10 +80,11 @@ const ActionHistory = {
     switch (action.type) {
       case "stroke": {
         Pen.drawStroke(Client.ctx, action.stroke, {
-          overrides: {
-            [Client.id]: action.stroke.compOp
-          },
-          save: true
+          save: true,
+          only: {
+            id: Client.id,
+            compOp: action.stroke.compOp
+          }
         });
         break;
       }
@@ -119,28 +120,31 @@ const ActionHistory = {
       }
       case "line": {
         Line.draw(action.line, Client.ctx, {
-          overrides: {
-            [Client.id]: action.line.compOp
-          },
-          save: true
+          save: true,
+          only: {
+            id: Client.id,
+            compOp: action.line.compOp
+          }
         });
         break;
       }
       case "rect": {
         Rect.draw(action.rect, Client.ctx, {
-          overrides: {
-            [Client.id]: action.rect.compOp
-          },
-          save: true
+          save: true,
+          only: {
+            id: Client.id,
+            compOp: action.rect.compOp
+          }
         });
         break;
       }
       case "ellipse": {
         Ellipse.draw(action.ellipse, Client.ctx, {
-          overrides: {
-            [Client.id]: action.ellipse.compOp
-          },
-          save: true
+          save: true,
+          only: {
+            id: Client.id,
+            compOp: action.ellipse.compOp
+          }
         });
         break;
       }

@@ -72,40 +72,60 @@ const Canvas = {
     this.canvas.style.transform = `scale(${this.zoom})`;
   },
   
-  update({ overrides = {}, extras = [], save = false } = {}) {
+  update({ extras = [], save = false, only = null } = {}) {
     this.canvas.width = sessionCanvas.width;
     this.canvas.height = sessionCanvas.height;
     this.ctx.drawImage(sessionCanvas, 0, 0);
     
-    for (const [clientId, client] of Object.entries(clients)) {
-      if (overrides.hasOwnProperty(clientId)) {
-        this.ctx.globalCompositeOperation = COMP_OPS[overrides[clientId]];
-      } else {
-        const type = client.action.type;
+    if (only) {
+      // Used in ActionHistory
+      this.ctx.globalCompositeOperation = COMP_OPS[only.compOp];
+      this.ctx.drawImage(clients[only.id].canvas, 0, 0);
+    } else {
+      const onTop = [];
+      for (const clientId of Session.actionOrder) {
+        const client = clients[clientId];
         // Selections are not part of the actual image
-        if (save && (type === "selecting" || type === "selection-move" || type === "selection-resize")) continue;
-        if (type === null &&
-            // Still draw the current selection (not currently changing it) if it exists, but don't if saving
-            (save || !client.action.data || !client.action.data.hasOwnProperty("selected"))) continue;
+        // Type is only null when a selection is present but not currently being modified
+        const type = client.action.type;
+        if (type === null || type === "selecting" || type === "selection-move" || type === "selection-resize") {
+          if (!save) {
+            // Selections should be drawn on top of everything, save them for later
+            onTop.push(clientId);
+          }
+          continue;
+        }
+        
         this.ctx.globalCompositeOperation = COMP_OPS[client.action.data.compOp] || DEFAULT_COMP_OP;
+        this.ctx.drawImage(client.canvas, 0, 0);
       }
-      this.ctx.drawImage(client.canvas, 0, 0);
-    }
-    for (const extra of extras) {
-      this.ctx.globalCompositeOperation = COMP_OPS[extra.compOp];
-      this.ctx.drawImage(extra.canvas, 0, 0);
+      for (const extra of extras) {
+        this.ctx.globalCompositeOperation = COMP_OPS[extra.compOp];
+        this.ctx.drawImage(extra.canvas, 0, 0);
+      }
+      
+      // Selections don't have special composite operations
+      this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
+      for (const clientId of onTop) {
+        this.ctx.drawImage(clients[clientId].canvas, 0, 0);
+      }
     }
     this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
     if (save) {
-      const tempCanvas = this._copyCanvas(this.canvas);
-      // Update display canvas
-      this.update({
-        overrides,
-        extras,
-        save: false
-      });
-      sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-      sessionCtx.drawImage(tempCanvas, 0, 0);
+      if (!only) {
+        const tempCanvas = this._copyCanvas(this.canvas);
+        // Update display canvas
+        this.update({
+          extras: extras,
+          save: false,
+          only: only
+        });
+        sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+        sessionCtx.drawImage(tempCanvas, 0, 0);
+      } else {
+        sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+        sessionCtx.drawImage(this.canvas, 0, 0);
+      }
     }
   },
   

@@ -23,6 +23,8 @@ const Session = {
   password: null,
   link: location.origin,
   
+  actionOrder: [],
+  
   // Add/Remove a user canvas and mouse and update the total
   addUsers(c, total) {
     c.forEach((client) => {
@@ -89,6 +91,16 @@ const Session = {
         Modal.close("sessionInfoModal");
       });
     }
+  },
+  
+  startClientAction(clientId, action) {
+    clients[clientId].action = action;
+    if (!this.actionOrder.includes(clientId)) this.actionOrder.push(clientId);
+  },
+  
+  endClientAction(clientId) {
+    const index = this.actionOrder.indexOf(clientId);
+    if (index !== -1) this.actionOrder.splice(index, 1);
   },
   
   // Request to create a new session

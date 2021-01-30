@@ -3,9 +3,6 @@
 - Handle race conditions
   - Timestamp? Action number?
 ## (Hopefully) Coming in the near future
-- The order of which client actions are drawn should be in the order they were started
-  - Push client ID when client starts an action to drawing order array
-  - Remove when client ends action
 - Selection copy buffer, for each client
   - Eliminate unnecessary raw image data of paste image actions in canvas files
   - Allow pasting copied data after switching to another tool

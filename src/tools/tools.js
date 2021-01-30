@@ -60,13 +60,14 @@ function mouseHold(event) {
         height: currentAction.data.height
       };
       currentAction.type = "selection-resize";
+      Session.startClientAction(Client.id, currentAction);
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
       currentAction.data.move = {
         x: point.x,
         y: point.y
       };
       currentAction.type = "selection-move";
-      clients[Client.id].action = currentAction;
+      Session.startClientAction(Client.id, currentAction);
     } else {
       startTool(point);
     }
@@ -89,7 +90,7 @@ function startTool(point) {
   
   switch (tool) {
     case PEN_TOOL: {
-      clients[Client.id].action = {
+      Session.startClientAction(Client.id, {
         type: "stroke",
         data: {
           points: [],
@@ -100,7 +101,7 @@ function startTool(point) {
           compOp: compOp,
           smoothen: document.getElementById("smoothenStrokes").checked
         }
-      };
+      });
       Client.sendMessage({
         type: "start-stroke",
         clientId: Client.id,
@@ -156,7 +157,7 @@ function startTool(point) {
         type: "create-selection",
         clientId: Client.id
       });
-      clients[Client.id].action = {
+      Session.startClientAction(Client.id, {
         type: "selecting",
         data: {
           selected: false,
@@ -171,11 +172,11 @@ function startTool(point) {
             y: false
           }
         }
-      };
+      });
       break;
     }
     case LINE_TOOL: {
-      clients[Client.id].action = {
+      Session.startClientAction(Client.id, {
         type: "line",
         data: {
           x0: point.x,
@@ -188,12 +189,12 @@ function startTool(point) {
           opacity: opacity,
           compOp: compOp
         }
-      };
+      });
       break;
     }
     case RECT_TOOL: {
       if (!shapeOutline && !shapeFill) break;
-      clients[Client.id].action = {
+      Session.startClientAction(Client.id, {
         type: "rect",
         data: {
           x: point.x,
@@ -210,12 +211,12 @@ function startTool(point) {
           outline: shapeOutline,
           fill: shapeFill
         }
-      };
+      });
       break;
     }
     case ELLIPSE_TOOL: {
       if (!shapeOutline && !shapeFill) break;
-      clients[Client.id].action = {
+      Session.startClientAction(Client.id, {
         type: "ellipse",
         data: {
           x: point.x,
@@ -232,7 +233,7 @@ function startTool(point) {
           outline: shapeOutline,
           fill: shapeFill
         }
-      };
+      });
       break;
     }
   }
@@ -392,6 +393,7 @@ function clearMouseHold(event) {
   if (!clients.hasOwnProperty(Client.id)) return;
   
   const currentAction = clients[Client.id].action;
+  var keepAction = false;
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
@@ -411,12 +413,7 @@ function clearMouseHold(event) {
         line: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update({
-        overrides: {
-          [Client.id]: currentAction.data.compOp
-        },
-        save: true
-      });
+      Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "line",
@@ -431,12 +428,7 @@ function clearMouseHold(event) {
         rect: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update({
-        overrides: {
-          [Client.id]: currentAction.data.compOp
-        },
-        save: true
-      });
+      Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "rect",
@@ -451,12 +443,7 @@ function clearMouseHold(event) {
         ellipse: currentAction.data,
         clientId: Client.id
       });
-      Canvas.update({
-        overrides: {
-          [Client.id]: currentAction.data.compOp
-        },
-        save: true
-      });
+      Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
       ActionHistory.addToUndo({
         type: "ellipse",
@@ -471,6 +458,7 @@ function clearMouseHold(event) {
         clients[Client.id].action = currentAction;
         Selection.adjustSizeAbsolute();
         Selection.draw(Client.ctx, clients[Client.id].action.data, true);
+        keepAction = true;
       } else {
         Selection.remove();
       }
@@ -488,10 +476,16 @@ function clearMouseHold(event) {
       }
       delete clients[Client.id].action.data.old;
       Selection.draw(Client.ctx, clients[Client.id].action.data, true);
+      keepAction = true;
+      break;
+    }
+    default: {
+      keepAction = true;
       break;
     }
   }
   clients[Client.id].action.type = null;
+  if (!keepAction) Session.endClientAction(Client.id);
 }
 
 // Switch the current tool

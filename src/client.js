@@ -237,7 +237,7 @@ const Client = {
       }
       // Another user has started a stroke
       case "start-stroke": {
-        clients[data.clientId].action = data.action;
+        Session.startClientAction(data.clientId, data.action);
         break;
       }
       // Another user has added a point in their current stroke
@@ -253,6 +253,7 @@ const Client = {
           clients[data.clientId].action.data
         );
         clients[data.clientId].action.type = null;
+        Session.endClientAction(data.clientId);
         break;
       }
       // Another user has undone/redone an action
@@ -290,14 +291,15 @@ const Client = {
         break;
       }
       case "create-selection": {
-        clients[data.clientId].action = {
+        Session.startClientAction(data.clientId, {
           type: "selecting",
           data: {}
-        };
+        });
         break;
       }
       case "remove-selection": {
         clients[data.clientId].action = NO_ACTION;
+        Session.endClientAction(data.clientId);
         Canvas.update();
         break;
       }
@@ -330,10 +332,10 @@ const Client = {
         break;
       }
       case "line": {
-        clients[data.clientId].action = {
+        Session.startClientAction(data.clientId, {
           type: "line",
           data: data.line
-        };
+        });
         Line.draw(data.line, clients[data.clientId].ctx);
         break;
       }
@@ -343,13 +345,14 @@ const Client = {
           type: "line",
           line: data.line
         });
+        Session.endClientAction(data.clientId);
         break;
       }
       case "rect": {
-        clients[data.clientId].action = {
+        Session.startClientAction(data.clientId, {
           type: "rect",
           data: data.rect
-        };
+        });
         Rect.draw(data.rect, clients[data.clientId].ctx);
         break;
       }
@@ -359,13 +362,14 @@ const Client = {
           type: "rect",
           rect: data.rect
         });
+        Session.endClientAction(data.clientId);
         break;
       }
       case "ellipse": {
-        clients[data.clientId].action = {
+        Session.startClientAction(data.clientId, {
           type: "ellipse",
           data: data.ellipse
-        };
+        });
         Ellipse.draw(data.ellipse, clients[data.clientId].ctx);
         break;
       }
@@ -375,6 +379,7 @@ const Client = {
           type: "ellipse",
           ellipse: data.ellipse
         });
+        Session.endClientAction(data.clientId);
         break;
       }
       case "user-name": {

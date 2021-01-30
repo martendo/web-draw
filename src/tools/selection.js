@@ -294,6 +294,7 @@ const Selection = {
       clientId: Client.id
     });
     clients[Client.id].action = NO_ACTION;
+    Session.endClientAction(Client.id);
     Canvas.update();
   },
   
