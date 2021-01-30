@@ -43,7 +43,7 @@ I then decided I'd make something myself. A couple of days later, the first vers
 ## How does it *really* work?
 Web Draw uses WebSockets for the "Web" part, and the Canvas API for the "Draw" part.
 
-The WebSockets server uses Node's [ws module](https://github.com/websockets/ws) and speaks JSON with its clients.
+The WebSockets server uses Node's [ws module](https://github.com/websockets/ws) and speaks [MessagePack](https://msgpack.org) with its clients using [msgpack-lite](https://github.com/kawanet/msgpack-lite).
 Whenever somebody does something, the server is told about it, and if necessary, the server then tells everybody else about it.
 
 The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing fancy.
