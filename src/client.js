@@ -163,14 +163,6 @@ const Client = {
       };
       reader.readAsArrayBuffer(event.data);
     };
-    
-    // "Ping" the server every 30 minutes so it doesn't go to sleep while it's being used
-    // Apparently WebSockets activity doesn't count as activity, so send an HTTP HEAD request
-    setInterval(() => {
-      const req = new XMLHttpRequest();
-      req.open("HEAD", WSS_URL.replace("ws", "http"));
-      req.send();
-    }, 1000 * 60 * 30);
   },
   
   handleMessage(msg) {
