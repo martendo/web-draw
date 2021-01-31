@@ -456,22 +456,7 @@ const Client = {
         Colour.change(0, Colour.DEFAULTS[0], false);
         Colour.change(1, Colour.DEFAULTS[1], false);
         
-        document.getElementById("lineCapSelect").value = 0;
-        
-        document.getElementById("smoothenStrokes").checked = true;
-        
         document.getElementById("cursorPos").textContent = "0, 0";
-        
-        document.getElementById("compositeSelect").value = 0;
-        
-        document.getElementById("fillBySelect").value = 0;
-        document.getElementById("fillChangeAlpha").checked = true;
-        
-        document.getElementById("colourPickerMerge").checked = false;
-        document.getElementById("colourPickerOpacity").checked = false;
-        
-        document.getElementById("shapeOutline").checked = true;
-        document.getElementById("shapeFill").checked = false;
         
         // Set up quick colour select colours
         const quickColourSelect = document.getElementById("quickColourSelect");

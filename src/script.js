@@ -137,6 +137,8 @@ const wakingUp = setTimeout(() => {
 
 Client.init();
 
+Tools.loadToolSettings(tool);
+
 // Set up events that end or cancel actions for all of the page in case it happens outside of the canvas
 document.addEventListener("pointermove", (event) => mouseMove(event), { passive: false });
 document.addEventListener("pointerup", (event) => clearMouseHold(event), { passive: false });
