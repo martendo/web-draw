@@ -95,7 +95,7 @@ const NO_ACTION = {
 // Drawing and tool variables
 var penColours = Colour.DEFAULTS.slice();
 var currentPen = 0;
-var tool = PEN_TOOL;
+var tool = "pen";
 
 var clients = {};
 
@@ -206,17 +206,17 @@ document.addEventListener("keydown", (event) => {
           break;
         }
         case "c": {
-          if (tool !== RECT_SELECT_TOOL) return;
+          if (tool !== "select") return;
           Selection.doCopy();
           break;
         }
         case "x": {
-          if (tool !== RECT_SELECT_TOOL) return;
+          if (tool !== "select") return;
           Selection.doCut();
           break;
         }
         case "v": {
-          if (tool !== RECT_SELECT_TOOL) return;
+          if (tool !== "select") return;
           Selection.doPaste();
           break;
         }
@@ -296,8 +296,8 @@ for (let i = 0; i < penColourValues.length; i++) {
     if (event.key === "Enter") Colour.changeWithValue(i, event);
   });
 }
-for (let i = 0; i < NUM_TOOLS; i++) {
-  document.getElementById(TOOLS[i] + "Btn").addEventListener("click", () => switchTool(i));
+for (const toolName of Tools.NAMES) {
+  document.getElementById(toolName + "Btn").addEventListener("click", () => switchTool(toolName));
 }
 
 const menuLabels = document.getElementsByClassName("menuLabel");

@@ -280,7 +280,7 @@ const Canvas = {
   
   // Import image and put on canvas
   importPicture(event) {
-    switchTool(RECT_SELECT_TOOL);
+    switchTool("select");
     const file = event.currentTarget.files[0];
     const reader = new FileReader();
     reader.onerror = (event) => {

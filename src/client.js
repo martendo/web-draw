@@ -520,7 +520,7 @@ const Client = {
         this.ctx = clients[this.id].ctx;
         
         // Select pen tool
-        switchTool(PEN_TOOL);
+        switchTool("pen");
         
         break;
       }

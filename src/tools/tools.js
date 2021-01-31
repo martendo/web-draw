@@ -18,11 +18,17 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Tools available to the user
-const PEN_TOOL = 0, FILL_TOOL = 1, COLOUR_PICKER_TOOL = 2, RECT_SELECT_TOOL = 3,
-      LINE_TOOL = 4, RECT_TOOL = 5, ELLIPSE_TOOL = 6;
-const TOOLS = ["pen", "fill", "colourPicker", "select", "line", "rect", "ellipse"];
-const NUM_TOOLS = TOOLS.length;
+const Tools = {
+  NAMES: [
+    "pen",
+    "fill",
+    "colourPicker",
+    "select",
+    "line",
+    "rect",
+    "ellipse"
+  ]
+};
 
 // Handle mousedown on canvas
 function mouseHold(event) {
@@ -86,10 +92,10 @@ function startTool(point) {
   const shapeFill    = document.getElementById("shapeFill").checked;
   const caps         = parseInt(document.getElementById("lineCapSelect").value);
   
-  if (tool !== RECT_SELECT_TOOL) Selection.remove();
+  if (tool !== "select") Selection.remove();
   
   switch (tool) {
-    case PEN_TOOL: {
+    case "pen": {
       Session.startClientAction(Client.id, {
         type: "stroke",
         data: {
@@ -110,7 +116,7 @@ function startTool(point) {
       Pen.draw(point.x, point.y);
       break;
     }
-    case FILL_TOOL: {
+    case "fill": {
       const thresholdInput = document.getElementById("fillThresholdInput");
       var threshold = parseInt(thresholdInput.dataset.value, 10);
       const fillColour = penColours[currentPen];
@@ -130,7 +136,7 @@ function startTool(point) {
       Fill.fill(point.x, point.y, fillColour, threshold, opacity, compOp, fillBy, changeAlpha);
       break;
     }
-    case COLOUR_PICKER_TOOL: {
+    case "colourPicker": {
       const pixelColour = sessionCtx.getImageData(point.x, point.y, 1, 1).data;
       const merge = document.getElementById("colourPickerMerge").checked;
       var colour = [0, 0, 0, 0];
@@ -152,7 +158,7 @@ function startTool(point) {
       }
       break;
     }
-    case RECT_SELECT_TOOL: {
+    case "select": {
       Client.sendMessage({
         type: "create-selection",
         clientId: Client.id
@@ -175,7 +181,7 @@ function startTool(point) {
       });
       break;
     }
-    case LINE_TOOL: {
+    case "line": {
       Session.startClientAction(Client.id, {
         type: "line",
         data: {
@@ -192,7 +198,7 @@ function startTool(point) {
       });
       break;
     }
-    case RECT_TOOL: {
+    case "rect": {
       if (!shapeOutline && !shapeFill) break;
       Session.startClientAction(Client.id, {
         type: "rect",
@@ -214,7 +220,7 @@ function startTool(point) {
       });
       break;
     }
-    case ELLIPSE_TOOL: {
+    case "ellipse": {
       if (!shapeOutline && !shapeFill) break;
       Session.startClientAction(Client.id, {
         type: "ellipse",
@@ -491,17 +497,18 @@ function clearMouseHold(event) {
 // Switch the current tool
 function switchTool(newTool) {
   tool = newTool;
-  for (var i = 0; i < NUM_TOOLS; i++) {
-    document.getElementById(TOOLS[i] + "Btn").classList.remove("btnSelected");
-    const settings = document.getElementsByClassName(TOOLS[i] + "Settings");
+  
+  for (const toolName of Tools.NAMES) {
+    document.getElementById(toolName + "Btn").classList.remove("btnSelected");
+    const settings = document.getElementsByClassName(toolName + "Settings");
     if (settings) {
       for (var s = 0; s < settings.length; s++) {
         settings[s].classList.remove("currentToolSettings");
       }
     }
   }
-  document.getElementById(TOOLS[tool] + "Btn").classList.add("btnSelected");
-  const settings = document.getElementsByClassName(TOOLS[tool] + "Settings");
+  document.getElementById(tool + "Btn").classList.add("btnSelected");
+  const settings = document.getElementsByClassName(tool + "Settings");
   if (settings) {
     for (var s = 0; s < settings.length; s++) {
       settings[s].classList.add("currentToolSettings");
