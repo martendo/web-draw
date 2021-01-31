@@ -27,7 +27,137 @@ const Tools = {
     "line",
     "rect",
     "ellipse"
-  ]
+  ],
+  
+  // `value`: Value goes in `value` attribute (select)
+  // `slider`: Set with `Slider.setValue()`, get with `data-value` attribute (slider)
+  // `checked`: Use `checked` flag (checkbox)
+  settings: {
+    "pen": {
+      "value": {
+        "compositeSelect": 0,
+        "lineCapSelect": 0
+      },
+      "slider": {
+        "opacity": 100,
+        "penWidth": 10,
+      },
+      "checked": {
+        "smoothenStrokes": true
+      }
+    },
+    
+    "fill": {
+      "value": {
+        "compositeSelect": 0,
+        "fillBySelect": 0
+      },
+      "slider": {
+        "opacity": 100,
+        "fillThreshold": 15
+      },
+      "checked": {
+        "fillChangeAlpha": true
+      }
+    },
+    
+    "colourPicker": {
+      "checked": {
+        "colourPickerMerge": false,
+        "colourPickerOpacity": false
+      }
+    },
+    
+    "select": null,
+    
+    "line": {
+      "value": {
+        "compositeSelect": 0,
+        "lineCapSelect": 0
+      },
+      "slider": {
+        "opacity": 100,
+        "penWidth": 10,
+      }
+    },
+    
+    "rect": {
+      "value": {
+        "compositeSelect": 0
+      },
+      "slider": {
+        "opacity": 100,
+        "penWidth": 10,
+      },
+      "checked": {
+        "shapeOutline": true,
+        "shapeFill": false
+      }
+    },
+    
+    "ellipse": {
+      "value": {
+        "compositeSelect": 0
+      },
+      "slider": {
+        "opacity": 100,
+        "penWidth": 10,
+      },
+      "checked": {
+        "shapeOutline": true,
+        "shapeFill": false
+      }
+    }
+  },
+  
+  // Save current tool's settings
+  saveToolSettings(tool) {
+    if (!this.settings[tool]) return;
+    
+    for (const [type, inputs] of Object.entries(this.settings[tool])) {
+      for (const input of Object.keys(inputs)) {
+        const element = document.getElementById(input);
+        switch (type) {
+          case "value": {
+            inputs[input] = element.value;
+            break;
+          }
+          case "slider": {
+            inputs[input] = document.getElementById(input + "Input").dataset.value;
+            break;
+          }
+          case "checked": {
+            inputs[input] = element.checked;
+            break;
+          }
+        }
+      }
+    }
+  },
+  // Set new tool's settings
+  loadToolSettings(tool) {
+    if (!this.settings[tool]) return;
+    
+    for (const [type, inputs] of Object.entries(this.settings[tool])) {
+      for (const input of Object.keys(inputs)) {
+        const element = document.getElementById(input);
+        switch (type) {
+          case "value": {
+            element.value = inputs[input];
+            break;
+          }
+          case "slider": {
+            Slider.setValue(input, parseFloat(inputs[input], 10));
+            break;
+          }
+          case "checked": {
+            element.checked = inputs[input];
+            break;
+          }
+        }
+      }
+    }
+  }
 };
 
 // Handle mousedown on canvas
@@ -496,6 +626,9 @@ function clearMouseHold(event) {
 
 // Switch the current tool
 function switchTool(newTool) {
+  Tools.saveToolSettings(tool);
+  Tools.loadToolSettings(newTool);
+  
   tool = newTool;
   
   for (const toolName of Tools.NAMES) {
