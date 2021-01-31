@@ -4,6 +4,77 @@ const HTMLMinifier = require("html-minifier");
 const CleanCSS = require("clean-css");
 const UglifyJS = require("uglify-es");
 
+// Missing in uglify-es/tools/domprops.json
+const otherDomprops = [
+  "clipboard",
+  "writeText",
+  "fromEntries"
+];
+
+const reserved = [
+  // Sent over WebSockets
+  "actions",
+  "caps",
+  "changeAlpha",
+  "client",
+  "clientId",
+  "clients",
+  "colour",
+  "compOp",
+  "data",
+  "ellipse",
+  "file",
+  "fill",
+  "fillBy",
+  "flipped",
+  "handle",
+  "height",
+  "id",
+  "image",
+  "latency",
+  "line",
+  "lineWidth",
+  "message",
+  "move",
+  "name",
+  "old",
+  "opacity",
+  "options",
+  "order",
+  "outline",
+  "outside",
+  "password",
+  "points",
+  "pos",
+  "rect",
+  "redoActions",
+  "resize",
+  "selected",
+  "selection",
+  "size",
+  "smoothen",
+  "threshold",
+  "total",
+  "type",
+  "undoActions",
+  "value",
+  "width",
+  "x",
+  "x0",
+  "x1",
+  "y",
+  "y0",
+  "y1",
+  
+  // HTML data-*
+  "callback",
+  "dplaces",
+  "lastValue",
+  "max",
+  "min",
+  "timestamp"
+];
+
 module.exports = function(grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON("package.json"),
@@ -12,12 +83,19 @@ module.exports = function(grunt) {
       level: 2
     },
     jsOptions: {
+      compress: {
+        hoist_funs: true,
+        passes: 2,
+        toplevel: true
+      },
       mangle: {
-        toplevel: true,
         properties: {
-          regex: /^_/
-        }
-      }
+          keep_quoted: true,
+          reserved: require("uglify-es/tools/domprops.json").concat(otherDomprops).concat(reserved)
+        },
+        toplevel: true
+      },
+      toplevel: true
     },
     
     copy: {
