@@ -1,3 +1,8 @@
+# "Built" code
+public/*.html
+public/*.css
+public/*.js
+
 # Logs
 logs
 *.log
