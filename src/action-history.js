@@ -28,6 +28,8 @@ const ActionHistory = {
     this.undoActions.push(data);
     this.enableUndo();
     this.clearRedo();
+    this.removeRedoActionsFromTable();
+    this.addActionToTable(data.type);
   },
   // Undo an action, and send a message to undo (from the user)
   doUndo() {
@@ -47,6 +49,7 @@ const ActionHistory = {
       }
       this.enableRedo();
       Session.drawCurrentActions();
+      this.updateLastAction();
     } else {
       this.clearUndo();
       return;
@@ -69,6 +72,7 @@ const ActionHistory = {
       this.doAction(previousAction);
       this.enableUndo();
       Session.drawCurrentActions();
+      this.updateLastAction();
     } else {
       this.clearRedo();
       return;
@@ -167,6 +171,38 @@ const ActionHistory = {
       this.clearRedo();
     }
     Session.drawCurrentActions();
+  },
+  
+  // Action history table
+  _table: document.getElementById("historyTabBox"),
+  
+  addActionToTable(name) {
+    const row = this._table.insertRow(-1);
+    const image = document.createElement("canvas");
+    image.classList.add("actionHistoryImage");
+    if (Session.canvas.width > Session.canvas.height) {
+      image.width = 60;
+      image.height = Session.canvas.height / (Session.canvas.width / 60);
+    } else {
+      image.height = 45;
+      image.width = Session.canvas.width / (Session.canvas.height / 45);
+    }
+    image.getContext("2d").drawImage(Session.canvas, 0, 0, image.width, image.height);
+    row.insertCell(-1).appendChild(image);
+    row.insertCell(-1).textContent = name;
+    this.updateLastAction();
+  },
+  updateLastAction() {
+    [...document.getElementsByClassName("lastAction")].forEach((el) => {
+      el.classList.remove("lastAction");
+    });
+    // children[0] = <tbody>
+    this._table.children[0].children[this.undoActions.length].classList.add("lastAction");
+  },
+  removeRedoActionsFromTable() {
+    [...this._table.children[0].children].slice(this.undoActions.length).forEach((el) => {
+      el.remove();
+    });
   },
   
   _undoBtn: document.getElementById("undoBtn"),

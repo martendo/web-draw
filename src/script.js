@@ -351,6 +351,19 @@ document.getElementById("chatXBtn").addEventListener("click", () => {
   Chat.box.classList.add("displayNone");
 });
 
+const tabs = [...document.getElementsByClassName("tab")];
+tabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    tabs.forEach((t) => {
+      t.classList.remove("tabSelected");
+      document.getElementById(t.id + "Box").style.display = "none";
+    });
+    tab.classList.add("tabSelected");
+    document.getElementById(tab.id + "Box").style.display = "table";
+  });
+});
+document.getElementById("toolTab").dispatchEvent(new Event("click"));
+
 Chat.input.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     Chat.send();

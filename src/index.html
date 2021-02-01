@@ -206,215 +206,225 @@
         </tr>
       </table>
       <div id="rightBox">
-        <table>
+        <table id="rightTabBar" class="tabBar">
           <tr>
-            <td>
-              <table id="colourTable">
-                <tr>
-                  <td><label for="penColour0Value">Colour 1</label></td>
-                  <td><label for="penColour1Value">Colour 2</label></td>
-                </tr>
-                <tr>
-                  <td>
-                    <span id="penColour0Container" class="penColourContainer">
-                      <span id="penColour0" class="penColour" title="Click to change colour 1"></span>
-                    </span>
-                  </td>
-                  <td>
-                    <span id="penColour1Container" class="penColourContainer">
-                      <span id="penColour1" class="penColour" title="Click to change colour 2"></span>
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input id="penColour0Value" class="penColourValue" type="text"></td>
-                  <td><input id="penColour1Value" class="penColourValue" type="text"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table id="quickColourSelect"></table>
-            </td>
-          </tr>
-          <tr>
-            <td><div class="separator"></div></td>
-          </tr>
-          <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
-            <td>
-              <div class="selectInput" title="How new content is added to the existing content">
-                <label class="selectLabel" for="compositeSelect">Mode</label>
-                <select id="compositeSelect">
-                  <option value="0" title="New content is drawn on top of the existing content.">Normal</option> <!-- source-over -->
-                  <option value="1" title="New content is drawn behind the existing content.">Behind</option> <!-- destination-over -->
-                  <option value="2" title="Existing content is kept where it doesn't overlap the new content.">Erase</option> <!-- destination-out -->
-                  <option class="separator" disabled>---</option>
-                  <option value="3" title="Retains the lightest pixels of both layers.">Lighten Only</option> <!-- lighten -->
-                  <option value="4" title="The pixels are inverted, multiplied, and inverted again.">Screen</option> <!-- screen -->
-                  <option value="5" title="Divides the bottom layer by the inverted top layer.">Dodge</option> <!-- color-dodge -->
-                  <option value="6" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option> <!-- lighter -->
-                  <option class="separator" disabled>---</option>
-                  <option value="7" title="Retains the darkest pixels of both layers.">Darken Only</option> <!-- darken -->
-                  <option value="8" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option> <!-- color-burn -->
-                  <option value="9" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option> <!-- multiply -->
-                  <option class="separator" disabled>---</option>
-                  <option value="10" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option> <!-- overlay -->
-                  <option value="11" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option> <!-- hard-light -->
-                  <option value="12" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option> <!-- soft-light -->
-                  <option class="separator" disabled>---</option>
-                  <option value="13" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option> <!-- difference -->
-                  <option value="14" title="Like difference, but with lower contrast.">Exclusion</option> <!-- exclusion -->
-                  <option class="separator" disabled>---</option>
-                  <option value="15" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option> <!-- source-in -->
-                  <option value="16" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option> <!-- source-out -->
-                  <option value="17" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option> <!-- source-atop -->
-                  <option value="18" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option> <!-- destination-in -->
-                  <option value="19" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option> <!-- destination-atop -->
-                  <option value="20" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option> <!-- xor -->
-                  <option value="21" title="Only the new shape is shown.">New Only</option> <!-- copy -->
-                  <option class="separator" disabled>---</option>
-                  <option value="22" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option> <!-- hue -->
-                  <option value="23" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option> <!-- saturation -->
-                  <option value="24" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option> <!-- color -->
-                  <option value="25" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option> <!-- luminosity -->
-                </select>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
-            <td>
-              <div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-dplaces="1" data-callback="updateColourAlpha" title="Opacity, in percent">
-                <div class="sliderLabel">Opacity</div>
-                <div class="sliderBar" id="opacityBar"></div>
-                <div class="sliderValue" id="opacityValue" contenteditable></div>
-                <div class="sliderValueUp" id="opacityValueUp">
-                  <svg width="20" height="15">
-                    <polygon points="10,3 3,12 17,12"></polygon>
-                  </svg>
-                </div>
-                <div class="sliderValueDown" id="opacityValueDown">
-                  <svg width="20" height="15">
-                    <polygon points="10,12 3,3 17,3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings lineSettings rectSettings ellipseSettings">
-            <td>
-              <div class="sliderInput" id="penWidthInput" data-min="1" data-width="150" data-max="10000" data-dplaces="0" title="The size of the pen in pixels">
-                <div class="sliderLabel">Size</div>
-                <div class="sliderBar" id="penWidthBar"></div>
-                <div class="sliderValue" id="penWidthValue" contenteditable></div>
-                <div class="sliderValueUp" id="penWidthValueUp">
-                  <svg width="20" height="15">
-                    <polygon points="10,3 3,12 17,12"></polygon>
-                  </svg>
-                </div>
-                <div class="sliderValueDown" id="penWidthValueDown">
-                  <svg width="20" height="15">
-                    <polygon points="10,12 3,3 17,3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings lineSettings">
-            <td>
-              <div class="selectInput" title="The shape at the ends of a line">
-                <label class="selectLabel" for="lineCapSelect">Caps</label>
-                <select id="lineCapSelect">
-                  <option value="0" title="The ends of lines are rounded.">Round</option>
-                  <option value="1" title="The ends of lines are squared off at the endpoints.">Butt</option>
-                  <option value="2" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
-                </select>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings">
-            <td title="Use quadratic curves between points instead of straight lines">
-              <input id="smoothenStrokes" type="checkbox">
-              <label for="smoothenStrokes">Smoothen strokes</label>
-            </td>
-          </tr>
-          <tr class="toolSettings rectSettings ellipseSettings">
-            <td>
-              <input id="shapeOutline" type="checkbox">
-              <label for="shapeOutline">Outline</label>
-            </td>
-          </tr>
-          <tr class="toolSettings rectSettings ellipseSettings">
-            <td>
-              <input id="shapeFill" type="checkbox">
-              <label for="shapeFill">Fill</label>
-            </td>
-          </tr>
-          <tr class="toolSettings fillSettings">
-            <td>
-              <div class="sliderInput" id="fillThresholdInput" data-min="0" data-width="255" data-max="255" data-dplaces="0" title="The maximum colour difference from the clicked colour to fill">
-                <div class="sliderLabel">Threshold</div>
-                <div class="sliderBar" id="fillThresholdBar"></div>
-                <div class="sliderValue" id="fillThresholdValue" contenteditable></div>
-                <div class="sliderValueUp" id="fillThresholdValueUp">
-                  <svg width="20" height="15">
-                    <polygon points="10,3 3,12 17,12"></polygon>
-                  </svg>
-                </div>
-                <div class="sliderValueDown" id="fillThresholdValueDown">
-                  <svg width="20" height="15">
-                    <polygon points="10,12 3,3 17,3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings fillSettings">
-            <td>
-              <div class="selectInput" title="Colour channels used to determine colour similarity">
-                <label class="selectLabel" for="fillBySelect">Fill by</label>
-                <select id="fillBySelect">
-                  <option value="0" title="Check all channels">RGBA</option>
-                  <option value="1" title="Check all colour channels, but not alpha">RGB</option>
-                  <option value="2" title="Check only the red colour channel">Red</option>
-                  <option value="3" title="Check only the green colour channel">Green</option>
-                  <option value="4" title="Check only the blue colour channel">Blue</option>
-                  <option value="5" title="Check only the alpha channel">Alpha</option>
-                </select>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings fillSettings">
-            <td>
-              <input id="fillChangeAlpha" type="checkbox">
-              <label for="fillChangeAlpha">Change alpha value</label>
-            </td>
-          </tr>
-          <tr class="toolSettings colourPickerSettings">
-            <td>
-              <input id="colourPickerMerge" type="checkbox">
-              <label for="colourPickerMerge">Merge with current</label>
-            </td>
-          </tr>
-          <tr class="toolSettings colourPickerSettings">
-            <td>
-              <input id="colourPickerOpacity" type="checkbox">
-              <label for="colourPickerOpacity">Sample opacity</label>
-            </td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectCopyBtn" class="toolBtn" title="Copy the pixels in the selected area on the canvas">Copy</button></td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectCutBtn" class="toolBtn" title="Cut the pixels from the selected area on the canvas">Cut</button></td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectPasteBtn" class="toolBtn" title="Paste the pixels in the selection onto the canvas">Paste</button></td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
+            <td class="tab" id="toolTab" title="Tool settings"><img src="/img/tool-settings.png"></td>
+            <td class="tab" id="historyTab" title="Action history"><img src="/img/action-history.png"></td>
+            <td class="tableExcess"></td>
           </tr>
         </table>
+        <div id="rightBoxContent">
+          <table id="toolTabBox" class="tabBox">
+            <tr>
+              <td>
+                <table id="colourTable">
+                  <tr>
+                    <td><label for="penColour0Value">Colour 1</label></td>
+                    <td><label for="penColour1Value">Colour 2</label></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span id="penColour0Container" class="penColourContainer">
+                        <span id="penColour0" class="penColour" title="Click to change colour 1"></span>
+                      </span>
+                    </td>
+                    <td>
+                      <span id="penColour1Container" class="penColourContainer">
+                        <span id="penColour1" class="penColour" title="Click to change colour 2"></span>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input id="penColour0Value" class="penColourValue" type="text"></td>
+                    <td><input id="penColour1Value" class="penColourValue" type="text"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table id="quickColourSelect"></table>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="separator"></div></td>
+            </tr>
+            <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
+              <td>
+                <div class="selectInput" title="How new content is added to the existing content">
+                  <label class="selectLabel" for="compositeSelect">Mode</label>
+                  <select id="compositeSelect">
+                    <option value="0" title="New content is drawn on top of the existing content.">Normal</option> <!-- source-over -->
+                    <option value="1" title="New content is drawn behind the existing content.">Behind</option> <!-- destination-over -->
+                    <option value="2" title="Existing content is kept where it doesn't overlap the new content.">Erase</option> <!-- destination-out -->
+                    <option class="separator" disabled>---</option>
+                    <option value="3" title="Retains the lightest pixels of both layers.">Lighten Only</option> <!-- lighten -->
+                    <option value="4" title="The pixels are inverted, multiplied, and inverted again.">Screen</option> <!-- screen -->
+                    <option value="5" title="Divides the bottom layer by the inverted top layer.">Dodge</option> <!-- color-dodge -->
+                    <option value="6" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option> <!-- lighter -->
+                    <option class="separator" disabled>---</option>
+                    <option value="7" title="Retains the darkest pixels of both layers.">Darken Only</option> <!-- darken -->
+                    <option value="8" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option> <!-- color-burn -->
+                    <option value="9" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option> <!-- multiply -->
+                    <option class="separator" disabled>---</option>
+                    <option value="10" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option> <!-- overlay -->
+                    <option value="11" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option> <!-- hard-light -->
+                    <option value="12" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option> <!-- soft-light -->
+                    <option class="separator" disabled>---</option>
+                    <option value="13" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option> <!-- difference -->
+                    <option value="14" title="Like difference, but with lower contrast.">Exclusion</option> <!-- exclusion -->
+                    <option class="separator" disabled>---</option>
+                    <option value="15" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option> <!-- source-in -->
+                    <option value="16" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option> <!-- source-out -->
+                    <option value="17" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option> <!-- source-atop -->
+                    <option value="18" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option> <!-- destination-in -->
+                    <option value="19" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option> <!-- destination-atop -->
+                    <option value="20" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option> <!-- xor -->
+                    <option value="21" title="Only the new shape is shown.">New Only</option> <!-- copy -->
+                    <option class="separator" disabled>---</option>
+                    <option value="22" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option> <!-- hue -->
+                    <option value="23" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option> <!-- saturation -->
+                    <option value="24" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option> <!-- color -->
+                    <option value="25" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option> <!-- luminosity -->
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
+              <td>
+                <div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-dplaces="1" data-callback="updateColourAlpha" title="Opacity, in percent">
+                  <div class="sliderLabel">Opacity</div>
+                  <div class="sliderBar" id="opacityBar"></div>
+                  <div class="sliderValue" id="opacityValue" contenteditable></div>
+                  <div class="sliderValueUp" id="opacityValueUp">
+                    <svg width="20" height="15">
+                      <polygon points="10,3 3,12 17,12"></polygon>
+                    </svg>
+                  </div>
+                  <div class="sliderValueDown" id="opacityValueDown">
+                    <svg width="20" height="15">
+                      <polygon points="10,12 3,3 17,3"></polygon>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings lineSettings rectSettings ellipseSettings">
+              <td>
+                <div class="sliderInput" id="penWidthInput" data-min="1" data-width="150" data-max="10000" data-dplaces="0" title="The size of the pen in pixels">
+                  <div class="sliderLabel">Size</div>
+                  <div class="sliderBar" id="penWidthBar"></div>
+                  <div class="sliderValue" id="penWidthValue" contenteditable></div>
+                  <div class="sliderValueUp" id="penWidthValueUp">
+                    <svg width="20" height="15">
+                      <polygon points="10,3 3,12 17,12"></polygon>
+                    </svg>
+                  </div>
+                  <div class="sliderValueDown" id="penWidthValueDown">
+                    <svg width="20" height="15">
+                      <polygon points="10,12 3,3 17,3"></polygon>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings lineSettings">
+              <td>
+                <div class="selectInput" title="The shape at the ends of a line">
+                  <label class="selectLabel" for="lineCapSelect">Caps</label>
+                  <select id="lineCapSelect">
+                    <option value="0" title="The ends of lines are rounded.">Round</option>
+                    <option value="1" title="The ends of lines are squared off at the endpoints.">Butt</option>
+                    <option value="2" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings">
+              <td title="Use quadratic curves between points instead of straight lines">
+                <input id="smoothenStrokes" type="checkbox">
+                <label for="smoothenStrokes">Smoothen strokes</label>
+              </td>
+            </tr>
+            <tr class="toolSettings rectSettings ellipseSettings">
+              <td>
+                <input id="shapeOutline" type="checkbox">
+                <label for="shapeOutline">Outline</label>
+              </td>
+            </tr>
+            <tr class="toolSettings rectSettings ellipseSettings">
+              <td>
+                <input id="shapeFill" type="checkbox">
+                <label for="shapeFill">Fill</label>
+              </td>
+            </tr>
+            <tr class="toolSettings fillSettings">
+              <td>
+                <div class="sliderInput" id="fillThresholdInput" data-min="0" data-width="255" data-max="255" data-dplaces="0" title="The maximum colour difference from the clicked colour to fill">
+                  <div class="sliderLabel">Threshold</div>
+                  <div class="sliderBar" id="fillThresholdBar"></div>
+                  <div class="sliderValue" id="fillThresholdValue" contenteditable></div>
+                  <div class="sliderValueUp" id="fillThresholdValueUp">
+                    <svg width="20" height="15">
+                      <polygon points="10,3 3,12 17,12"></polygon>
+                    </svg>
+                  </div>
+                  <div class="sliderValueDown" id="fillThresholdValueDown">
+                    <svg width="20" height="15">
+                      <polygon points="10,12 3,3 17,3"></polygon>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings fillSettings">
+              <td>
+                <div class="selectInput" title="Colour channels used to determine colour similarity">
+                  <label class="selectLabel" for="fillBySelect">Fill by</label>
+                  <select id="fillBySelect">
+                    <option value="0" title="Check all channels">RGBA</option>
+                    <option value="1" title="Check all colour channels, but not alpha">RGB</option>
+                    <option value="2" title="Check only the red colour channel">Red</option>
+                    <option value="3" title="Check only the green colour channel">Green</option>
+                    <option value="4" title="Check only the blue colour channel">Blue</option>
+                    <option value="5" title="Check only the alpha channel">Alpha</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings fillSettings">
+              <td>
+                <input id="fillChangeAlpha" type="checkbox">
+                <label for="fillChangeAlpha">Change alpha value</label>
+              </td>
+            </tr>
+            <tr class="toolSettings colourPickerSettings">
+              <td>
+                <input id="colourPickerMerge" type="checkbox">
+                <label for="colourPickerMerge">Merge with current</label>
+              </td>
+            </tr>
+            <tr class="toolSettings colourPickerSettings">
+              <td>
+                <input id="colourPickerOpacity" type="checkbox">
+                <label for="colourPickerOpacity">Sample opacity</label>
+              </td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectCopyBtn" class="toolBtn" title="Copy the pixels in the selected area on the canvas">Copy</button></td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectCutBtn" class="toolBtn" title="Cut the pixels from the selected area on the canvas">Cut</button></td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectPasteBtn" class="toolBtn" title="Paste the pixels in the selection onto the canvas">Paste</button></td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
+            </tr>
+          </table>
+          <table id="historyTabBox" class="tabBox table border"></table>
+        </div>
         <table id="posInfo">
           <tr>
             <td><span id="cursorPos" class="lightBox"></span></td>

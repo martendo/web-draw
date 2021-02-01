@@ -536,6 +536,7 @@ const Client = {
         Chat.box.classList.add("displayNone");
         
         Canvas.init();
+        ActionHistory.addActionToTable("[ Base Image ]");
         
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);
