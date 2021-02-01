@@ -170,7 +170,7 @@ const ActionHistory = {
     
     Canvas.init();
     // Add all actions to the action history table
-    for (const action of this.undoActions.concat(this.redoActions)) {
+    for (const action of this.undoActions.concat(this.redoActions.slice().reverse())) {
       this.doAction(action);
       this.addActionToTable(action.type, false);
     }
