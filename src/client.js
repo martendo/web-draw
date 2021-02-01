@@ -388,8 +388,8 @@ const Client = {
       }
       case "user-name": {
         clients[data.clientId].name = data.name;
-        if (data.clientId === Client.id) document.getElementById("userName").textContent = data.name;
-        [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name);
+        if (data.clientId === Client.id) document.getElementById("userName").textContent = data.name || Client.id;
+        [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name || data.clientId);
         [...document.getElementsByClassName("chatPrivateText-" + data.clientId)].forEach((text) => {
           Chat.writePrivateTextTitle(text, [...text.className.matchAll(/chatPrivateText-([a-z\d]{4})/g)].map((name) => name[1]));
         });
