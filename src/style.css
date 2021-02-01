@@ -355,9 +355,15 @@ div.separator {
 }
 .actionHistoryImage {
   border: 1px solid #000000;
+  background: url("/img/transparent.png");
+  background-size: 10px;
+}
+.actionName {
+  width: 100%;
+  font-size: 14px;
 }
 #historyTabBox .lastAction {
-  background-color: #fafafa;
+  background-color: #f6f6f6;
 }
 #rightBoxContent {
   grid-row: 2;
@@ -617,8 +623,8 @@ label {
 }
 
 #displayCanvas {
-  background-size: 16px;
   background: url("/img/transparent.png");
+  background-size: 16px;
 }
 
 table {

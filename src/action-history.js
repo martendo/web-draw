@@ -190,6 +190,50 @@ const ActionHistory = {
   _table: document.getElementById("historyTabBox"),
   
   addActionToTable(name, updateLast = true) {
+    // Make names more user-friendly
+    switch (name) {
+      case "stroke": {
+        name = "Pen";
+        break;
+      }
+      case "fill": {
+        name = "Flood fill";
+        break;
+      }
+      case "line": {
+        name = "Line";
+        break;
+      }
+      case "rect": {
+        name = "Rectangle";
+        break;
+      }
+      case "ellipse": {
+        name = "Ellipse";
+        break;
+      }
+      case "selection-paste": {
+        name = "Paste";
+        break;
+      }
+      case "selection-clear": {
+        name = "Clear selection";
+        break;
+      }
+      case "clear-blank": {
+        name = "Clear canvas";
+        break;
+      }
+      case "clear": {
+        name = "Clear canvas to transparent";
+        break;
+      }
+      case "resize-canvas": {
+        name = "Resize canvas";
+        break;
+      }
+    }
+    
     const row = this._table.insertRow(-1);
     const image = document.createElement("canvas");
     image.classList.add("actionHistoryImage");
@@ -202,7 +246,9 @@ const ActionHistory = {
     }
     image.getContext("2d").drawImage(Session.canvas, 0, 0, image.width, image.height);
     row.insertCell(-1).appendChild(image);
-    row.insertCell(-1).textContent = name;
+    const nameCell = row.insertCell(-1);
+    nameCell.classList.add("actionName");
+    nameCell.textContent = name;
     if (updateLast) this.updateLastAction();
   },
   updateLastAction() {
