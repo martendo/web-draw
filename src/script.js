@@ -434,7 +434,6 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
     }
     // 3: Transparency = null
   }
-  console.log(bgColour);
   const options = {
     width: document.getElementById("canvasResizeWidth").value,
     height: document.getElementById("canvasResizeHeight").value,
