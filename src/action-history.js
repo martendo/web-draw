@@ -32,53 +32,61 @@ const ActionHistory = {
     this.addActionToTable(data.type);
   },
   // Undo an action, and send a message to undo (from the user)
-  doUndo() {
+  moveWithOffset(offset) {
+    const num = this.undoActions.length + offset;
     Client.sendMessage({
-      type: "undo"
+      type: "move-history",
+      num: num
     });
-    this.undo();
+    this.moveTo(num);
   },
-  // Actually undo an action
-  undo() {
-    const previousAction = this.undoActions.pop();
-    if (previousAction) {
-      this.redoActions.push(previousAction);
-      Canvas.init();
-      for (var i = 0; i < this.undoActions.length; i++) {
-        this.doAction(this.undoActions[i]);
+  // Undo/Redo an action
+  moveTo(num) {
+    const offset = num - this.undoActions.length;
+    if (offset < 0) {
+      // Undo
+      for (var i = 0; i < -offset; i++) {
+        const previousAction = this.undoActions.pop();
+        if (previousAction) {
+          this.redoActions.push(previousAction);
+          Canvas.init();
+          for (const action of this.undoActions) {
+            this.doAction(action);
+          }
+          this.enableRedo();
+          Session.drawCurrentActions();
+          this.updateLastAction();
+        } else {
+          this.clearUndo();
+          return;
+        }
+        if (!this.undoActions.length) {
+          this.clearUndo();
+          return;
+        }
       }
-      this.enableRedo();
-      Session.drawCurrentActions();
-      this.updateLastAction();
     } else {
-      this.clearUndo();
-      return;
+      // Redo
+      for (var i = 0; i < offset; i++) {
+        const previousAction = this.redoActions.pop();
+        if (previousAction) {
+          this.undoActions.push(previousAction);
+          this.doAction(previousAction);
+          this.enableUndo();
+          Session.drawCurrentActions();
+          this.updateLastAction();
+        } else {
+          this.clearRedo();
+          return;
+        }
+        if (!this.redoActions.length) {
+          this.clearRedo();
+          return;
+        }
+      }
     }
-    if (!this.undoActions.length) this.clearUndo();
   },
   
-  // Redo an action, and send a message to redo (from the user)
-  doRedo() {
-    Client.sendMessage({
-      type: "redo"
-    });
-    this.redo();
-  },
-  // Actually redo an action
-  redo() {
-    const previousAction = this.redoActions.pop();
-    if (previousAction) {
-      this.undoActions.push(previousAction);
-      this.doAction(previousAction);
-      this.enableUndo();
-      Session.drawCurrentActions();
-      this.updateLastAction();
-    } else {
-      this.clearRedo();
-      return;
-    }
-    if (!this.redoActions.length) this.clearRedo();
-  },
   // Handle different types of actions
   doAction(action) {
     switch (action.type) {

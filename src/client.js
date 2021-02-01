@@ -261,12 +261,8 @@ const Client = {
         break;
       }
       // Another user has undone/redone an action
-      case "undo": {
-        ActionHistory.undo();
-        break;
-      }
-      case "redo": {
-        ActionHistory.redo();
+      case "move-history": {
+        ActionHistory.moveTo(data.num);
         break;
       }
       // Another user has used the flood fill tool

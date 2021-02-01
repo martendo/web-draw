@@ -242,8 +242,7 @@ wss.on("connection", (socket) => {
       case "import-picture":
       case "open-canvas":
       case "resize-canvas":
-      case "undo":
-      case "redo":
+      case "move-history":
       case "start-stroke":
       case "add-stroke":
       case "end-stroke":
