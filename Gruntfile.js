@@ -46,6 +46,7 @@ const reserved = [
   "password",
   "points",
   "pos",
+  "priv",
   "rect",
   "redoActions",
   "resize",

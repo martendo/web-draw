@@ -406,6 +406,8 @@ div.separator {
   text-decoration: underline;
 }
 .chatPrivateText {
+  font-size: 16px;
+  color: #505050;
   float: right;
 }
 #chatBtn {
