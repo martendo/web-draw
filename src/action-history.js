@@ -156,10 +156,23 @@ const ActionHistory = {
   },
   
   doAllActions() {
+    [...this._table.children[0].children].slice(1).forEach((el) => {
+      el.remove();
+    });
+    
     Canvas.init();
-    for (var i = 0; i < this.undoActions.length; i++) {
-      this.doAction(this.undoActions[i]);
+    // Add all actions to the action history table
+    for (const action of this.undoActions.concat(this.redoActions)) {
+      this.doAction(action);
+      this.addActionToTable(action.type, false);
     }
+    // Undo the redone actions (only done to get canvas images for history)
+    Canvas.init();
+    for (const action of this.undoActions) {
+      this.doAction(action);
+    }
+    this.updateLastAction();
+    
     if (this.undoActions.length) {
       this.enableUndo();
     } else {
@@ -176,7 +189,7 @@ const ActionHistory = {
   // Action history table
   _table: document.getElementById("historyTabBox"),
   
-  addActionToTable(name) {
+  addActionToTable(name, updateLast = true) {
     const row = this._table.insertRow(-1);
     const image = document.createElement("canvas");
     image.classList.add("actionHistoryImage");
@@ -190,7 +203,7 @@ const ActionHistory = {
     image.getContext("2d").drawImage(Session.canvas, 0, 0, image.width, image.height);
     row.insertCell(-1).appendChild(image);
     row.insertCell(-1).textContent = name;
-    this.updateLastAction();
+    if (updateLast) this.updateLastAction();
   },
   updateLastAction() {
     [...document.getElementsByClassName("lastAction")].forEach((el) => {
