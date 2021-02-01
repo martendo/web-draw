@@ -22,6 +22,9 @@ const Client = {
   id: null,
   socket: null,
   
+  tryReconnect: null,
+  reconnectionWait: null,
+  
   sendMouse: true,
   mouseInterval: null,
   
@@ -30,6 +33,7 @@ const Client = {
   
   // Send a message to the server
   sendMessage(data) {
+    if (!this.socket) return;
     const msg = msgpack.encode(data);
     this.socket.send(msg);
   },
@@ -89,6 +93,12 @@ const Client = {
     }
   },
   
+  disconnect() {
+    if (this.tryReconnect != null) clearTimeout(this.tryReconnect);
+    Session.leave();
+    Modal.close("disconnectModal");
+  },
+  
   init() {
     // Create WebSocket
     this.socket = new WebSocket(WSS_URL);
@@ -96,17 +106,35 @@ const Client = {
     // Show error modal on error
     this.socket.onerror = (event) => {
       Modal.open("errorModal");
-      Session.leave();
       console.error("WebSocket error:", event);
     };
     this.socket.onopen = () => {
+      Modal.close("disconnectModal");
+      Modal.close("errorModal");
       document.getElementById("connectionInfo").style.display = "none";
-      document.getElementById("connectionInfoWait").style.display = "none";
+      const wait = document.getElementById("connectionInfoWait");
+      if (wait) wait.style.display = "none";
       document.getElementById("menuOptionsContainer").style.display = "block";
       clearInterval(connectionWait);
       clearTimeout(wakingUp);
       const info = document.getElementById("wakingUpInfo");
       if (info) info.remove();
+      
+      // If reconnected, try to restore
+      if (this.tryReconnect != null) {
+        this.sendMessage({
+          type: "reconnect",
+          client: {
+            id: this.id,
+            name: clients[this.id].name
+          },
+          session: {
+            id: Session.id,
+            password: Session.password
+          }
+        });
+        return;
+      }
       
       // Tell the server if there is a session ID in the URL
       const result = /^\/s\/(.+)$/.exec(location.pathname);
@@ -132,10 +160,13 @@ const Client = {
     
     // Tell the user when the this.socket has closed
     this.socket.onclose = (event) => {
-      Session.leave();
+      this.socket = null;
+      if (this.reconnectionWait) clearInterval(this.reconnectionWait);
+      
       const text = document.getElementById("disconnectText");
       text.innerHTML = `You were disconnected from the server.<br>Code: ${event.code} (${CLOSE_CODES[event.code]})`;
       if (event.reason) text.innerHTML += `<br>Reason: ${event.reason}`;
+      
       const connectionInfo = document.getElementById("connectionInfo");
       clearInterval(connectionWait);
       clearTimeout(wakingUp);
@@ -149,7 +180,17 @@ const Client = {
       reloadBtn.addEventListener("click", () => location.reload());
       connectionInfo.appendChild(reloadBtn);
       document.getElementById("menuOptionsContainer").style.display = "none";
+      
+      const waitReconnect = () => {
+        const wait = document.getElementById("reconnectWait");
+        if (wait.textContent.length === 3) wait.textContent = "";
+        wait.innerHTML += ".";
+      };
+      this.reconnectionWait = setInterval(() => waitReconnect(), 500);
+      waitReconnect();
+      
       Modal.open("disconnectModal");
+      this.tryReconnect = setTimeout(() => this.init(), 500);
     };
     
     // Handle messages from the server
@@ -347,6 +388,7 @@ const Client = {
       }
       case "user-name": {
         clients[data.clientId].name = data.name;
+        if (data.clientId === Client.id) document.getElementById("userName").textContent = data.name;
         [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name);
         [...document.getElementsByClassName("chatPrivateText-" + data.clientId)].forEach((text) => {
           Chat.writePrivateTextTitle(text, [...text.className.matchAll(/chatPrivateText-([a-z\d]{4})/g)].map((name) => name[1]));
@@ -394,7 +436,7 @@ const Client = {
       }
       // A user has left the session
       case "user-left": {
-        Session.removeUsers(data.client, data.total);
+        Session.removeUsers([data.client], data.total);
         break;
       }
       // Another user has moved their mouse
@@ -440,6 +482,14 @@ const Client = {
         if (data.total !== 1) Modal.open("retrieveModal");
         Session.updateId(data.id);
         Session.updatePassword(data.password);
+        
+        Session.removeUsers(Object.keys(clients), 0);
+        Session.addUsers(data.clients, data.total);
+        this.canvas = clients[this.id].canvas;
+        this.ctx = clients[this.id].ctx;
+        
+        if (data.restore) break;
+        
         ActionHistory.clearUndo();
         ActionHistory.clearRedo();
         
@@ -490,11 +540,6 @@ const Client = {
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);
         Canvas.zoomToWindow("fit", false);
-        
-        Session.addUsers(data.clients, data.total);
-        
-        this.canvas = clients[this.id].canvas;
-        this.ctx = clients[this.id].ctx;
         
         // Select pen tool
         switchTool("pen");

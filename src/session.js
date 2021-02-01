@@ -48,12 +48,12 @@ const Session = {
     });
     this.updateUserInfo(total);
   },
-  removeUsers(client, total) {
-    delete clients[client.id];
-    if (client.id !== Client.id) {
+  removeUsers(c, total) {
+    c.forEach((client) => {
+      delete clients[client.id];
       const img = document.getElementById("cursorIcon-" + client.id);
-      img.remove();
-    }
+      if (img) img.remove();
+    });
     this.updateUserInfo(total);
   },
   // Update the total number of users connected to the current session

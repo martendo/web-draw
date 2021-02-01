@@ -791,9 +791,13 @@
     
     <div id="disconnectModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3 id="disconnectText">You were disconnected from the server.</h3></div>
+        <div class="modalHeader"><h3>Trying to reconnect...</h3></div>
+        <div class="modalBody">
+          <div id="disconnectText">You were disconnected from the server.</div>
+          <div id="reconnectWait">...</div>
+        </div>
         <div class="modalFooter">
-          <button id="disconnectModalOkBtn">OK</button>
+          <button id="disconnectModalGiveUpBtn">Give Up</button>
         </div>
       </div>
     </div>

@@ -746,6 +746,9 @@ select {
 #connectionInfoWait {
   font-size: 128px;
 }
+#reconnectWait {
+  text-align: center;
+}
 .connectionInfoDisconnected {
   color: #ff0000;
 }

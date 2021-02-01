@@ -48,7 +48,7 @@ class Session {
     console.log(`Create session ${this.id} - ${sessions.size} sessions open`);
   }
   
-  join(client) {
+  join(client, restore = false) {
     if (client.session) {
       console.error("Client already in session!");
     }
@@ -64,7 +64,8 @@ class Session {
           name: c.name
         };
       }),
-      password: this.password
+      password: this.password,
+      restore: restore
     });
     client.broadcast({
       type: "user-joined",
@@ -165,7 +166,7 @@ class Client {
   }
 }
 
-function joinSession(client, id, pass = null) {
+function joinSession(client, id, pass = null, restore) {
   const session = sessions.get(id);
   if (session.password) {
     if (pass) {
@@ -177,13 +178,14 @@ function joinSession(client, id, pass = null) {
       });
     }
   } else {
-    session.join(client);
+    session.join(client, restore);
   }
 }
-function createSession(client, id, pass = null) {
+function createSession(client, id, pass = null, restore) {
   const session = new Session(id);
-  joinSession(client, id);
+  joinSession(client, id, pass, restore);
   session.setPassword(client, pass);
+  return session;
 }
 function checkSessionPassword(client, id, password) {
   const session = sessions.get(id);
@@ -344,6 +346,33 @@ wss.on("connection", (socket) => {
         } else {
           createSession(client, data.id, data.password);
         }
+        break;
+      }
+      case "reconnect": {
+        if (!clients.has(data.client.id)) {
+          clients.delete(client.id);
+          client.id = data.client.id;
+          clients.set(client.id, client);
+        }
+        client.name = data.client.name;
+        client.send({
+          type: "connection-established",
+          id: client.id
+        });
+        
+        if (!sessions.has(data.session.id)) {
+          if (client.session) sessions.delete(client.session.id);
+          client.session = createSession(client, data.session.id, data.session.password, true);
+          sessions.set(client.session.id, client.session);
+        } else {
+          joinSession(client, data.session.id, data.session.password);
+        }
+        client.session.broadcast({
+          type: "user-name",
+          name: client.name,
+          clientId: client.id
+        });
+        
         break;
       }
       case "session-id": {

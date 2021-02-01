@@ -6,7 +6,6 @@
 - Selection copy buffer, for each client
   - Eliminate unnecessary raw image data of paste image actions in canvas files
   - Allow pasting copied data after switching to another tool
-- Try to reconnect to the server after disconnecting (should be cancelable)
 - Editing of shapes and lines in a similar fashion to selections
 - Rotation of selections
 - View and edit action history

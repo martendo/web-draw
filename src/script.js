@@ -493,7 +493,7 @@ document.getElementById("appInfoModalDoneBtn").addEventListener("click", () => M
 
 document.getElementById("errorModalOkBtn").addEventListener("click", () => Modal.close("errorModal"));
 document.getElementById("oldCanvasFileModalOkBtn").addEventListener("click", () => Modal.close("oldCanvasFileModal"));
-document.getElementById("disconnectModalOkBtn").addEventListener("click", () => Modal.close("disconnectModal"));
+document.getElementById("disconnectModalGiveUpBtn").addEventListener("click", () => Client.disconnect());
 document.getElementById("sessionNoExistModalOkBtn").addEventListener("click", () => Modal.close("sessionNoExistModal"));
 document.getElementById("sessionAlreadyExistModalOkBtn").addEventListener("click", () => Modal.close("sessionAlreadyExistModal"));
 
