@@ -41,7 +41,7 @@ const Client = {
   sendMouseMove() {
     if (!mouseMoved.moved) return;
     
-    const outside = mouseMoved.x < 0 || mouseMoved.x > sessionCanvas.width || mouseMoved.y < 0 || mouseMoved.y > sessionCanvas.height;
+    const outside = mouseMoved.x < 0 || mouseMoved.x > Session.canvas.width || mouseMoved.y < 0 || mouseMoved.y > Session.canvas.height;
     if (outside && !mouseMoved.outside) {
       // Just went outside
       this.sendMessage({
@@ -302,7 +302,7 @@ const Client = {
         break;
       }
       case "remove-selection": {
-        clients[data.clientId].action = NO_ACTION;
+        clients[data.clientId].action = {...NO_ACTION};
         Session.endClientAction(data.clientId);
         Canvas.update();
         break;

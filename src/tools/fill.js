@@ -62,9 +62,9 @@ const Fill = {
   // Fill an area of the same colour
   fill(startX, startY, colour, threshold, opacity, compOp, fillBy, changeAlpha, user = true) {
     const fillColour = Colour.hexToRgb(colour, 255 * opacity);
-    const canvasWidth = sessionCanvas.width, canvasHeight = sessionCanvas.height;
+    const canvasWidth = Session.canvas.width, canvasHeight = Session.canvas.height;
     var pixelStack = [[startX, startY]],
-        pixels = sessionCtx.getImageData(0, 0, canvasWidth, canvasHeight).data,
+        pixels = Session.ctx.getImageData(0, 0, canvasWidth, canvasHeight).data,
         pixelPos = ((startY * canvasWidth) + startX) * 4;
     const fillCtx = document.createElement("canvas").getContext("2d");
     fillCtx.canvas.width = canvasWidth;

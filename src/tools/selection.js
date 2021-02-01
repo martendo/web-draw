@@ -223,11 +223,11 @@ const Selection = {
     this.clear(sel, colour);
   },
   copy(ctx, sel) {
-    sel.data = sessionCtx.getImageData(sel.x, sel.y, sel.width, sel.height);
+    sel.data = Session.ctx.getImageData(sel.x, sel.y, sel.width, sel.height);
     this.draw(ctx, sel, true);
   },
   paste(sel, user = true) {
-    if (sel.data) this.drawData(sessionCtx, sel);
+    if (sel.data) this.drawData(Session.ctx, sel);
     if (user) {
       ActionHistory.addToUndo({
         type: "selection-paste",
@@ -247,8 +247,8 @@ const Selection = {
     }
   },
   clear(sel, colour, user = true) {
-    sessionCtx.fillStyle = colour;
-    sessionCtx.fillRect(sel.x, sel.y, sel.width, sel.height);
+    Session.ctx.fillStyle = colour;
+    Session.ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
     if (user) {
       ActionHistory.addToUndo({
         type: "selection-clear",
@@ -293,7 +293,7 @@ const Selection = {
       type: "remove-selection",
       clientId: Client.id
     });
-    clients[Client.id].action = NO_ACTION;
+    clients[Client.id].action = {...NO_ACTION};
     Session.endClientAction(Client.id);
     Canvas.update();
   },

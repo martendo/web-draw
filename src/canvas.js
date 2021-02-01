@@ -34,8 +34,8 @@ const Canvas = {
   
   init() {
     // Set canvas size
-    sessionCanvas.width = this.CANVAS_WIDTH;
-    sessionCanvas.height = this.CANVAS_HEIGHT;
+    Session.canvas.width = this.CANVAS_WIDTH;
+    Session.canvas.height = this.CANVAS_HEIGHT;
     this.canvas.width = this.CANVAS_WIDTH;
     this.canvas.height = this.CANVAS_HEIGHT;
     for (const client of Object.values(clients)) {
@@ -59,8 +59,8 @@ const Canvas = {
   },
   // Set the canvas zoom to whatever fits in the container, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {
-    const widthZoom = (this.container.clientWidth - (15 * 2)) / sessionCanvas.width;
-    const heightZoom = (this.container.clientHeight - (15 * 2)) / sessionCanvas.height;
+    const widthZoom = (this.container.clientWidth - (15 * 2)) / Session.canvas.width;
+    const heightZoom = (this.container.clientHeight - (15 * 2)) / Session.canvas.height;
     const fitZoom = type === "fit" ? Math.min(widthZoom, heightZoom) : Math.max(widthZoom, heightZoom);
     const newZoom = (fitZoom < this.zoom || allowLarger) ? fitZoom : this.zoom;
     this.setZoom(newZoom);
@@ -73,9 +73,9 @@ const Canvas = {
   },
   
   update({ extras = [], save = false, only = null } = {}) {
-    this.canvas.width = sessionCanvas.width;
-    this.canvas.height = sessionCanvas.height;
-    this.ctx.drawImage(sessionCanvas, 0, 0);
+    this.canvas.width = Session.canvas.width;
+    this.canvas.height = Session.canvas.height;
+    this.ctx.drawImage(Session.canvas, 0, 0);
     
     if (only) {
       // Used in ActionHistory
@@ -120,11 +120,11 @@ const Canvas = {
           save: false,
           only: only
         });
-        sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-        sessionCtx.drawImage(tempCanvas, 0, 0);
+        Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
+        Session.ctx.drawImage(tempCanvas, 0, 0);
       } else {
-        sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-        sessionCtx.drawImage(this.canvas, 0, 0);
+        Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
+        Session.ctx.drawImage(this.canvas, 0, 0);
       }
     }
   },
@@ -133,7 +133,7 @@ const Canvas = {
   export() {
     const a = document.createElement("a");
     a.style.display = "none";
-    a.href = sessionCanvas.toDataURL("image/png");
+    a.href = Session.canvas.toDataURL("image/png");
     a.download = "image.png";
     a.click();
   },
@@ -189,8 +189,8 @@ const Canvas = {
     this.init();
     // Zoom canvas to fit in canvasContainer if it doesn't already
     this.zoomToWindow("fit", false);
-    sessionCtx.fillStyle = Colour.BLANK;
-    sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    Session.ctx.fillStyle = Colour.BLANK;
+    Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
     ActionHistory.undoActions = data.undoActions;
     ActionHistory.redoActions = data.redoActions;
     if (data.actions) {
@@ -239,23 +239,23 @@ const Canvas = {
         options: options
       });
     }
-    const sessionCanvasCopy = this._copyCanvas(sessionCanvas);
+    const sessionCanvasCopy = this._copyCanvas(Session.canvas);
     const clientCanvasCopies = {};
     for (const [clientId, client] of Object.entries(clients)) {
       clientCanvasCopies[clientId] = this._copyCanvas(client.canvas);
     }
     var changed = false;
-    if (options.width !== sessionCanvas.width) {
+    if (options.width !== Session.canvas.width) {
       Client.canvas.width = options.width;
-      sessionCanvas.width = options.width;
+      Session.canvas.width = options.width;
       for (const client of Object.values(clients)) {
         client.canvas.width = options.width;
       }
       changed = true;
     }
-    if (options.height !== sessionCanvas.height) {
+    if (options.height !== Session.canvas.height) {
       Client.canvas.height = options.height;
-      sessionCanvas.height = options.height;
+      Session.canvas.height = options.height;
       for (const client of Object.values(clients)) {
         client.canvas.height = options.height;
       }
@@ -263,12 +263,12 @@ const Canvas = {
     }
     if (changed) {
       if (options.colour) {
-        sessionCtx.fillStyle = options.colour;
-        sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
-        sessionCtx.clearRect(options.x, options.y, sessionCanvasCopy.width, sessionCanvasCopy.height);
+        Session.ctx.fillStyle = options.colour;
+        Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
+        Session.ctx.clearRect(options.x, options.y, sessionCanvasCopy.width, sessionCanvasCopy.height);
       }
       // Canvas already filled with background colour
-      sessionCtx.drawImage(sessionCanvasCopy, options.x, options.y);
+      Session.ctx.drawImage(sessionCanvasCopy, options.x, options.y);
       
       for (const [clientId, client] of Object.entries(clients)) {
         // Canvas already cleared from size change
@@ -298,8 +298,8 @@ const Canvas = {
         type: "clear-blank"
       });
     }
-    sessionCtx.fillStyle = Colour.BLANK;
-    sessionCtx.fillRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    Session.ctx.fillStyle = Colour.BLANK;
+    Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.ctx.fillStyle = Colour.BLANK;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     if (user) {
@@ -316,7 +316,7 @@ const Canvas = {
         type: "clear"
       });
     }
-    sessionCtx.clearRect(0, 0, sessionCanvas.width, sessionCanvas.height);
+    Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (user) {
       ActionHistory.addToUndo({

@@ -20,13 +20,13 @@
 
 const Colour = {
   // Starting pen colours
-  DEFAULTS: ["#000000", "#ffffff"],
+  DEFAULTS: Object.freeze(["#000000", "#ffffff"]),
   // Blank canvas colour
   BLANK: "#ffffff",
 
   // Basic colours for quick selection
   // Stolen from MS Paint
-  BASICS: {
+  BASICS: Object.freeze({
     values: [
       [
         "#000000", "#7f7f7f", "#880015", "#ed1c24", "#ff7f27",
@@ -47,7 +47,7 @@ const Colour = {
         "Light yellow", "Lime", "Light turquoise", "Blue-grey", "Lavender"
       ]
     ]
-  },
+  }),
   
   // Convert hex colour value to an RGBA array
   hexToRgb(colour, alpha = 255) {

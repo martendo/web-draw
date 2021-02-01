@@ -23,6 +23,10 @@ const Session = {
   password: null,
   link: location.origin,
   
+  // Session canvas (permanent)
+  canvas: document.createElement("canvas"),
+  ctx: null,
+  
   actionOrder: [],
   
   // Add/Remove a user canvas and mouse and update the total
@@ -37,13 +41,13 @@ const Session = {
       }
       const clientCanvas = document.createElement("canvas");
       clientCanvas.classList.add("clientCanvas");
-      clientCanvas.width = sessionCanvas.width;
-      clientCanvas.height = sessionCanvas.height;
+      clientCanvas.width = Session.canvas.width;
+      clientCanvas.height = Session.canvas.height;
       clients[client.id] = {
         name: client.name,
         canvas: clientCanvas,
         ctx: clientCanvas.getContext("2d"),
-        action: NO_ACTION
+        action: {...NO_ACTION}
       };
     });
     this.updateUserInfo(total);
@@ -249,3 +253,4 @@ const Session = {
     Modal.close("userModal");
   }
 };
+Session.ctx = Session.canvas.getContext("2d");

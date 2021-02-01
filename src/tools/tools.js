@@ -163,20 +163,16 @@ const Tools = {
 // Handle mousedown on canvas
 function mouseHold(event) {
   if (event.target.tagName !== "CANVAS") return;
-  if (event.button) {
-    switch (event.button) {
-      case 0: {
-        currentPen = 0;
-        break;
-      }
-      case 2: {
-        currentPen = 1;
-        break;
-      }
-      default: return;
+  switch (event.button) {
+    case 0: {
+      currentPen = 0;
+      break;
     }
-  } else {
-    currentPen = 0;
+    case 2: {
+      currentPen = 1;
+      break;
+    }
+    default: return;
   }
   event.preventDefault();
   const point = Canvas.getCursorPos(event);
@@ -197,6 +193,7 @@ function mouseHold(event) {
       };
       currentAction.type = "selection-resize";
       Session.startClientAction(Client.id, currentAction);
+      return;
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
       currentAction.data.move = {
         x: point.x,
@@ -204,13 +201,10 @@ function mouseHold(event) {
       };
       currentAction.type = "selection-move";
       Session.startClientAction(Client.id, currentAction);
-    } else {
-      startTool(point);
+      return;
     }
-  } else {
-    startTool(point);
   }
-  return false;
+  startTool(point);
 }
 function startTool(point) {
   clients[Client.id].action.type = null;
@@ -267,7 +261,7 @@ function startTool(point) {
       break;
     }
     case "colourPicker": {
-      const pixelColour = sessionCtx.getImageData(point.x, point.y, 1, 1).data;
+      const pixelColour = Session.ctx.getImageData(point.x, point.y, 1, 1).data;
       const merge = document.getElementById("colourPickerMerge").checked;
       var colour = [0, 0, 0, 0];
       if (merge) {

@@ -25,7 +25,7 @@ const WSS_URL = "wss://web-draw.herokuapp.com";
 const MOUSEMOVE_UPDATE_INTERVAL = 50;
 
 // WebSocket closure code descriptions
-const CLOSE_CODES = {
+const CLOSE_CODES = Object.freeze({
   1000: "Normal Closure",
   1001: "Going Away",
   1002: "Protocol Error",
@@ -42,19 +42,19 @@ const CLOSE_CODES = {
   1013: "Try Again Later",
   1014: "Bad Gateway",
   1015: "TLS Handshake"
-};
+});
 
 var ctrlKey = false;
 
 // Values of tool setting <select>s
 // Pen stroke and line cap options
-const CAPS = [
+const CAPS = Object.freeze([
   "round",
   "butt",
   "square"
-];
+]);
 // Canvas globalCompositeOperation options
-const COMP_OPS = [
+const COMP_OPS = Object.freeze([
   "source-over",
   "destination-over",
   "destination-out",
@@ -81,16 +81,16 @@ const COMP_OPS = [
   "saturation",
   "color",
   "luminosity"
-];
+]);
 const DEFAULT_COMP_OP = COMP_OPS[0];
 
 // List of ping latency measurements to calculate average
 var prevPings = [];
 
-const NO_ACTION = {
+const NO_ACTION = Object.freeze({
   type: null,
   data: null
-};
+});
 
 // Drawing and tool variables
 var penColours = Colour.DEFAULTS.slice();
@@ -106,10 +106,6 @@ var mouseMoved = {
 };
 // Most recent custom colours
 var customColours = [];
-
-// Session canvas (permanent)
-const sessionCanvas = document.createElement("canvas");
-const sessionCtx = sessionCanvas.getContext("2d");
 
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
@@ -392,20 +388,20 @@ const resizeHeight = document.getElementById("canvasResizeHeight");
 const offsetX = document.getElementById("canvasResizeOffsetX");
 const offsetY = document.getElementById("canvasResizeOffsetY");
 resizeWidth.addEventListener("input", () => {
-  const delta = resizeWidth.value - sessionCanvas.width;
+  const delta = resizeWidth.value - Session.canvas.width;
   offsetX.min = Math.min(delta, 0);
   offsetX.max = Math.max(delta, 0);
   offsetX.value = Math.max(Math.min(offsetX.value, offsetX.max), offsetX.min);
 });
 resizeHeight.addEventListener("input", () => {
-  const delta = resizeHeight.value - sessionCanvas.height;
+  const delta = resizeHeight.value - Session.canvas.height;
   offsetY.min = Math.min(delta, 0);
   offsetY.max = Math.max(delta, 0);
   offsetY.value = Math.max(Math.min(offsetY.value, offsetY.max), offsetY.min);
 });
 document.getElementById("editResizeBtn").addEventListener("click", () => {
-  resizeWidth.value = sessionCanvas.width;
-  resizeHeight.value = sessionCanvas.height;
+  resizeWidth.value = Session.canvas.width;
+  resizeHeight.value = Session.canvas.height;
   offsetX.min = 0;
   offsetX.max = 0;
   offsetX.value = 0;
@@ -415,8 +411,8 @@ document.getElementById("editResizeBtn").addEventListener("click", () => {
   Modal.open("canvasResizeModal");
 });
 document.getElementById("canvasResizeOffsetCentre").addEventListener("click", () => {
-  offsetX.value = Math.round((resizeWidth.value - sessionCanvas.width) / 2);
-  offsetY.value = Math.round((resizeHeight.value - sessionCanvas.height) / 2);
+  offsetX.value = Math.round((resizeWidth.value - Session.canvas.width) / 2);
+  offsetY.value = Math.round((resizeHeight.value - Session.canvas.height) / 2);
 });
 const resizeFill = document.getElementById("canvasResizeFill");
 resizeFill.value = 1;
