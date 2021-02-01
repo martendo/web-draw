@@ -243,6 +243,14 @@ const ActionHistory = {
     }
     
     const row = this._table.insertRow(-1);
+    const num = this._table.children[0].children.length - 1;
+    row.addEventListener("pointerdown", () => {
+      Client.sendMessage({
+        type: "move-history",
+        num: num
+      });
+      this.moveTo(num);
+    });
     const image = document.createElement("canvas");
     image.classList.add("actionHistoryImage");
     if (Session.canvas.width > Session.canvas.height) {
