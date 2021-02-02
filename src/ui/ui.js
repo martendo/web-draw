@@ -42,3 +42,11 @@ function copyText(text, event = null) {
     }, 1000);
   }
 }
+
+const Icons = Object.freeze({
+  cursor:    "{{ BASE64:src/img/cursor.png }}",
+  visible:   "{{ BASE64:src/img/visible.png }}",
+  noVisible: "{{ BASE64:src/img/no-visible.png }}",
+  up:        "{{ BASE64:src/img/up.png }}",
+  down:      "{{ BASE64:src/img/down.png }}"
+});

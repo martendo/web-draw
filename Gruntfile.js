@@ -192,6 +192,19 @@ module.exports = function(grunt) {
       }
     },
     
+    base64Replace: {
+      build: {
+        options: {
+          type: "image/png"
+        },
+        src: [
+          "public/index.html",
+          "public/style.css",
+          "public/script.js"
+        ]
+      }
+    },
+    
     banner: {
       build: {
         options: {
@@ -272,6 +285,17 @@ module.exports = function(grunt) {
     });
   });
   
+  // base64Replace
+  grunt.registerMultiTask("base64Replace", function () {
+    this.files.forEach((file) => {
+      file.src.forEach((src) => {
+        grunt.file.write(src, grunt.file.read(src).replace(/{{ BASE64:(.+?) }}/g, (match, $1) => {
+          return `data:${this.options().type};base64,${grunt.file.read($1, { encoding: null }).toString("base64")}`;
+        }));
+      });
+    });
+  });
+  
   // concat
   grunt.registerMultiTask("concat", function () {
     const options = this.options();
@@ -318,6 +342,6 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace", "banner"]);
-  grunt.registerTask("debug", ["copy", "concat:debug", "replace"]);
+  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace", "base64Replace", "banner"]);
+  grunt.registerTask("debug", ["copy", "concat:debug", "replace", "base64Replace"]);
 };

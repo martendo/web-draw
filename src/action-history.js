@@ -260,7 +260,7 @@ const ActionHistory = {
           const btn = document.createElement("img");
           btn.classList.add("actionMoveDown");
           btn.title = "Move this action down";
-          btn.src = "/img/down.png";
+          btn.src = Icons.down;
           btn.addEventListener("click", () => this.moveAction(num, +1));
           cells[1].appendChild(btn);
         }
@@ -349,7 +349,7 @@ const ActionHistory = {
       toggleCell.classList.add("actionButtons");
       const toggleBtn = document.createElement("img");
       toggleBtn.title = "Toggle this action";
-      toggleBtn.src = enabled ? "/img/visible.png" : "/img/no-visible.png";
+      toggleBtn.src = enabled ? Icons.visible : Icons.noVisible;
       toggleBtn.addEventListener("click", () => this.toggleAction(num));
       toggleCell.appendChild(toggleBtn);
       
@@ -358,7 +358,7 @@ const ActionHistory = {
       if (num > 1) {
         const upBtn = document.createElement("img");
         upBtn.title = "Move this action up";
-        upBtn.src = "/img/up.png";
+        upBtn.src = Icons.up;
         upBtn.addEventListener("click", () => this.moveAction(num, -1));
         moveCell.appendChild(upBtn);
       }
@@ -367,7 +367,7 @@ const ActionHistory = {
         const downBtn = document.createElement("img");
         downBtn.classList.add("actionMoveDown");
         downBtn.title = "Move this action down";
-        downBtn.src = "/img/down.png";
+        downBtn.src = Icons.down;
         downBtn.addEventListener("click", () => this.moveAction(num, +1));
         moveCell.appendChild(downBtn);
       }

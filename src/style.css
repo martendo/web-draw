@@ -18,6 +18,10 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+:root {
+  --transparent-pattern: url("{{ BASE64:src/img/transparent.png }}");
+}
+
 body {
   background-color: #f8f8f8;
 }
@@ -91,7 +95,7 @@ a {
   vertical-align: baseline;
 }
 a[target="_blank"]::after {
-  content: url("/img/external.png");
+  content: url("{{ BASE64:src/img/external.png }}");
   margin: 0 2px 0 6px;
 }
 a:hover {
@@ -361,7 +365,7 @@ div.separator {
 }
 .actionHistoryImage {
   border: 1px solid #000000;
-  background: url("/img/transparent.png");
+  background: var(--transparent-pattern);
   background-size: 10px;
 }
 #historyTabBox .actionName {
@@ -642,7 +646,7 @@ label {
 }
 
 #displayCanvas {
-  background: url("/img/transparent.png");
+  background: var(--transparent-pattern);
   background-size: 16px;
 }
 
@@ -691,7 +695,7 @@ table.table.border.alternate tr:nth-child(even) {
 .penColourContainer {
   padding: 0;
   border: none;
-  background: url("/img/transparent.png");
+  background: var(--transparent-pattern);
   background-size: 20px;
 }
 .penColourValue {

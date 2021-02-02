@@ -34,7 +34,7 @@ const Session = {
     c.forEach((client) => {
       if (client.id !== Client.id) {
         const img = document.createElement("img");
-        img.src = "/img/cursor.png";
+        img.src = Icons.cursor;
         img.classList.add("cursorIcon");
         img.id = "cursorIcon-" + client.id;
         document.body.appendChild(img);

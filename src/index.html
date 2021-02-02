@@ -36,8 +36,8 @@
     <meta property="og:description" content="A little real-time online drawing program.">
     <meta property="og:type" content="website">
     
-    <meta property="og:image" content="https://w-draw.web.app/img/pen-icon-og.png">
-    <meta property="og:image:secure_url" content="https://w-draw.web.app/img/pen-icon-og.png">
+    <meta property="og:image" content="https://w-draw.web.app/pen-icon-og.png">
+    <meta property="og:image:secure_url" content="https://w-draw.web.app/pen-icon-og.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="300">
     <meta property="og:image:height" content="157">
@@ -61,7 +61,7 @@
           <button class="infoBtn" id="infoBtn">Info
           </button><button class="infoBtn" id="helpBtn">Help</button>
         </div>
-        <h1><img class="penIcon" src="/img/pen-icon.png" alt="Pen Logo">Web Draw</h1>
+        <h1><img class="penIcon" src="{{ BASE64:src/img/pen-icon.png }}" alt="Pen Logo">Web Draw</h1>
         <div id="connectionInfo">
           <div id="connectionInfoText">Connecting to server...</div>
           <div id="connectionInfoWait">&#183;&#183;&#183;</div>
@@ -158,49 +158,49 @@
         <tr>
           <td>
             <button id="penBtn" title="Pen Tool&#10;Draw a free-form line">
-              <img id="penBtnIcon" src="/img/pen.png" alt="P">
+              <img id="penBtnIcon" src="{{ BASE64:src/img/pen.png }}" alt="P">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="fillBtn" title="Flood Fill Tool&#10;Fill an area of the same colour">
-              <img id="fillBtnIcon" src="/img/flood-fill.png" alt="F">
+              <img id="fillBtnIcon" src="{{ BASE64:src/img/flood-fill.png }}" alt="F">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="colourPickerBtn" title="Colour Picker Tool&#10;Get a colour from the canvas">
-              <img id="colourPickerIcon" src="/img/colour-picker.png" alt="C">
+              <img id="colourPickerIcon" src="{{ BASE64:src/img/colour-picker.png }}" alt="C">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="selectBtn" title="Rectangular Select Tool&#10;Select a rectangular area from the canvas to manipulate">
-              <img id="selectIcon" src="/img/select.png" alt="S">
+              <img id="selectIcon" src="{{ BASE64:src/img/select.png }}" alt="S">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="lineBtn" title="Line Tool&#10;Draw a straight line from one point to another">
-              <img id="lineIcon" src="/img/line.png" alt="L">
+              <img id="lineIcon" src="{{ BASE64:src/img/line.png }}" alt="L">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="rectBtn" title="Rectangle Tool&#10;Draw a rectangle">
-              <img id="rectIcon" src="/img/rect.png" alt="R">
+              <img id="rectIcon" src="{{ BASE64:src/img/rect.png }}" alt="R">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="ellipseBtn" title="Ellipse Tool&#10;Draw an ellipse">
-              <img id="ellipseIcon" src="/img/ellipse.png" alt="R">
+              <img id="ellipseIcon" src="{{ BASE64:src/img/ellipse.png }}" alt="R">
             </button>
           </td>
         </tr>
@@ -208,8 +208,8 @@
       <div id="rightBox">
         <table id="rightTabBar" class="tabBar">
           <tr>
-            <td class="tab" id="toolTab" title="Tool settings"><img src="/img/tool-settings.png"></td>
-            <td class="tab" id="historyTab" title="Action history"><img src="/img/action-history.png"></td>
+            <td class="tab" id="toolTab" title="Tool settings"><img src="{{ BASE64:src/img/tool-settings.png }}"></td>
+            <td class="tab" id="historyTab" title="Action history"><img src="{{ BASE64:src/img/action-history.png }}"></td>
             <td class="tableExcess"></td>
           </tr>
         </table>
@@ -998,7 +998,7 @@
           <table id="infoModalTable">
             <tr>
               <td>
-                <h3>Web Draw<img class="penIcon" src="/img/pen.png" alt="Pen Logo"></h3>
+                <h3>Web Draw<img class="penIcon" src="{{ BASE64:src/img/pen.png }}" alt="Pen Logo"></h3>
                 <small><code>{{ VERSION }}</code></small><br>
                 By <a href="https://github.com/martendo7" target="_blank">martendo7</a><br>
                 <table class="table">
