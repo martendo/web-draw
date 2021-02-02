@@ -225,6 +225,9 @@ button:active:not(:disabled) {
 .menuLabel:hover, .menuDropdown > li:hover, .menuSelected > .menuLabel {
   background-color: #e8e8e8;
 }
+.menuLabel:active, .menuDropdown > li:active {
+  background-color: #d8d8d8;
+}
 #menubar > .menuItem {
   display: inline-block;
   border-right: 1px solid #d0d0d0;
@@ -684,7 +687,7 @@ table.table.border.alternate tr:nth-child(even) {
   font-family: "Courier New", monospace;
   padding: 2px;
 }
-#colourTable {
+.colourTable {
   text-align: center;
   width: 100%;
 }
