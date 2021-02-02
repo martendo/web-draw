@@ -249,6 +249,7 @@ const Selection = {
   clear(sel, colour, user = true) {
     Session.ctx.fillStyle = colour;
     Session.ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
+    Canvas.update();
     if (user) {
       ActionHistory.addToUndo({
         type: "selection-clear",
@@ -261,7 +262,6 @@ const Selection = {
         colour: colour
       });
     }
-    Canvas.update();
   },
   doCopy() {
     if (!clients[Client.id].action.data.selected) return;

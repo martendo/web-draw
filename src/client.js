@@ -261,12 +261,8 @@ const Client = {
         break;
       }
       // Another user has undone/redone an action
-      case "undo": {
-        ActionHistory.undo();
-        break;
-      }
-      case "redo": {
-        ActionHistory.redo();
+      case "move-history": {
+        ActionHistory.moveTo(data.num);
         break;
       }
       // Another user has used the flood fill tool
@@ -536,6 +532,7 @@ const Client = {
         Chat.box.classList.add("displayNone");
         
         Canvas.init();
+        ActionHistory.addActionToTable("[ Base Image ]");
         
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);

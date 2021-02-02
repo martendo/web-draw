@@ -206,215 +206,225 @@
         </tr>
       </table>
       <div id="rightBox">
-        <table>
+        <table id="rightTabBar" class="tabBar">
           <tr>
-            <td>
-              <table id="colourTable">
-                <tr>
-                  <td><label for="penColour0Value">Colour 1</label></td>
-                  <td><label for="penColour1Value">Colour 2</label></td>
-                </tr>
-                <tr>
-                  <td>
-                    <span id="penColour0Container" class="penColourContainer">
-                      <span id="penColour0" class="penColour" title="Click to change colour 1"></span>
-                    </span>
-                  </td>
-                  <td>
-                    <span id="penColour1Container" class="penColourContainer">
-                      <span id="penColour1" class="penColour" title="Click to change colour 2"></span>
-                    </span>
-                  </td>
-                </tr>
-                <tr>
-                  <td><input id="penColour0Value" class="penColourValue" type="text"></td>
-                  <td><input id="penColour1Value" class="penColourValue" type="text"></td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table id="quickColourSelect"></table>
-            </td>
-          </tr>
-          <tr>
-            <td><div class="separator"></div></td>
-          </tr>
-          <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
-            <td>
-              <div class="selectInput" title="How new content is added to the existing content">
-                <label class="selectLabel" for="compositeSelect">Mode</label>
-                <select id="compositeSelect">
-                  <option value="0" title="New content is drawn on top of the existing content.">Normal</option> <!-- source-over -->
-                  <option value="1" title="New content is drawn behind the existing content.">Behind</option> <!-- destination-over -->
-                  <option value="2" title="Existing content is kept where it doesn't overlap the new content.">Erase</option> <!-- destination-out -->
-                  <option class="separator" disabled>---</option>
-                  <option value="3" title="Retains the lightest pixels of both layers.">Lighten Only</option> <!-- lighten -->
-                  <option value="4" title="The pixels are inverted, multiplied, and inverted again.">Screen</option> <!-- screen -->
-                  <option value="5" title="Divides the bottom layer by the inverted top layer.">Dodge</option> <!-- color-dodge -->
-                  <option value="6" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option> <!-- lighter -->
-                  <option class="separator" disabled>---</option>
-                  <option value="7" title="Retains the darkest pixels of both layers.">Darken Only</option> <!-- darken -->
-                  <option value="8" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option> <!-- color-burn -->
-                  <option value="9" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option> <!-- multiply -->
-                  <option class="separator" disabled>---</option>
-                  <option value="10" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option> <!-- overlay -->
-                  <option value="11" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option> <!-- hard-light -->
-                  <option value="12" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option> <!-- soft-light -->
-                  <option class="separator" disabled>---</option>
-                  <option value="13" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option> <!-- difference -->
-                  <option value="14" title="Like difference, but with lower contrast.">Exclusion</option> <!-- exclusion -->
-                  <option class="separator" disabled>---</option>
-                  <option value="15" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option> <!-- source-in -->
-                  <option value="16" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option> <!-- source-out -->
-                  <option value="17" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option> <!-- source-atop -->
-                  <option value="18" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option> <!-- destination-in -->
-                  <option value="19" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option> <!-- destination-atop -->
-                  <option value="20" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option> <!-- xor -->
-                  <option value="21" title="Only the new shape is shown.">New Only</option> <!-- copy -->
-                  <option class="separator" disabled>---</option>
-                  <option value="22" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option> <!-- hue -->
-                  <option value="23" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option> <!-- saturation -->
-                  <option value="24" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option> <!-- color -->
-                  <option value="25" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option> <!-- luminosity -->
-                </select>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
-            <td>
-              <div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-dplaces="1" data-callback="updateColourAlpha" title="Opacity, in percent">
-                <div class="sliderLabel">Opacity</div>
-                <div class="sliderBar" id="opacityBar"></div>
-                <div class="sliderValue" id="opacityValue" contenteditable></div>
-                <div class="sliderValueUp" id="opacityValueUp">
-                  <svg width="20" height="15">
-                    <polygon points="10,3 3,12 17,12"></polygon>
-                  </svg>
-                </div>
-                <div class="sliderValueDown" id="opacityValueDown">
-                  <svg width="20" height="15">
-                    <polygon points="10,12 3,3 17,3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings lineSettings rectSettings ellipseSettings">
-            <td>
-              <div class="sliderInput" id="penWidthInput" data-min="1" data-width="150" data-max="10000" data-dplaces="0" title="The size of the pen in pixels">
-                <div class="sliderLabel">Size</div>
-                <div class="sliderBar" id="penWidthBar"></div>
-                <div class="sliderValue" id="penWidthValue" contenteditable></div>
-                <div class="sliderValueUp" id="penWidthValueUp">
-                  <svg width="20" height="15">
-                    <polygon points="10,3 3,12 17,12"></polygon>
-                  </svg>
-                </div>
-                <div class="sliderValueDown" id="penWidthValueDown">
-                  <svg width="20" height="15">
-                    <polygon points="10,12 3,3 17,3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings lineSettings">
-            <td>
-              <div class="selectInput" title="The shape at the ends of a line">
-                <label class="selectLabel" for="lineCapSelect">Caps</label>
-                <select id="lineCapSelect">
-                  <option value="0" title="The ends of lines are rounded.">Round</option>
-                  <option value="1" title="The ends of lines are squared off at the endpoints.">Butt</option>
-                  <option value="2" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
-                </select>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings penSettings">
-            <td title="Use quadratic curves between points instead of straight lines">
-              <input id="smoothenStrokes" type="checkbox">
-              <label for="smoothenStrokes">Smoothen strokes</label>
-            </td>
-          </tr>
-          <tr class="toolSettings rectSettings ellipseSettings">
-            <td>
-              <input id="shapeOutline" type="checkbox">
-              <label for="shapeOutline">Outline</label>
-            </td>
-          </tr>
-          <tr class="toolSettings rectSettings ellipseSettings">
-            <td>
-              <input id="shapeFill" type="checkbox">
-              <label for="shapeFill">Fill</label>
-            </td>
-          </tr>
-          <tr class="toolSettings fillSettings">
-            <td>
-              <div class="sliderInput" id="fillThresholdInput" data-min="0" data-width="255" data-max="255" data-dplaces="0" title="The maximum colour difference from the clicked colour to fill">
-                <div class="sliderLabel">Threshold</div>
-                <div class="sliderBar" id="fillThresholdBar"></div>
-                <div class="sliderValue" id="fillThresholdValue" contenteditable></div>
-                <div class="sliderValueUp" id="fillThresholdValueUp">
-                  <svg width="20" height="15">
-                    <polygon points="10,3 3,12 17,12"></polygon>
-                  </svg>
-                </div>
-                <div class="sliderValueDown" id="fillThresholdValueDown">
-                  <svg width="20" height="15">
-                    <polygon points="10,12 3,3 17,3"></polygon>
-                  </svg>
-                </div>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings fillSettings">
-            <td>
-              <div class="selectInput" title="Colour channels used to determine colour similarity">
-                <label class="selectLabel" for="fillBySelect">Fill by</label>
-                <select id="fillBySelect">
-                  <option value="0" title="Check all channels">RGBA</option>
-                  <option value="1" title="Check all colour channels, but not alpha">RGB</option>
-                  <option value="2" title="Check only the red colour channel">Red</option>
-                  <option value="3" title="Check only the green colour channel">Green</option>
-                  <option value="4" title="Check only the blue colour channel">Blue</option>
-                  <option value="5" title="Check only the alpha channel">Alpha</option>
-                </select>
-              </div>
-            </td>
-          </tr>
-          <tr class="toolSettings fillSettings">
-            <td>
-              <input id="fillChangeAlpha" type="checkbox">
-              <label for="fillChangeAlpha">Change alpha value</label>
-            </td>
-          </tr>
-          <tr class="toolSettings colourPickerSettings">
-            <td>
-              <input id="colourPickerMerge" type="checkbox">
-              <label for="colourPickerMerge">Merge with current</label>
-            </td>
-          </tr>
-          <tr class="toolSettings colourPickerSettings">
-            <td>
-              <input id="colourPickerOpacity" type="checkbox">
-              <label for="colourPickerOpacity">Sample opacity</label>
-            </td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectCopyBtn" class="toolBtn" title="Copy the pixels in the selected area on the canvas">Copy</button></td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectCutBtn" class="toolBtn" title="Cut the pixels from the selected area on the canvas">Cut</button></td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectPasteBtn" class="toolBtn" title="Paste the pixels in the selection onto the canvas">Paste</button></td>
-          </tr>
-          <tr class="toolSettings selectSettings">
-            <td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
+            <td class="tab" id="toolTab" title="Tool settings"><img src="/img/tool-settings.png"></td>
+            <td class="tab" id="historyTab" title="Action history"><img src="/img/action-history.png"></td>
+            <td class="tableExcess"></td>
           </tr>
         </table>
+        <div id="rightBoxContent">
+          <table id="toolTabBox" class="tabBox">
+            <tr>
+              <td>
+                <table id="colourTable">
+                  <tr>
+                    <td><label for="penColour0Value">Colour 1</label></td>
+                    <td><label for="penColour1Value">Colour 2</label></td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <span id="penColour0Container" class="penColourContainer">
+                        <span id="penColour0" class="penColour" title="Click to change colour 1"></span>
+                      </span>
+                    </td>
+                    <td>
+                      <span id="penColour1Container" class="penColourContainer">
+                        <span id="penColour1" class="penColour" title="Click to change colour 2"></span>
+                      </span>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td><input id="penColour0Value" class="penColourValue" type="text"></td>
+                    <td><input id="penColour1Value" class="penColourValue" type="text"></td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <table id="quickColourSelect"></table>
+              </td>
+            </tr>
+            <tr>
+              <td><div class="separator"></div></td>
+            </tr>
+            <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
+              <td>
+                <div class="selectInput" title="How new content is added to the existing content">
+                  <label class="selectLabel" for="compositeSelect">Mode</label>
+                  <select id="compositeSelect">
+                    <option value="0" title="New content is drawn on top of the existing content.">Normal</option> <!-- source-over -->
+                    <option value="1" title="New content is drawn behind the existing content.">Behind</option> <!-- destination-over -->
+                    <option value="2" title="Existing content is kept where it doesn't overlap the new content.">Erase</option> <!-- destination-out -->
+                    <option class="separator" disabled>---</option>
+                    <option value="3" title="Retains the lightest pixels of both layers.">Lighten Only</option> <!-- lighten -->
+                    <option value="4" title="The pixels are inverted, multiplied, and inverted again.">Screen</option> <!-- screen -->
+                    <option value="5" title="Divides the bottom layer by the inverted top layer.">Dodge</option> <!-- color-dodge -->
+                    <option value="6" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option> <!-- lighter -->
+                    <option class="separator" disabled>---</option>
+                    <option value="7" title="Retains the darkest pixels of both layers.">Darken Only</option> <!-- darken -->
+                    <option value="8" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option> <!-- color-burn -->
+                    <option value="9" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option> <!-- multiply -->
+                    <option class="separator" disabled>---</option>
+                    <option value="10" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option> <!-- overlay -->
+                    <option value="11" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option> <!-- hard-light -->
+                    <option value="12" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option> <!-- soft-light -->
+                    <option class="separator" disabled>---</option>
+                    <option value="13" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option> <!-- difference -->
+                    <option value="14" title="Like difference, but with lower contrast.">Exclusion</option> <!-- exclusion -->
+                    <option class="separator" disabled>---</option>
+                    <option value="15" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option> <!-- source-in -->
+                    <option value="16" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option> <!-- source-out -->
+                    <option value="17" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option> <!-- source-atop -->
+                    <option value="18" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option> <!-- destination-in -->
+                    <option value="19" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option> <!-- destination-atop -->
+                    <option value="20" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option> <!-- xor -->
+                    <option value="21" title="Only the new shape is shown.">New Only</option> <!-- copy -->
+                    <option class="separator" disabled>---</option>
+                    <option value="22" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option> <!-- hue -->
+                    <option value="23" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option> <!-- saturation -->
+                    <option value="24" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option> <!-- color -->
+                    <option value="25" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option> <!-- luminosity -->
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
+              <td>
+                <div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-dplaces="1" data-callback="updateColourAlpha" title="Opacity, in percent">
+                  <div class="sliderLabel">Opacity</div>
+                  <div class="sliderBar" id="opacityBar"></div>
+                  <div class="sliderValue" id="opacityValue" contenteditable></div>
+                  <div class="sliderValueUp" id="opacityValueUp">
+                    <svg width="20" height="15">
+                      <polygon points="10,3 3,12 17,12"></polygon>
+                    </svg>
+                  </div>
+                  <div class="sliderValueDown" id="opacityValueDown">
+                    <svg width="20" height="15">
+                      <polygon points="10,12 3,3 17,3"></polygon>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings lineSettings rectSettings ellipseSettings">
+              <td>
+                <div class="sliderInput" id="penWidthInput" data-min="1" data-width="150" data-max="10000" data-dplaces="0" title="The size of the pen in pixels">
+                  <div class="sliderLabel">Size</div>
+                  <div class="sliderBar" id="penWidthBar"></div>
+                  <div class="sliderValue" id="penWidthValue" contenteditable></div>
+                  <div class="sliderValueUp" id="penWidthValueUp">
+                    <svg width="20" height="15">
+                      <polygon points="10,3 3,12 17,12"></polygon>
+                    </svg>
+                  </div>
+                  <div class="sliderValueDown" id="penWidthValueDown">
+                    <svg width="20" height="15">
+                      <polygon points="10,12 3,3 17,3"></polygon>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings lineSettings">
+              <td>
+                <div class="selectInput" title="The shape at the ends of a line">
+                  <label class="selectLabel" for="lineCapSelect">Caps</label>
+                  <select id="lineCapSelect">
+                    <option value="0" title="The ends of lines are rounded.">Round</option>
+                    <option value="1" title="The ends of lines are squared off at the endpoints.">Butt</option>
+                    <option value="2" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings penSettings">
+              <td title="Use quadratic curves between points instead of straight lines">
+                <input id="smoothenStrokes" type="checkbox">
+                <label for="smoothenStrokes">Smoothen strokes</label>
+              </td>
+            </tr>
+            <tr class="toolSettings rectSettings ellipseSettings">
+              <td>
+                <input id="shapeOutline" type="checkbox">
+                <label for="shapeOutline">Outline</label>
+              </td>
+            </tr>
+            <tr class="toolSettings rectSettings ellipseSettings">
+              <td>
+                <input id="shapeFill" type="checkbox">
+                <label for="shapeFill">Fill</label>
+              </td>
+            </tr>
+            <tr class="toolSettings fillSettings">
+              <td>
+                <div class="sliderInput" id="fillThresholdInput" data-min="0" data-width="255" data-max="255" data-dplaces="0" title="The maximum colour difference from the clicked colour to fill">
+                  <div class="sliderLabel">Threshold</div>
+                  <div class="sliderBar" id="fillThresholdBar"></div>
+                  <div class="sliderValue" id="fillThresholdValue" contenteditable></div>
+                  <div class="sliderValueUp" id="fillThresholdValueUp">
+                    <svg width="20" height="15">
+                      <polygon points="10,3 3,12 17,12"></polygon>
+                    </svg>
+                  </div>
+                  <div class="sliderValueDown" id="fillThresholdValueDown">
+                    <svg width="20" height="15">
+                      <polygon points="10,12 3,3 17,3"></polygon>
+                    </svg>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings fillSettings">
+              <td>
+                <div class="selectInput" title="Colour channels used to determine colour similarity">
+                  <label class="selectLabel" for="fillBySelect">Fill by</label>
+                  <select id="fillBySelect">
+                    <option value="0" title="Check all channels">RGBA</option>
+                    <option value="1" title="Check all colour channels, but not alpha">RGB</option>
+                    <option value="2" title="Check only the red colour channel">Red</option>
+                    <option value="3" title="Check only the green colour channel">Green</option>
+                    <option value="4" title="Check only the blue colour channel">Blue</option>
+                    <option value="5" title="Check only the alpha channel">Alpha</option>
+                  </select>
+                </div>
+              </td>
+            </tr>
+            <tr class="toolSettings fillSettings">
+              <td>
+                <input id="fillChangeAlpha" type="checkbox">
+                <label for="fillChangeAlpha">Change alpha value</label>
+              </td>
+            </tr>
+            <tr class="toolSettings colourPickerSettings">
+              <td>
+                <input id="colourPickerMerge" type="checkbox">
+                <label for="colourPickerMerge">Merge with current</label>
+              </td>
+            </tr>
+            <tr class="toolSettings colourPickerSettings">
+              <td>
+                <input id="colourPickerOpacity" type="checkbox">
+                <label for="colourPickerOpacity">Sample opacity</label>
+              </td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectCopyBtn" class="toolBtn" title="Copy the pixels in the selected area on the canvas">Copy</button></td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectCutBtn" class="toolBtn" title="Cut the pixels from the selected area on the canvas">Cut</button></td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectPasteBtn" class="toolBtn" title="Paste the pixels in the selection onto the canvas">Paste</button></td>
+            </tr>
+            <tr class="toolSettings selectSettings">
+              <td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
+            </tr>
+          </table>
+          <table id="historyTabBox" class="tabBox table border"></table>
+        </div>
         <table id="posInfo">
           <tr>
             <td><span id="cursorPos" class="lightBox"></span></td>
@@ -454,9 +464,9 @@
     
     <div id="helpModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Help</h3></div>
+        <div class="modalHeader"><h2>Help</h2></div>
         <div class="modalBody">
-          <h4>Contents</h4>
+          <h3>Contents</h3>
           <label for="helpContentsCollapse" class="collapseLabel"><a>Show/Hide</a></label><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
           <div class="collapseContent">
             <ul>
@@ -478,32 +488,35 @@
               </ul></li>
               <li><a href="#help-left_toolbar">Left Toolbar</a></li>
               <li><a href="#help-right_toolbar">Right Toolbar</a><ul>
-                <li><a href="#help-right_toolbar-colours">Colours</a></li>
-                <li><a href="#help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</a><ul>
-                  <li><a href="#help-right_toolbar-mode_opacity-mode">Mode</a></li>
-                  <li><a href="#help-right_toolbar-mode_opacity-opacity">Opacity</a></li>
+                <li><a href="#help-right_toolbar-tool_settings">Tool Settings</a><ul>
+                  <li><a href="#help-right_toolbar-colours">Colours</a></li>
+                  <li><a href="#help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</a><ul>
+                    <li><a href="#help-right_toolbar-mode_opacity-mode">Mode</a></li>
+                    <li><a href="#help-right_toolbar-mode_opacity-opacity">Opacity</a></li>
+                  </ul></li>
+                  <li><a href="#help-right_toolbar-line_size">Line Size Settings</a></li>
+                  <li><a href="#help-right_toolbar-line_cap">Line Cap Settings</a></li>
+                  <li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
+                    <li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
+                    <li><a href="#help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
+                    <li><a href="#help-right_toolbar-flood_fill-alpha">Change alpha value</a></li>
+                  </ul></li>
+                  <li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
+                    <li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
+                    <li><a href="#help-right_toolbar-colour_picker-sample_opacity">Sample opacity</a></li>
+                  </ul></li>
+                  <li><a href="#help-right_toolbar-rect_select">Rectangular Select Actions</a><ul>
+                    <li><a href="#help-right_toolbar-rect_select-copy">Copy</a></li>
+                    <li><a href="#help-right_toolbar-rect_select-cut">Cut</a></li>
+                    <li><a href="#help-right_toolbar-rect_select-paste">Paste</a></li>
+                    <li><a href="#help-right_toolbar-rect_select-clear">Clear</a></li>
+                  </ul></li>
+                  <li><a href="#help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</a><ul>
+                    <li><a href="#help-right_toolbar-shape-outline">Outline</a></li>
+                    <li><a href="#help-right_toolbar-shape-fill">Fill</a></li>
+                  </ul></li>
                 </ul></li>
-                <li><a href="#help-right_toolbar-line_size">Line Size Settings</a></li>
-                <li><a href="#help-right_toolbar-line_cap">Line Cap Settings</a></li>
-                <li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
-                  <li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
-                  <li><a href="#help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
-                  <li><a href="#help-right_toolbar-flood_fill-alpha">Change alpha value</a></li>
-                </ul></li>
-                <li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
-                  <li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
-                  <li><a href="#help-right_toolbar-colour_picker-sample_opacity">Sample opacity</a></li>
-                </ul></li>
-                <li><a href="#help-right_toolbar-rect_select">Rectangular Select Actions</a><ul>
-                  <li><a href="#help-right_toolbar-rect_select-copy">Copy</a></li>
-                  <li><a href="#help-right_toolbar-rect_select-cut">Cut</a></li>
-                  <li><a href="#help-right_toolbar-rect_select-paste">Paste</a></li>
-                  <li><a href="#help-right_toolbar-rect_select-clear">Clear</a></li>
-                </ul></li>
-                <li><a href="#help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</a><ul>
-                  <li><a href="#help-right_toolbar-shape-outline">Outline</a></li>
-                  <li><a href="#help-right_toolbar-shape-fill">Fill</a></li>
-                </ul></li>
+                <li><a href="#help-right_toolbar-action_history">Action History</a></li>
               </ul></li>
               <li><a href="#help-chat">Chat</a></li>
               <li><a href="#help-bottom_toolbar">Bottom Toolbar</a></li>
@@ -515,13 +528,13 @@
               </ul></li>
             </ul>
           </div>
-          <h4 id="help-sessions">Sessions</h4>
+          <h3 id="help-sessions">Sessions</h3>
           Imagine a session is the room you're in. Everybody in the same room sees and works on the same drawing.<br>
           If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
           If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random 4-character ID.<br>
           <br>
           You may be prompted to enter a password when joining a session. If you don't know it, you can't join the session!
-          <h5 id="help-sessions-links">Session Links</h5>
+          <h4 id="help-sessions-links">Session Links</h4>
           If you're looking to share the link with your friends so they can automatically join, see <a href="#help-menubar-share_link">Share Link</a> on the menubar.<br>
           <br>
           The session URL can be used to automatically join the session. It follows this format:<br>
@@ -531,43 +544,43 @@
           The session password can also be passed through the URL in a query string:<br>
           <code>https://w-draw.web.app/s/secret-drawing<strong class="mono">?pass=&#60;password&#62;</strong></code>, where <code>&#60;password&#62;</code> is the session's password.<br>
           If you are creating the session with this link (a session with the specified ID doesn't exist yet), then the password on the new session will be automatically set to the one specified.
-          <h4 id="help-menubar">Menubar</h4>
+          <h3 id="help-menubar">Menubar</h3>
           The menubar (at the very top of the screen) allows you to do useful things, like save your canvas for later, set a password on your session, or look at this help window!<br>
-          <h5 id="help-menubar-save_open">Save/Open</h5>
+          <h4 id="help-menubar-save_open">Save/Open</h4>
           Web Draw can save and open files containing the info it needs to recreate your canvas. It's similar to the data that is sent to a new client joining your session. It contains the canvas' undo and redo data, which are lists of actions (strokes, flood fills, lines, etc.) clients have made and their properties (colour, opacity, etc.).<br>
           <br>
           <strong>WARNING!</strong><br>
           The canvas data format is going to change and will become incompatible with newer versions of Web Draw.
-          <h5 id="help-menubar-export_import">Export/Import</h5>
+          <h4 id="help-menubar-export_import">Export/Import</h4>
           With the "Export" button, you can save your drawing as a PNG image!<br>
           And with "Import", you can upload an image to use in your drawing!
-          <h5 id="help-menubar-resize_canvas">Resize Canvas</h5>
+          <h4 id="help-menubar-resize_canvas">Resize Canvas</h4>
           In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.<br>
           <br>
           When choosing a new size for your canvas, you may also choose an offset position for the original image on the new canvas and how to fill new canvas space.<br>
           The "Centre" button will automatically set the offset position so that the original image will be centred on the new canvas.
-          <h5 id="help-menubar-session_id_password">Session ID & Password</h5>
+          <h4 id="help-menubar-session_id_password">Session ID & Password</h4>
           Through the "Session" menu, you can change the current session's ID and set (or remove) a password.
-          <h5 id="help-menubar-share_link">Share Link</h5>
+          <h4 id="help-menubar-share_link">Share Link</h4>
           Here you can get a link that you can share with your friends which will allow whoever uses it to automatically join the session. If your session has a password on it, you can optionally include it in the link so that whoever uses your link doesn't have to type it in. If the password isn't included, they will be prompted to enter it before joining, just like from the main page.
-          <h5 id="help-menubar-info">Info</h5>
+          <h4 id="help-menubar-info">Info</h4>
           This "Info" window will show a little info about the web app and the client (you!).<br>
           Ping is the latency of the connection to the server. Every 10 seconds, the server will send a ping to your browser and wait for a pong to make sure the connection is still alive. It also measures the amount of time between when the ping was sent and the pong was received, and tells the browser about it so it can display it here so you can know about it. If you're curious, I typically get an average latency of around 40 ms.
-          <h4 id="help-top_toolbar">Top Toolbar</h4>
+          <h3 id="help-top_toolbar">Top Toolbar</h3>
           The top toolbar has your canvas controls.
-          <h5 id="help-top_toolbar-undo_redo">Undo/Redo</h5>
+          <h4 id="help-top_toolbar-undo_redo">Undo/Redo</h4>
           Click the "Undo" button to undo the last action on the canvas.<br>
           Click "Redo" to redo the last undone action.<br>
           <br>
           Note: These are actions that anyone in the session has made, not just your own.
-          <h5 id="help-top_toolbar-clear">Clear</h5>
+          <h4 id="help-top_toolbar-clear">Clear</h4>
           Clear the canvas to all white. Double click to clear to all transparent pixels. (<code>#00000000</code>)
-          <h5 id="help-top_toolbar-canvas_zoom">Canvas Zoom</h5>
+          <h4 id="help-top_toolbar-canvas_zoom">Canvas Zoom</h4>
           This is the displayed size of the canvas on your screen. This doesn't affect the actual size of the canvas or the zoom of the canvas on anybody else's screen. If you need to be more precise or detailed or just need to draw something small, you can zoom in a bit.<br>
           To change it, you can either use your mouse wheel on the canvas area with the <kbd>Control</kbd> key held down, or if you want, you can enter percentage size into the number box.<br>
           The "Reset" button will reset the zoom to 100%.<br>
           The "Fit" button will set the canvas zoom to the largest size that will fit in the canvas area.
-          <h4 id="help-left_toolbar">Left Toolbar</h4>
+          <h3 id="help-left_toolbar">Left Toolbar</h3>
           On the left, you've got all your different tools.<br>
           <strong>Pen</strong>: Draw a free-form line however you want!<br>
           <strong>Flood Fill</strong>: Fill an area of a similar colour, decided by the fill threshold. Colours with a difference within the threshold will be recoloured.<br>
@@ -578,8 +591,10 @@
           <strong>Ellipse</strong>: Draw an ellipse, with optional outline & fill.<br>
           <br>
           Note: With every applicable tool, the left mouse button will use Colour 1, and the right will use Colour 2.
-          <h4 id="help-right_toolbar">Right Toolbar</h4>
-          You'll see your colours and tool settings over on the right.
+          <h3 id="help-right_toolbar">Right Toolbar</h3>
+          The right toolbar has 2 tabs: A tool settings tab and an action history tab.<br>
+          <h4 id="help-right_toolbar-tool_settings">Tool Settings</h4>
+          Here you can find your colours and settings for all your tools.
           <h5 id="help-right_toolbar-colours">Colours</h5>
           The colours are always shown. Colour 1 is the colour to use with the left mouse button, and Colour 2 is used with the right. Click on a colour in the table to the left with the left or right button to set the corresponding colour. Click on the colour box for Colour 1 or 2 to choose a custom colour with a colour picker, or type in a hex RGB or RGBA colour value in the box below. You can use 3-digit or 6-digit hex RGB colours, or 4-digit or 8-digit hex RGBA colours.
           <h5 id="help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</h5>
@@ -632,7 +647,9 @@
           The line around the outer edge of the shape. Uses the colour which the mouse was clicked with.
           <h6 id="help-right_toolbar-shape-fill">Fill</h6>
           Whether or not the inside of the shape is filled with a solid colour. Uses the opposite colour from what the mouse was clicked with.
-          <h4 id="help-chat">Chat</h4>
+          <h4 id="help-right_toolbar-action_history">Action History</h4>
+          Here you can find the history of all actions that make up the canvas you see. Each entry in the list consists of a little snapshot of what the canvas looked like at that point in history and the name of the action that made it look like that. The current point in history is highlighted. Undoing or redoing will move that highlight up or down the list. Clicking any given entry in the list will take you to that point in history.
+          <h3 id="help-chat">Chat</h3>
           Use the chat to send messages to other people in the session, including private messages to people you choose.<br>
           <br>
           Normally, a message is sent to everyone in the session. However, if the message begins with "to:", it will be a private message sent only to the people with the client IDs that follow. For example, if your message is "to:x7sm PRIVATE MESSAGE!!!", only you and the person with the client ID of <code>x7sm</code> will be able to see the message, and no one else. You can also use a comma-separated list of IDs, like this: "to:x7sm,18hp Hello!"<br>
@@ -664,18 +681,18 @@
           </table>
           <br>
           You can escape the special characters with a backslash if you want to, for example, use asterisks around a word without italicizing it. You can do that by putting a backslash before a special character. "\*cough*" will suffice and will be shown as "*cough*". If either one of the opening or closing or both formatting characters are escaped (e.g. "\*"), the text will not be formatted. And as you should expect, you can escape the backslash as well: "\\**cool**" will result in "\<strong>cool</strong>". You can escape the backslash and the formatting, too, and the backslash before the backslash, and so on.
-          <h4 id="help-bottom_toolbar">Bottom Toolbar</h4>
+          <h3 id="help-bottom_toolbar">Bottom Toolbar</h3>
           At the bottom of your screen is some session info.<br>
           You will see the ID of the session you are currently in and the number of users connected to it.<br>
           Your session ID can be easily copied to the clipboard by clicking on it. If you want to share a link where your buddies can automatically join your session without any other hassle, just copy the link in the address bar, which will have your session ID in it. (See above, Sessions.)<br>
           Finally, a "Leave" button to leave the session. You will be taken back to the main page.
-          <h4 id="help-keyboard_shortcuts">Keyboard Shortcuts</h4>
-          <h5 id="help-keyboard_shortcuts-edit">Edit</h5>
+          <h3 id="help-keyboard_shortcuts">Keyboard Shortcuts</h3>
+          <h4 id="help-keyboard_shortcuts-edit">Edit</h4>
           <ul>
             <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> - Undo</li>
             <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <strong>OR</strong> <kbd>Ctrl</kbd> + <kbd>Y</kbd> - Redo</li>
           </ul>
-          <h5 id="help-keyboard_shortcuts-view">View</h5>
+          <h4 id="help-keyboard_shortcuts-view">View</h4>
           <ul>
             <li><kbd>+</kbd> - Zoom canvas in</li>
             <li><kbd>-</kbd> - Zoom canvas out</li>
@@ -692,13 +709,13 @@
           <ul>
             <li><kbd>Escape</kbd> - Toggle chat sidebar</li>
           </ul>
-          <h5 id="help-keyboard_shortcuts-selection">With Selection</h5>
+          <h4 id="help-keyboard_shortcuts-selection">With Selection</h4>
           <ul>
             <li><kbd>Ctrl</kbd> + <kbd>C</kbd> - Copy</li>
             <li><kbd>Ctrl</kbd> + <kbd>X</kbd> - Cut</li>
             <li><kbd>Ctrl</kbd> + <kbd>V</kbd> - Paste</li>
           </ul>
-          <h5 id="help-keyboard_shortcuts-other">Other</h5>
+          <h4 id="help-keyboard_shortcuts-other">Other</h4>
           <ul>
             <li><kbd>F1</kbd> - Open Help window</li>
           </ul>
@@ -712,15 +729,15 @@
     
     <div id="appInfoModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>App Info</h3></div>
+        <div class="modalHeader"><h2>App Info</h2></div>
         <div class="modalBody">
           As you can probably tell from the version number, Web Draw isn't finished yet. It may never be, but I'll definitely keep adding things and improving the program.<br>
           <br>
           I plan to make Web Draw a nice drawing program with lots of features. When it feels like a better online real-time version of MS Paint, I'll be happy to call it "finished", even though I'm sure it won't be at that point. You can see what I have planned in my <a href="https://github.com/martendo7/web-draw/blob/master/TODO.md" target="_blank">to-do list</a>.
-          <h4>Why'd you make this?</h4>
+          <h3>Why'd you make this?</h3>
           I dunno, for fun. It's cool, though.<br>
           <br>
-          <h4>More Info</h4>
+          <h3>More Info</h3>
           Web Draw is written entirely in plain JavaScript, so that I know what I'm doing. The interface is also plain HTML and CSS.<br>
           <br>
         </div>
@@ -732,7 +749,7 @@
     
     <div id="noWsModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Your Browser Doesn't Support WebSockets!</h3></div>
+        <div class="modalHeader"><h2>Your Browser Doesn't Support WebSockets!</h2></div>
         <div class="modalBody">
           That means your browser is old. You should upgrade.<br>
           Web Draw doesn't work without WebSockets. Sorry, but no WebSockets means no Web Draw.<br>
@@ -742,7 +759,7 @@
     
     <div id="sessionNoExistModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>There is no existing session with the ID <code id="sessionNoExist">N/A</code>.</h3></div>
+        <div class="modalHeader"><h2>There is no existing session with the ID <code id="sessionNoExist">N/A</code>.</h2></div>
         <div class="modalFooter">
           <button id="sessionNoExistModalOkBtn">OK</button>
         </div>
@@ -750,7 +767,7 @@
     </div>
     <div id="sessionAlreadyExistModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>A session with the ID <code id="sessionAlreadyExist">N/A</code> already exists. Please choose another ID.</h3></div>
+        <div class="modalHeader"><h2>A session with the ID <code id="sessionAlreadyExist">N/A</code> already exists. Please choose another ID.</h2></div>
         <div class="modalFooter">
           <button id="sessionAlreadyExistModalOkBtn">OK</button>
         </div>
@@ -759,13 +776,13 @@
     
     <div id="retrieveModal" class="modal">
       <div class="modalContent" style="min-width: 20em;">
-        <div class="modalHeader"><h3 id="retrieveText">Setting up canvas...</h3></div>
+        <div class="modalHeader"><h2 id="retrieveText">Setting up canvas...</h2></div>
       </div>
     </div>
     
     <div id="oldCanvasFileModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Error Setting Up Canvas</h3></div>
+        <div class="modalHeader"><h2>Error Setting Up Canvas</h2></div>
         <div class="modalBody">
           There was a problem while trying to set up the drawing in your canvas file.<br>
           It's likely that it is old and outdated - the canvas format has changed and will continue to change until I stop messing around with features.<br>
@@ -778,7 +795,7 @@
     
     <div id="errorModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Woah! Error!</h3></div>
+        <div class="modalHeader"><h2>Woah! Error!</h2></div>
         <div class="modalBody">
           There's been a problem with the server. That means something's really not right. :/<br>
           Try reloading the page, and if it still doesn't work, the server may be down. Sorry!
@@ -791,7 +808,7 @@
     
     <div id="disconnectModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Trying to reconnect...</h3></div>
+        <div class="modalHeader"><h2>Trying to reconnect...</h2></div>
         <div class="modalBody">
           <div id="disconnectText">You were disconnected from the server.</div>
           <div id="reconnectWait">...</div>
@@ -804,7 +821,7 @@
     
     <div id="canvasResizeModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Resize Canvas</h3></div>
+        <div class="modalHeader"><h2>Resize Canvas</h2></div>
         <div class="modalBody">
           <fieldset>
             <legend>Canvas Size</legend>
@@ -855,7 +872,7 @@
     
     <div id="changeSessionIdModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Change Session ID</h3></div>
+        <div class="modalHeader"><h2>Change Session ID</h2></div>
         <div class="modalBody">
           Current session ID: <span id="sessionIdCurrent" class="clickToCopy lightBox mono" title="Copy">N/A</span><br>
           <br>
@@ -869,7 +886,7 @@
     </div>
     <div id="sessionIdChangedModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>The session ID has been changed to <code id="sessionIdChanged">N/A</code>.</h3></div>
+        <div class="modalHeader"><h2>The session ID has been changed to <code id="sessionIdChanged">N/A</code>.</h2></div>
         <div class="modalFooter">
           <button id="sessionIdChangedModalOkBtn">OK</button>
         </div>
@@ -877,7 +894,7 @@
     </div>
     <div id="sessionHasIdModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>There is already a session with the ID <code id="sessionHasId">N/A</code>. Please choose another ID.</h3></div>
+        <div class="modalHeader"><h2>There is already a session with the ID <code id="sessionHasId">N/A</code>. Please choose another ID.</h2></div>
         <div class="modalFooter">
           <button id="sessionHasIdModalOkBtn">OK</button>
         </div>
@@ -886,7 +903,7 @@
     
     <div id="setSessionPasswordModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Set Session Password</h3></div>
+        <div class="modalHeader"><h2>Set Session Password</h2></div>
         <div class="modalBody">
           <span id="sessionPasswordCurrent"></span><br>
           <br>
@@ -900,7 +917,7 @@
     </div>
     <div id="enterSessionPasswordModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Enter Password</h3></div>
+        <div class="modalHeader"><h2>Enter Password</h2></div>
         <div class="modalBody">
           The session <code id="enterSessionPasswordId">N/A</code> has a password set on it. Please enter it to join.<br>
           <label for="enterSessionPassword">Password: </label>
@@ -913,7 +930,7 @@
     </div>
     <div id="sessionWrongPasswordModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>The password <code id="sessionWrongPassword">N/A</code> does not match the password for the session <code id="sessionWrongPasswordId">N/A</code>.</h3></div>
+        <div class="modalHeader"><h2>The password <code id="sessionWrongPassword">N/A</code> does not match the password for the session <code id="sessionWrongPasswordId">N/A</code>.</h2></div>
         <div class="modalFooter">
           <button id="sessionWrongPasswordModalOkBtn">OK</button>
         </div>
@@ -921,7 +938,7 @@
     </div>
     <div id="shareSessionLinkModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Share Session Link</h3></div>
+        <div class="modalHeader"><h2>Share Session Link</h2></div>
         <div class="modalBody">
           Share this link with your friends to join this session!<br>
           <br>
@@ -952,7 +969,7 @@
     
     <div id="userModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>User Settings</h3></div>
+        <div class="modalHeader"><h2>User Settings</h2></div>
         <div class="modalBody">
           <label for="userNameInput">Name: </label>
           <input id="userNameInput" type="text">
@@ -965,12 +982,12 @@
     
     <div id="infoModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Info</h3></div>
+        <div class="modalHeader"><h2>Info</h2></div>
         <div class="modalBody">
           <table id="infoModalTable">
             <tr>
               <td>
-                <h4>Web Draw<img class="penIcon" src="/img/pen.png" alt="Pen Logo"></h4>
+                <h3>Web Draw<img class="penIcon" src="/img/pen.png" alt="Pen Logo"></h3>
                 <small><code>{{ VERSION }}</code></small><br>
                 By <a href="https://github.com/martendo7" target="_blank">martendo7</a><br>
                 <table class="table">
@@ -988,7 +1005,7 @@
               </td>
               <td><span class="spacer"></span></td>
               <td>
-                <h4>User Info</h4>
+                <h3>User Info</h3>
                 <table id="infoTable" class="table">
                   <tr>
                     <td>Client ID:</td>
@@ -1022,7 +1039,7 @@
     
     <div id="allPingsModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Previous Pings</h3></div>
+        <div class="modalHeader"><h2>Previous Pings</h2></div>
         <div class="modalBody">
           <table class="table border">
             <tr>
@@ -1055,7 +1072,7 @@
     
     <div id="sessionInfoModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Session Info</h3></div>
+        <div class="modalHeader"><h2>Session Info</h2></div>
         <div class="modalBody">
           Session ID: <span id="sessionInfoId" class="clickToCopy lightBox mono" title="Copy">N/A</span><br>
           Number of clients connected: <strong id="sessionInfoClients">0</strong><br>
@@ -1079,7 +1096,7 @@
     
     <div id="settingsModal" class="modal">
       <div class="modalContent">
-        <div class="modalHeader"><h3>Settings</h3></div>
+        <div class="modalHeader"><h2>Settings</h2></div>
         <div class="modalBody">
           <table class="table">
             <tr>

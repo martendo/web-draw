@@ -233,12 +233,6 @@ const Canvas = {
   
   // Set the canvas size
   resize(options, user = true) {
-    if (user) {
-      ActionHistory.addToUndo({
-        type: "resize-canvas",
-        options: options
-      });
-    }
     const sessionCanvasCopy = this._copyCanvas(Session.canvas);
     const clientCanvasCopies = {};
     for (const [clientId, client] of Object.entries(clients)) {
@@ -276,6 +270,12 @@ const Canvas = {
       }
     }
     Canvas.update();
+    if (user) {
+      ActionHistory.addToUndo({
+        type: "resize-canvas",
+        options: options
+      });
+    }
   },
   
   // Import image and put on canvas

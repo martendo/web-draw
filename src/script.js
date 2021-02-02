@@ -195,12 +195,12 @@ document.addEventListener("keydown", (event) => {
     } else {
       switch (event.key) {
         case "z": {
-          ActionHistory.doUndo();
+          ActionHistory.moveWithOffset(-1);
           break;
         }
         case "Z":
         case "y": {
-          ActionHistory.doRedo();
+          ActionHistory.moveWithOffset(+1);
           break;
         }
         case "c": {
@@ -322,8 +322,8 @@ document.getElementById("fileImportBtn").addEventListener("click", () => {
   const filePicker = document.getElementById("choosePicture");
   filePicker.click();
 });
-document.getElementById("editUndoBtn").addEventListener("click", () => ActionHistory.doUndo());
-document.getElementById("editRedoBtn").addEventListener("click", () => ActionHistory.doRedo());
+document.getElementById("editUndoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(-1));
+document.getElementById("editRedoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(+1));
 document.getElementById("editClearBtn").addEventListener("click", () => Canvas.clearBlank());
 document.getElementById("editClearTransparentBtn").addEventListener("click", () => Canvas.clear());
 document.getElementById("editSettingsBtn").addEventListener("click", () => Modal.open("settingsModal"));
@@ -351,6 +351,19 @@ document.getElementById("chatXBtn").addEventListener("click", () => {
   Chat.box.classList.add("displayNone");
 });
 
+const tabs = [...document.getElementsByClassName("tab")];
+tabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    tabs.forEach((t) => {
+      t.classList.remove("tabSelected");
+      document.getElementById(t.id + "Box").style.display = "none";
+    });
+    tab.classList.add("tabSelected");
+    document.getElementById(tab.id + "Box").style.display = "table";
+  });
+});
+document.getElementById("toolTab").dispatchEvent(new Event("click"));
+
 Chat.input.addEventListener("keydown", (event) => {
   if (event.key === "Enter" && !event.shiftKey) {
     Chat.send();
@@ -365,8 +378,8 @@ Chat.input.addEventListener("input", () => {
 });
 document.getElementById("chatSendBtn").addEventListener("click", () => Chat.send());
 
-document.getElementById("undoBtn").addEventListener("click", () => ActionHistory.doUndo());
-document.getElementById("redoBtn").addEventListener("click", () => ActionHistory.doRedo());
+document.getElementById("undoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(-1));
+document.getElementById("redoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(+1));
 const clearBtn = document.getElementById("clearBtn");
 clearBtn.addEventListener("click", () => Canvas.clearBlank());
 clearBtn.addEventListener("dblclick", () => Canvas.clear());
