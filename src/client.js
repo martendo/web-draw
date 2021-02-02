@@ -94,6 +94,8 @@ const Client = {
   },
   
   disconnect() {
+    // Signal gave up
+    this.socket = 0;
     if (this.tryReconnect != null) clearTimeout(this.tryReconnect);
     Session.leave();
     Modal.close("disconnectModal");
@@ -160,8 +162,9 @@ const Client = {
     
     // Tell the user when the this.socket has closed
     this.socket.onclose = (event) => {
-      this.socket = null;
       if (this.reconnectionWait) clearInterval(this.reconnectionWait);
+      if (this.socket === 0) return;
+      this.socket = null;
       
       const text = document.getElementById("disconnectText");
       text.innerHTML = `You were disconnected from the server.<br>Code: ${event.code} (${CLOSE_CODES[event.code]})`;
