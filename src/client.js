@@ -268,6 +268,16 @@ const Client = {
         ActionHistory.moveTo(data.num);
         break;
       }
+      // Another user has toggled visibility of an action
+      case "toggle-action": {
+        ActionHistory.toggleAction(data.num, false);
+        break;
+      }
+      // Another user has moved an action
+      case "move-action": {
+        ActionHistory.moveAction(data.num, data.offset, false);
+        break;
+      }
       // Another user has used the flood fill tool
       case "fill": {
         Fill.fill(data.x, data.y, data.colour, data.threshold, data.opacity, data.compOp, data.fillBy, data.changeAlpha);

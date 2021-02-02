@@ -8,9 +8,7 @@
   - Allow pasting copied data after switching to another tool
 - Editing of shapes and lines in a similar fashion to selections
 - Rotation of selections
-- View and edit action history
-  - Deletion of actions
-  - Reordering of actions
+- Edit settings of actions in action history (change colour, opacity, etc.)
 ## Later
 - Make the canvas container/area a `<canvas>` and draw the "canvas" (image) on that
   - Allows better/nicer manipulation of view
@@ -21,6 +19,3 @@
 - Multiple layers
   - Requires huge changes, but layers are super useful
 - Text
-- "Object" selection (cursor tool)
-  - "Object" = saved action = stroke, line, shape, and possibly fill and images
-  - Allows object attribute modification (change colour, opacity, etc.)

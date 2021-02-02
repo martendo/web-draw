@@ -364,9 +364,22 @@ div.separator {
   background: url("/img/transparent.png");
   background-size: 10px;
 }
-.actionName {
+#historyTabBox .actionName {
   width: 100%;
   font-size: 14px;
+  border-right: none;
+}
+#historyTabBox .actionButtons {
+  border-left: none;
+  padding-left: 0;
+  line-height: 0;
+}
+#historyTabBox .actionButtons:not(:last-child) {
+  border-right: none;
+  padding-right: 0;
+}
+#historyTabBox .actionButtons > img {
+  padding: 2px;
 }
 #historyTabBox .lastAction {
   background-color: #f6f6f6;
