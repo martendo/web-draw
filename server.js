@@ -244,6 +244,7 @@ wss.on("connection", (socket) => {
       case "resize-canvas":
       case "move-history":
       case "toggle-action":
+      case "move-action":
       case "start-stroke":
       case "add-stroke":
       case "end-stroke":

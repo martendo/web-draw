@@ -423,7 +423,9 @@
               <td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
             </tr>
           </table>
-          <table id="historyTabBox" class="tabBox table border"></table>
+          <table id="historyTabBox" class="tabBox table border">
+            <tbody></tbody>
+          </table>
         </div>
         <table id="posInfo">
           <tr>
@@ -518,6 +520,7 @@
                 </ul></li>
                 <li><a href="#help-right_toolbar-action_history">Action History</a><ul>
                   <li><a href="#help-right_toolbar-action_history-toggling">Toggling Actions</a></li>
+                  <li><a href="#help-right_toolbar-action_history-moving">Moving Actions</a></li>
                 </ul></li>
               </ul></li>
               <li><a href="#help-chat">Chat</a></li>
@@ -650,9 +653,13 @@
           <h6 id="help-right_toolbar-shape-fill">Fill</h6>
           Whether or not the inside of the shape is filled with a solid colour. Uses the opposite colour from what the mouse was clicked with.
           <h4 id="help-right_toolbar-action_history">Action History</h4>
-          Here you can find the history of all actions that make up the canvas you see. Each entry in the list consists of a little snapshot of what the canvas looked like at that point in history and the name of the action that made it look like that. The current point in history is highlighted. Undoing or redoing will move that highlight up or down the list. Clicking any given entry in the list will take you to that point in history.
+          Here you can find the history of all actions that make up the canvas you see. Each entry in the list consists of a little snapshot of what the canvas looked like at that point in history and the name of the action that made it look like that. The current point in history is highlighted. Undoing or redoing will move that highlight up or down the list. Clicking any given entry in the list will take you to that point in history.<br>
+          <br>
+          The following are some ways you can edit action history. Keep in mind that these changes will affect actions that come after the edited one, as you're changing history!
           <h5 id="help-right_toolbar-action_history-toggling">Toggling Actions</h5>
-          Any action in history can be enabled/disabled at any time with the button to the right of an action entry in the table. When an action is "disabled", it will be as if it was never made. Keep in mind this will affect actions that come after it, as you're changing history!
+          Any action in history can be enabled/disabled at any time with the button to the right of an action entry in the table. When an action is "disabled", it will be as if it was never made.
+          <h5 id="help-right_toolbar-action_history-moving">Moving Actions</h5>
+          Moving actions up and down in history can be done with the up and down arrows next to action entries. An action that is moved up will happen before the previous action, and an action that is moved down will happen after the next action. This may be useful if your buddies accidentally mess up the order of things, since you're all drawing at the same time.
           <h3 id="help-chat">Chat</h3>
           Use the chat to send messages to other people in the session, including private messages to people you choose.<br>
           <br>

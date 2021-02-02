@@ -369,16 +369,17 @@ div.separator {
 #historyTabBox .actionButtons {
   border-left: none;
   padding-left: 0;
+  line-height: 0;
 }
-#historyTabBox .actionButtons > * {
-  padding: 8px;
+#historyTabBox .actionButtons:not(:last-child) {
+  border-right: none;
+  padding-right: 0;
+}
+#historyTabBox .actionButtons > img {
+  padding: 2px;
 }
 #historyTabBox .lastAction {
   background-color: #f6f6f6;
-}
-#historyTabBox button {
-  padding: 3px;
-  line-height: 0;
 }
 #rightBoxContent {
   grid-row: 2;
