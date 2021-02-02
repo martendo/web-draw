@@ -25,7 +25,10 @@ const ActionHistory = {
   
   // Push an action onto this.undoActions, enable the undo button, clear this.redoActions
   addToUndo(data) {
-    this.undoActions.push(data);
+    this.undoActions.push({
+      enabled: true,
+      data: data
+    });
     this.enableUndo();
     this.clearRedo();
     this.removeRedoActionsFromTable();
@@ -87,8 +90,30 @@ const ActionHistory = {
     }
   },
   
+  toggleAction(num, user = true) {
+    if (user) {
+      Client.sendMessage({
+        type: "toggle-action",
+        num: num
+      });
+    }
+    num--;
+    var action;
+    if (num < this.undoActions.length) {
+      action = this.undoActions[num];
+    } else {
+      action = this.redoActions[this.redoActions.length - 1 - (num - this.undoActions.length)];
+    }
+    action.enabled = !action.enabled;
+    this.doAllActions();
+    return action.enabled;
+  },
+  
   // Handle different types of actions
   doAction(action) {
+    if (!action.enabled) return;
+    
+    action = action.data;
     switch (action.type) {
       case "stroke": {
         Pen.drawStroke(Client.ctx, action.stroke, {
@@ -172,7 +197,7 @@ const ActionHistory = {
     // Add all actions to the action history table
     for (const action of this.undoActions.concat(this.redoActions.slice().reverse())) {
       this.doAction(action);
-      this.addActionToTable(action.type, false);
+      this.addActionToTable(action.data.type, action.enabled, false);
     }
     // Undo the redone actions (only done to get canvas images for history)
     Canvas.init();
@@ -197,7 +222,8 @@ const ActionHistory = {
   // Action history table
   _table: document.getElementById("historyTabBox"),
   
-  addActionToTable(name, updateLast = true) {
+  addActionToTable(name, enabled = true, updateLast = true) {
+    var hideable = true;
     // Make names more user-friendly
     switch (name) {
       case "stroke": {
@@ -240,11 +266,16 @@ const ActionHistory = {
         name = "Resize canvas";
         break;
       }
+      default: {
+        hideable = false;
+        break;
+      }
     }
     
     const row = this._table.insertRow(-1);
     const num = this._table.children[0].children.length - 1;
-    row.addEventListener("pointerdown", () => {
+    row.addEventListener("pointerdown", (event) => {
+      if (event.target.tagName === "IMG") return;
       Client.sendMessage({
         type: "move-history",
         num: num
@@ -262,9 +293,21 @@ const ActionHistory = {
     }
     image.getContext("2d").drawImage(Session.canvas, 0, 0, image.width, image.height);
     row.insertCell(-1).appendChild(image);
+    
     const nameCell = row.insertCell(-1);
     nameCell.classList.add("actionName");
     nameCell.textContent = name;
+    
+    const buttonCell = row.insertCell(-1);
+    buttonCell.classList.add("actionButtons");
+    if (hideable) {
+      const button = document.createElement("img");
+      button.title = "Toggle this action";
+      button.src = enabled ? "/img/visible.png" : "/img/no-visible.png";
+      button.addEventListener("click", () => this.toggleAction(num));
+      buttonCell.appendChild(button);
+    }
+    
     if (updateLast) this.updateLastAction();
   },
   updateLastAction() {
