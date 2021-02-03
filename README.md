@@ -1,4 +1,4 @@
-# [Web Draw](https://w-draw.web.app) ![Pen Logo](/public/img/pen.png)
+# [Web Draw](https://w-draw.web.app) ![Pen Logo](/src/img/pen.png)
 [![Version](https://img.shields.io/github/v/tag/martendo7/web-draw?label=version)](https://github.com/martendo7/web-draw/tags)
 [![Website](https://img.shields.io/website?down_color=inactive&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fw-draw.web.app)](https://w-draw.web.app)
 
@@ -24,13 +24,13 @@ A session's password can be set or removed at any time.
 Well, pretty much anything.
 
 These are the tools that are currently available:
-- ![pen](/public/img/pen.png) Pen Tool
-- ![flood-fill](/public/img/flood-fill.png) Flood Fill Tool
-- ![colour-picker](/public/img/colour-picker.png) Colour Picker Tool
-- ![select](/public/img/select.png) Rectangular Select Tool
-- ![line](/public/img/line.png) Line Tool
-- ![rect](/public/img/rect.png) Rectangle Tool
-- ![ellipse](/public/img/ellipse.png) Ellipse Tool
+- ![pen](/src/img/pen.png) Pen Tool
+- ![flood-fill](/src/img/flood-fill.png) Flood Fill Tool
+- ![colour-picker](/src/img/colour-picker.png) Colour Picker Tool
+- ![select](/src/img/select.png) Rectangular Select Tool
+- ![line](/src/img/line.png) Line Tool
+- ![rect](/src/img/rect.png) Rectangle Tool
+- ![ellipse](/src/img/ellipse.png) Ellipse Tool
 
 ## How do you use it?
 Web Draw is fairly similar to most drawing programs in terms of how they are used.
