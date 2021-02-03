@@ -62,11 +62,11 @@
     <input type="file" id="chooseCanvasFile" class="hidden" accept=".bin">
     <span id="tooltip" class="hidden"></span>
     <div id="menuScreen">
+      <div id="infoBtnContainer">
+        <button class="infoBtn" id="infoBtn">Info
+        </button><button class="infoBtn" id="helpBtn">Help</button>
+      </div>
       <div id="menuMainContainer">
-        <div id="infoBtnContainer">
-          <button class="infoBtn" id="infoBtn">Info
-          </button><button class="infoBtn" id="helpBtn">Help</button>
-        </div>
         <h1><img class="penIcon" src="{{ BASE64:src/img/pen-icon.png }}" alt="Pen Logo">Web Draw</h1>
         <div id="connectionInfo">
           <div id="connectionInfoText">Connecting to server...</div>

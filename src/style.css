@@ -137,16 +137,24 @@ button:active:not(:disabled) {
 #menuScreen {
   display: grid;
   grid-template-columns: auto;
-  grid-template-rows: minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   text-align: center;
   width: 100%;
   height: 100%;
 }
-#menuMainContainer {
-  overflow-y: auto;
+#infoBtnContainer {
   grid-column: 1;
   grid-row: 1;
   padding: 8px;
+  padding-bottom: 0;
+  text-align: right;
+}
+#menuMainContainer {
+  overflow-y: auto;
+  grid-column: 1;
+  grid-row: 2;
+  padding: 8px;
+  padding-top: 0;
 }
 #menuOptionsContainer {
   display: none;
@@ -154,16 +162,9 @@ button:active:not(:disabled) {
 #menuOptionsContainer > :not(:last-child) {
   margin-bottom: 3em;
 }
-#infoBtnContainer {
-  position: absolute;
-  padding: 8px;
-  top: 0;
-  right: 0;
-  z-index: 25;
-}
 #bottom {
   grid-column: 1;
-  grid-row: 2;
+  grid-row: 3;
   width: 100%;
   bottom: 0;
   left: 0;
