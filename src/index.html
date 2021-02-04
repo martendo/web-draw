@@ -433,21 +433,21 @@
             <tbody></tbody>
           </table>
         </div>
-        <table id="posInfo">
-          <tr>
-            <td><span id="cursorPos" class="lightBox"></span></td>
-          </tr>
-          <tr>
-            <td>
-              <span id="selectPos" class="lightBox"></span>
-              <span id="selectSize" class="lightBox"></span>
-            </td>
-          </tr>
-        </table>
       </div>
       <div id="canvasContainer">
         <canvas id="displayCanvas">The HTML canvas element isn't supported in your browser... :(</canvas>
       </div>
+      <table id="statusBox">
+        <tr>
+          <td>
+            <span id="cursorPos" class="lightBox"></span>
+          </td>
+          <td class="tableExcess"></td>
+          <td id="selectionInfo">
+            <span id="selectPos" class="lightBox"></span> <span id="selectSize" class="lightBox"></span>
+          </td>
+        </tr>
+      </table>
       <table id="bottomBox">
         <tr>
           <td>

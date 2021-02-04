@@ -186,7 +186,7 @@ button:active:not(:disabled) {
 #drawScreen {
   display: none;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
 }
 .cursorIcon {
   position: fixed;
@@ -280,17 +280,17 @@ div.separator {
   display: block;
 }
 
-#topBox, #bottomBox, #leftBox, #rightBox, #menubar {
+#topBox, #bottomBox, #statusBox, #leftBox, #rightBox, #menubar {
   margin: 0;
   display: block;
 }
-#topBox, #bottomBox, #leftBox, #rightBox, #chatBox {
+#topBox, #bottomBox, #statusBox, #leftBox, #rightBox, #chatBox {
   z-index: 20;
 }
 #topBox, #bottomBox, #leftBox, #rightBox {
   background-color: #fcfcfc;
 }
-#topBox, #bottomBox, #leftBox, #rightBoxContent {
+#topBox, #bottomBox, #statusBox, #leftBox, #rightBoxContent {
   padding: 8px;
 }
 #rightBox, #menubar, #canvasContainer {
@@ -299,7 +299,7 @@ div.separator {
   -ms-user-select: none;
   user-select: none;
 }
-#topBox, #bottomBox, #menubar {
+#topBox, #bottomBox, #statusBox, #menubar {
   overflow-x: auto;
   white-space: nowrap;
 }
@@ -309,21 +309,26 @@ div.separator {
   grid-column: 2;
 }
 #bottomBox {
+  border-top: 1px solid #c0c0c0;
+  grid-row: 5;
+  grid-column: 2;
+}
+#statusBox {
   border-top: 1px solid #d0d0d0;
   grid-row: 4;
   grid-column: 2;
+  background-color: #f8f8f8;
 }
 #leftBox {
   border-right: 1px solid #d0d0d0;
-  grid-row: 2 / span 3;
+  grid-row: 2 / span 4;
   grid-column: 1;
   overflow-y: auto;
 }
 #rightBox {
   border-left: 1px solid #d0d0d0;
-  grid-row: 2 / span 3;
+  grid-row: 2 / span 4;
   grid-column: 3;
-  position: relative;
   padding: 0;
   width: 250px;
   display: grid;
@@ -335,6 +340,9 @@ div.separator {
 }
 #bottomBox * {
   vertical-align: baseline;
+}
+#statusBox * {
+  font-size: 14px;
 }
 #rightTabBar {
   grid-row: 1;
@@ -523,14 +531,6 @@ div.separator {
 #canvasZoom {
   width: calc(6ch + 6px);
 }
-#posInfo {
-  position: absolute;
-  text-align: right;
-  margin: 8px;
-  bottom: 0;
-  right: 0;
-  z-index: 25;
-}
 
 .penIcon {
   vertical-align: bottom;
@@ -543,6 +543,7 @@ div.separator {
   background-color: #ffffff;
   border: 1px solid #d0d0d0;
   padding: 3px 6px;
+  display: inline-block;
 }
 code {
   background-color: rgba(0, 0, 0, 0.05);

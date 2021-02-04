@@ -200,6 +200,7 @@ const Selection = {
     });
   },
   updateSizeAndPos() {
+    document.getElementById("selectionInfo").style.display = "";
     const selection = clients[Client.id].action;
     document.getElementById("selectPos").textContent = `${selection.data.x}, ${selection.data.y}`;
     document.getElementById("selectSize").textContent = `${selection.data.width}x${selection.data.height}`;
@@ -295,6 +296,7 @@ const Selection = {
     });
     clients[Client.id].action = {...NO_ACTION};
     Session.endClientAction(Client.id);
+    document.getElementById("selectionInfo").style.display = "none";
     Canvas.update();
   },
   
