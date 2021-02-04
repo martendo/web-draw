@@ -56,10 +56,12 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 ├── .github/workflows/
 │   └── build-deploy.yaml
 ├── public/
+│   ├── app.webmanifest
+│   ├── favicon.ico
+│   └── ...
+├── src/
 │   ├── img/
 │   │   └── ...
-│   └── favicon.ico
-├── src/
 │   ├── tools/
 │   │   └── ...
 │   ├── ui/
@@ -69,13 +71,15 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 │   ├── script.js
 │   ├── style.css
 │   └── ...
+├── Gruntfile.js
 ├── README.md
 ├── server.js
 └── ...
 ```
-- `.github/workflows/build-deploy.yaml` - GitHub Actions workflow to minify code and deploy to Firebase Hosting
+- `.github/workflows/build-deploy.yaml` - GitHub Actions workflow to "build" code and deploy to Firebase Hosting
 - `public` - All the files the client needs; the root directory of the site
   - Code in `src` is minified and placed in this directory
-  - `img` - All the images (except favicon.ico, if that counts)
 - `src` - Source code of the web app
+  - `img` - All icons used in the app, inserted in source code as Base64 strings at build
+- `Gruntfile.js` - Script to minify code, insert build date and version, Base64 images, and copyright notices, and copy over to `public`
 - `server.js` - The WebSockets server
