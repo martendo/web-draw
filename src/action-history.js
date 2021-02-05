@@ -318,7 +318,7 @@ const ActionHistory = {
     
     const row = this._table.insertRow(-1);
     num++;
-    row.addEventListener("pointerdown", (event) => {
+    row.addEventListener("click", (event) => {
       if (event.target.tagName === "IMG") return;
       Client.sendMessage({
         type: "move-history",
