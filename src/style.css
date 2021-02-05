@@ -408,7 +408,7 @@ div.separator {
 }
 
 #chatBox {
-  grid-row: 2 / span 3;
+  grid-row: 2 / span 4;
   grid-column: 4;
   border-left: 1px solid #c0c0c0;
   background-color: #fafafa;
