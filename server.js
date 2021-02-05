@@ -350,7 +350,7 @@ wss.on("connection", (socket) => {
         break;
       }
       case "reconnect": {
-        if (!clients.has(data.client.id)) {
+        if (data.client.id && !clients.has(data.client.id)) {
           clients.delete(client.id);
           client.id = data.client.id;
           clients.set(client.id, client);
@@ -361,7 +361,7 @@ wss.on("connection", (socket) => {
           id: client.id
         });
         
-        if (!sessions.has(data.session.id)) {
+        if (data.session.id && !sessions.has(data.session.id)) {
           if (client.session) sessions.delete(client.session.id);
           client.session = createSession(client, data.session.id, data.session.password, true);
           sessions.set(client.session.id, client.session);
