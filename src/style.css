@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-:root {
+:root.light {
   --background-colour: #f8f8f8;
   --background-1-colour: #f0f0f0;
   
@@ -98,7 +98,91 @@
   --table-cell-highlight-colour: #ffffe0;
   --table-cell-highlight-hover-colour: #fcfcd0;
   --table-cell-highlight-active-colour: #f0f0c8;
+}
+
+:root.dark {
+  --background-colour: #303030;
+  --background-1-colour: #383838;
   
+  --text-colour: #e8e8e8;
+  --text-disabled-colour: #808080;
+  --border-colour: #282828;
+  --border-disabled-colour: #606060;
+  
+  --link-colour: #20b0ff;
+  --link-hover-colour: #1090f0;
+  --link-active-colour: #2070e0;
+  
+  --button-colour: #585858;
+  --button-disabled-colour: #303030;
+  --button-hover-colour: #686868;
+  --button-selected-colour: #808080;
+  --button-selected-hover-colour: #909090;
+  --button-active-colour: #606060;
+  
+  /* <code>, chat box [X] button */
+  --highlight-background-colour: rgba(255, 255, 255, 0.15);
+  
+  --important-colour: #ff0000;
+  
+  --input-colour: #707070;
+  
+  --var-box-colour: #606060;
+  --var-box-border-colour: #808080;
+  
+  --kbd-colour: #282828;
+  --kbd-border-colour: #000000;
+  
+  --tooltip-colour: rgba(56, 56, 56, 0.8);
+  --tooltip-text-colour: #ffffff;
+  
+  --quick-colour-select-colour: #5c5c5c;
+  
+  --slider-bar-colour: #505050;
+  --slider-bar-border-colour: #5c5c5c;
+  --slider-arrow-colour: #404040;
+  --slider-arrow-hover-colour: #606060;
+  --slider-arrow-active-colour: #808080;
+  
+  --toolbar-1-colour: #383838;
+  --toolbar-1-border-colour: #000000;
+  --toolbar-1-border-colour-2: #000000;
+  --toolbar-1-hover-colour: #505050;
+  --toolbar-1-active-colour: #383838;
+  
+  --toolbar-2-colour: #4c4c4c;
+  --toolbar-2-colour-2: #383838;
+  --toolbar-2-border-colour: #202020;
+  --sub-toolbar-2-colour: #404040; /* "Status" bar */
+  --tab-colour: #404040;
+  --tab-hover-colour: #484848;
+  
+  --chat-box-colour: #585858;
+  --chat-message-colour: #707070;
+  --chat-message-border-colour: #101010;
+  --chat-message-info-text-colour: #c0c0c0;
+  --badge-colour: var(--important-colour);
+  
+  --modal-border-colour: #000000;
+  --modal-header-colour: #282828;
+  --modal-body-colour: #383838;
+  --modal-blur-background-colour: rgba(0, 0, 0, 0.4);
+  
+  --table-border-colour: #000000;
+  --table-cell-colour: #202020;
+  --table-alternate-cell-colour: #2c2c2c;
+  --table-header-colour: #2c2c2c;
+  
+  /* Session client table -> clickable rows */
+  --table-cell-hover-colour: #282828;
+  --table-cell-active-colour: #181818;
+  /* The current user's row in the session client table -> highlighted */
+  --table-cell-highlight-colour: #282808;
+  --table-cell-highlight-hover-colour: #303010;
+  --table-cell-highlight-active-colour: #202000;
+}
+
+:root {
   --transparent-pattern: url("{{ BASE64:src/img/transparent.png }}");
 }
 
@@ -123,6 +207,7 @@ body > * {
   font-family: Tahoma, Verdana, Segoe, sans-serif;
   box-sizing: border-box;
   touch-action: manipulation;
+  color: var(--text-colour);
 }
 
 h1 {
@@ -187,6 +272,8 @@ a:active {
 
 input, select {
   margin: 3px;
+  background-color: var(--input-colour);
+  border: 1px solid var(--border-colour);
 }
 button {
   padding: 3px 8px;
@@ -679,7 +766,7 @@ small {
 }
 .modalFooter {
   padding: 5px;
-  border-top: 2px ridge;
+  border-top: 2px solid var(--toolbar-1-border-colour);
   background-color: var(--modal-body-colour);
   text-align: right;
 }
