@@ -30,6 +30,7 @@
   --link-colour: #0000ee;
   --link-hover-colour: #2828f0;
   --link-active-colour: #000090;
+  --external-link-icon: url("{{ BASE64:src/img/external.png }}");
   
   --button-colour: #e0e0e0;
   --button-disabled-colour: #d0d0d0;
@@ -112,6 +113,7 @@
   --link-colour: #20b0ff;
   --link-hover-colour: #1090f0;
   --link-active-colour: #2070e0;
+  --external-link-icon: url("{{ BASE64:src/img/external-dark.png }}");
   
   --button-colour: #585858;
   --button-disabled-colour: #303030;
@@ -260,7 +262,7 @@ a {
   vertical-align: baseline;
 }
 a[target="_blank"]::after {
-  content: url("{{ BASE64:src/img/external.png }}");
+  content: var(--external-link-icon);
   margin: 0 2px 0 6px;
 }
 a:hover {
