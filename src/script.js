@@ -468,9 +468,13 @@ document.getElementById("sendMouseMovements").addEventListener("input", (event) 
 document.getElementById("receiveMouseMovements").addEventListener("input", (event) => Client.setReceiveMouse(event.target.checked));
 
 document.getElementById("changeThemeModalDoneBtn").addEventListener("click", () => Modal.close("changeThemeModal"));
-const rootElement = document.documentElement;
-document.getElementById("lightTheme").addEventListener("change", () => rootElement.className = "light");
-document.getElementById("darkTheme").addEventListener("change", () => rootElement.className = "dark");
+document.getElementById("lightTheme").addEventListener("change", () => setTheme("light"));
+document.getElementById("darkTheme").addEventListener("change", () => setTheme("dark"));
+const theme = localStorage.getItem("theme");
+if (theme) {
+  document.documentElement.className = theme;
+  document.getElementById(theme + "Theme").checked = true;
+}
 
 document.getElementById("helpModalDoneBtn").addEventListener("click", () => {
   Modal.close("helpModal");

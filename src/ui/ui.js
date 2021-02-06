@@ -43,6 +43,11 @@ function copyText(text, event = null) {
   }
 }
 
+function setTheme(theme) {
+  document.documentElement.className = theme;
+  localStorage.setItem("theme", theme);
+}
+
 const Icons = Object.freeze({
   cursor:    "{{ BASE64:src/img/cursor.png }}",
   visible:   "{{ BASE64:src/img/visible.png }}",
