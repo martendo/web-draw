@@ -24,18 +24,27 @@ const Chat = {
   
   format(message) {
     // Replace characters that can interfere with HTML, and do markdown-ish styling
+    const noStyle = [];
     return message
       .replace(/&/g, "&#38;")
       .replace(/</g, "&#60;")
       .replace(/>/g, "&#62;")
       .replace(/"/g, "&#34;")
       .replace(/'/g, "&#39;")
+      .replace(/\b(https?:\/\/[a-z0-9\-+&@#\/%?=~_|!:,.;]*[a-z0-9\-+&@#\/%=~_|])\b/ig, (match, p1) => {
+        // Save the URL to prevent styling
+        noStyle.push(`<a href="${p1}" target="_blank" title="${p1}">${p1}</a>`);
+        return `&!${noStyle.length - 1};`;
+      })
       .replace(/(^|[^\\])((?:\\{2})*)\*\*([\s\S]*?[^\\](?:\\{2})*)\*\*/mg, "$1$2<strong>$3</strong>") // **bold**
       .replace(/(^|[^\\])((?:\\{2})*)__([\s\S]*?[^\\](?:\\{2})*)__/mg, "$1$2<u>$3</u>") // __underlined__
       .replace(/(^|[^\\])((?:\\{2})*)~~([\s\S]*?[^\\](?:\\{2})*)~~/mg, "$1$2<s>$3</s>") // ~~strikethrough~~
       .replace(/(^|[^\\*_])((?:\\{2})*)[*_]([\s\S]*?[^\\*_](?:\\{2})*)[*_]/mg, "$1$2<em>$3</em>") // *italicized* OR _italicized_
       .replace(/\\([^\sa-z0-9])/img, "$1")
-      .replace(/\\/g, "&#92;");
+      .replace(/\\/g, "&#92;")
+      .replace(/&!(\d+);/g, (match, p1) => {
+        return noStyle[parseInt(p1)];
+      });
   },
   
   send() {
