@@ -22,10 +22,30 @@ const Chat = {
   box: document.getElementById("chatBox"),
   input: document.getElementById("chatInput"),
   
+  format(message) {
+    // Replace characters that can interfere with HTML, and do markdown-ish styling
+    return message
+      .replace(/&/g, "&#38;")
+      .replace(/</g, "&#60;")
+      .replace(/>/g, "&#62;")
+      .replace(/"/g, "&#34;")
+      .replace(/'/g, "&#39;")
+      .replace(/(^|[^\\])((?:\\{2})*)\*\*([\s\S]*?[^\\](?:\\{2})*)\*\*/mg, "$1$2<strong>$3</strong>") // **bold**
+      .replace(/(^|[^\\])((?:\\{2})*)__([\s\S]*?[^\\](?:\\{2})*)__/mg, "$1$2<u>$3</u>") // __underlined__
+      .replace(/(^|[^\\])((?:\\{2})*)~~([\s\S]*?[^\\](?:\\{2})*)~~/mg, "$1$2<s>$3</s>") // ~~strikethrough~~
+      .replace(/(^|[^\\*_])((?:\\{2})*)[*_]([\s\S]*?[^\\*_](?:\\{2})*)[*_]/mg, "$1$2<em>$3</em>") // *italicized* OR _italicized_
+      .replace(/\\([^\sa-z0-9])/img, "$1")
+      .replace(/\\/g, "&#92;");
+  },
+  
   send() {
     const msg = this.input.value;
-    const indexSpace = msg.indexOf(" ");
-    if (msg.trim() === "" || (msg.slice(0, 3) === "to:" && (msg.slice(indexSpace).trim() === "" || indexSpace === -1))) return;
+    // Check whether or not the message would *appear* empty
+    const formatted = this.format(msg).replace(/<\w+?>([\s\S]*?)<\/\w+?>/mg, "$1");
+    const indexSpace = formatted.indexOf(" ");
+    // If message appears empty, don't allow sending it
+    if (formatted.trim() === "" || (formatted.slice(0, 3) === "to:" && (indexSpace === -1 || formatted.slice(indexSpace).trim() === ""))) return;
+    
     this.input.value = "";
     const box = document.getElementById("chatMessages");
     const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
@@ -69,18 +89,6 @@ const Chat = {
   },
   
   addMessage(msg) {
-    // Replace characters that can interfere with HTML, and do markdown styling
-    msg.message = msg.message
-      .replace(/&/g, "&#38;")
-      .replace(/</g, "&#60;")
-      .replace(/>/g, "&#62;")
-      .replace(/(^|[^\\])((?:\\{2})*)\*\*([\s\S]*?[^\\](?:\\{2})*)\*\*/mg, "$1$2<strong>$3</strong>") // **bold**
-      .replace(/(^|[^\\])((?:\\{2})*)__([\s\S]*?[^\\](?:\\{2})*)__/mg, "$1$2<u>$3</u>")               // __underlined__
-      .replace(/(^|[^\\])((?:\\{2})*)~~([\s\S]*?[^\\](?:\\{2})*)~~/mg, "$1$2<s>$3</s>")               // ~~strikethrough~~
-      .replace(/(^|[^\\*])((?:\\{2})*)\*([\s\S]*?[^\\*](?:\\{2})*)\*/mg, "$1$2<em>$3</em>")           // *italicized*
-      .replace(/(^|[^\\_])((?:\\{2})*)_([\s\S]*?[^\\_](?:\\{2})*)_/mg, "$1$2<em>$3</em>")             // _italicized_
-      .replace(/\\([\s\S])/mg, "$1")
-      .replace(/\\/g, "&#92;");
     const box = document.getElementById("chatMessages");
     var bubble;
     const last = box.children[box.children.length - 1];
@@ -130,7 +138,7 @@ const Chat = {
     msgText.classList.add("chatMessageText");
     msgText.dataset.timestamp = msg.timestamp;
     msgText.title = this.getFullDate(new Date(msg.timestamp));
-    msgText.innerHTML = msg.message;
+    msgText.innerHTML = this.format(msg.message);
     bubble.appendChild(msgText);
     box.appendChild(bubble);
     
