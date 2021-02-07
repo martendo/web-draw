@@ -5,7 +5,7 @@
   "display": "standalone",
   "background_color": "#f8f8f8",
   "theme_color": "#00a2e8",
-  "description": "A little real-time online drawing program.",
+  "description": "A little real-time online collaborative drawing program.",
   "scope": "/",
   "lang": "en-CA",
   "dir": "ltr",
