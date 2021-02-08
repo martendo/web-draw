@@ -163,6 +163,8 @@ const Tools = {
 // Handle mousedown on canvas
 function mouseHold(event) {
   if (event.target.tagName !== "CANVAS") return;
+  const point = Canvas.getCursorPos(event);
+  if (point.x > Session.canvas.width || point.y > Session.canvas.height) return;
   switch (event.button) {
     case 0: {
       currentPen = 0;
@@ -175,7 +177,6 @@ function mouseHold(event) {
     default: return;
   }
   event.preventDefault();
-  const point = Canvas.getCursorPos(event);
   const currentAction = clients[Client.id].action;
   if (currentAction.data && currentAction.data.selected) {
     const handle = Selection.getResizeHandle(point, [0, 1, 2, 3, 4, 5, 6, 7]);
@@ -501,14 +502,14 @@ function mouseMove(event) {
       "nesw-resize", "ns-resize", "nwse-resize"
     ]);
     if (cursor !== null) {
-      Canvas.canvas.style.cursor = cursor;
+      Canvas.mixingCanvas.style.cursor = cursor;
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
-      Canvas.canvas.style.cursor = "move";
+      Canvas.mixingCanvas.style.cursor = "move";
     } else {
-      Canvas.canvas.style.cursor = "auto";
+      Canvas.mixingCanvas.style.cursor = "auto";
     }
   } else {
-    Canvas.canvas.style.cursor = "auto";
+    Canvas.mixingCanvas.style.cursor = "auto";
   }
   mouseMoved.moved = true;
   if (event.target.tagName !== "CANVAS") {

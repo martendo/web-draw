@@ -46,6 +46,8 @@ function copyText(text, event = null) {
 function setTheme(theme) {
   document.documentElement.className = theme;
   localStorage.setItem("theme", theme);
+  // Background colour (extra space) has changed
+  Canvas.drawCanvas();
 }
 
 const Icons = Object.freeze({

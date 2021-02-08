@@ -365,12 +365,9 @@ button:active:not(:disabled) {
 #canvasContainer {
   grid-column: 2;
   grid-row: 3;
-  overflow-x: auto;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto;
-  padding: 15px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding: 0;
   margin: 0;
   touch-action: none;
   background-color: var(--background-1-colour);
@@ -462,7 +459,7 @@ div.separator {
 #topBox, #bottomBox, #statusBox, #leftBox, #rightBoxContent {
   padding: 8px;
 }
-#rightBox, #menubar, #canvasContainer {
+#leftBox, #rightBox, #menubar, #statusBox, canvas {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

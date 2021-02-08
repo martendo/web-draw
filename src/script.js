@@ -154,6 +154,12 @@ document.addEventListener("click", (event) => {
   }
 });
 
+window.addEventListener("resize", () => {
+  Canvas.displayCanvas.width = Canvas.container.clientWidth;
+  Canvas.displayCanvas.height = Canvas.container.clientHeight;
+  Canvas.drawCanvas();
+});
+
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
@@ -249,8 +255,8 @@ document.addEventListener("keyup", (event) => {
 });
 
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
-Canvas.container.addEventListener("pointerdown", (event) => mouseHold(event));
-Canvas.container.addEventListener("wheel", (event) => {
+Canvas.displayCanvas.addEventListener("pointerdown", (event) => mouseHold(event));
+Canvas.displayCanvas.addEventListener("wheel", (event) => {
   if (!ctrlKey) return;
   event.preventDefault();
   const delta = Math.sign(event.deltaY) * -0.25;
