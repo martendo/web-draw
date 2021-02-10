@@ -26,6 +26,8 @@ const Canvas = {
   DEFAULT_ZOOM: 1,
   MIN_ZOOM:     0,
   
+  SCROLLBAR_WIDTH: 15,
+  
   zoom: null,
   pan: {
     x: 0,
@@ -52,6 +54,7 @@ const Canvas = {
     }
     // Start with the canvas cleared
     this.clearBlank(false);
+    this.drawCanvas();
   },
   
   // Zoom the canvas with the mouse wheel
@@ -144,10 +147,25 @@ const Canvas = {
     
     const width = this.mixingCanvas.width * this.zoom;
     const height = this.mixingCanvas.height * this.zoom;
+    
     // Show transparency pattern under image
     this.displayCtx.clearRect(this.pan.x, this.pan.y, width, height);
     // Actual image
     this.displayCtx.drawImage(this.mixingCanvas, this.pan.x, this.pan.y, width, height);
+    
+    // Draw scroll bars
+    this.displayCtx.fillStyle = "#c0c0c0";
+    this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH, this.displayCanvas.height - this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
+    
+    this.displayCtx.fillStyle = "#808080";
+    this.displayCtx.fillRect(0, this.displayCanvas.height - this.SCROLLBAR_WIDTH, this.displayCanvas.width - this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
+    this.displayCtx.fillStyle = "#f8f8f8";
+    this.displayCtx.fillRect((this.pan.x / Session.canvas.width) * (this.displayCanvas.width / this.zoom) + 1, this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1, Math.min((this.displayCanvas.width / Session.canvas.width) * (this.displayCanvas.width / this.zoom), this.displayCanvas.width - this.SCROLLBAR_WIDTH - 1) - 1, this.SCROLLBAR_WIDTH - 2);
+    
+    this.displayCtx.fillStyle = "#808080";
+    this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH, 0, this.SCROLLBAR_WIDTH, this.displayCanvas.height - this.SCROLLBAR_WIDTH);
+    this.displayCtx.fillStyle = "#f8f8f8";
+    this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1, (this.pan.y / Session.canvas.height) * (this.displayCanvas.height / this.zoom) + 1, this.SCROLLBAR_WIDTH - 2, Math.min((this.displayCanvas.height / Session.canvas.height) * (this.displayCanvas.height / this.zoom), this.displayCanvas.height - this.SCROLLBAR_WIDTH - 1) - 1);
   },
   
   // Export canvas image
