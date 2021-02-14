@@ -44,8 +44,6 @@ const CLOSE_CODES = Object.freeze({
   1015: "TLS Handshake"
 });
 
-var ctrlKey = false;
-
 // Values of tool setting <select>s
 // Pen stroke and line cap options
 const CAPS = Object.freeze([
@@ -247,17 +245,10 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Control") ctrlKey = true;
-});
-document.addEventListener("keyup", (event) => {
-  if (event.key === "Control") ctrlKey = false;
-});
-
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
 Canvas.displayCanvas.addEventListener("pointerdown", (event) => mouseHold(event));
 Canvas.displayCanvas.addEventListener("wheel", (event) => {
-  if (!ctrlKey) return;
+  if (!event.ctrlKey) return;
   event.preventDefault();
   const delta = Math.sign(event.deltaY) * -0.25;
   Canvas.changeZoom(delta);
