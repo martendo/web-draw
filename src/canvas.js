@@ -33,6 +33,16 @@ const Canvas = {
     x: 0,
     y: 0
   },
+  scrollbarX: {
+    trough: null,
+    thumb: null,
+    drag: null
+  },
+  scrollbarY: {
+    trough: null,
+    thumb: null,
+    drag: null
+  },
   
   container: document.getElementById("canvasContainer"),
   displayCanvas: document.getElementById("displayCanvas"),
@@ -147,25 +157,47 @@ const Canvas = {
     
     const width = this.mixingCanvas.width * this.zoom;
     const height = this.mixingCanvas.height * this.zoom;
-    
     // Show transparency pattern under image
-    this.displayCtx.clearRect(this.pan.x, this.pan.y, width, height);
+    this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
     // Actual image
-    this.displayCtx.drawImage(this.mixingCanvas, this.pan.x, this.pan.y, width, height);
+    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x, -this.pan.y, width, height);
     
     // Draw scroll bars
+    this.scrollbarX.trough = {
+      x: 0,
+      y: this.displayCanvas.height - this.SCROLLBAR_WIDTH,
+      width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
+      height: this.SCROLLBAR_WIDTH
+    };
+    this.scrollbarX.thumb = {
+      x: (this.pan.x / Session.canvas.width) * (this.scrollbarX.trough.width / this.zoom) + 1,
+      y: this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1,
+      width: Math.min((this.scrollbarX.trough.width / Session.canvas.width) * (this.scrollbarX.trough.width / this.zoom), this.displayCanvas.width - this.SCROLLBAR_WIDTH - 1) - 1,
+      height: this.SCROLLBAR_WIDTH - 2
+    };
+    this.scrollbarY.trough = {
+      x: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
+      y: 0,
+      width: this.SCROLLBAR_WIDTH,
+      height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
+    };
+    this.scrollbarY.thumb = {
+      x: this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1,
+      y: (this.pan.y / Session.canvas.height) * (this.scrollbarY.trough.height / this.zoom) + 1,
+      width: this.SCROLLBAR_WIDTH - 2,
+      height: Math.min((this.scrollbarY.trough.height / Session.canvas.height) * (this.scrollbarY.trough.height / this.zoom), this.displayCanvas.height - this.SCROLLBAR_WIDTH - 1) - 1
+    };
+    
+    this.displayCtx.fillStyle = "#808080";
+    this.displayCtx.fillRect(...Object.values(this.scrollbarX.trough));
+    this.displayCtx.fillRect(...Object.values(this.scrollbarY.trough));
+    
+    this.displayCtx.fillStyle = "#f8f8f8";
+    this.displayCtx.fillRect(...Object.values(this.scrollbarX.thumb));
+    this.displayCtx.fillRect(...Object.values(this.scrollbarY.thumb));
+    
     this.displayCtx.fillStyle = "#c0c0c0";
     this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH, this.displayCanvas.height - this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
-    
-    this.displayCtx.fillStyle = "#808080";
-    this.displayCtx.fillRect(0, this.displayCanvas.height - this.SCROLLBAR_WIDTH, this.displayCanvas.width - this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
-    this.displayCtx.fillStyle = "#f8f8f8";
-    this.displayCtx.fillRect((this.pan.x / Session.canvas.width) * (this.displayCanvas.width / this.zoom) + 1, this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1, Math.min((this.displayCanvas.width / Session.canvas.width) * (this.displayCanvas.width / this.zoom), this.displayCanvas.width - this.SCROLLBAR_WIDTH - 1) - 1, this.SCROLLBAR_WIDTH - 2);
-    
-    this.displayCtx.fillStyle = "#808080";
-    this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH, 0, this.SCROLLBAR_WIDTH, this.displayCanvas.height - this.SCROLLBAR_WIDTH);
-    this.displayCtx.fillStyle = "#f8f8f8";
-    this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1, (this.pan.y / Session.canvas.height) * (this.displayCanvas.height / this.zoom) + 1, this.SCROLLBAR_WIDTH - 2, Math.min((this.displayCanvas.height / Session.canvas.height) * (this.displayCanvas.height / this.zoom), this.displayCanvas.height - this.SCROLLBAR_WIDTH - 1) - 1);
   },
   
   // Export canvas image
@@ -257,8 +289,16 @@ const Canvas = {
       };
     }
     return {
-      x: ((mouse.x - this.displayCanvas.offsetLeft) / Canvas.zoom) | 0,
-      y: ((mouse.y - this.displayCanvas.offsetTop) / Canvas.zoom) | 0
+      x: (mouse.x - this.displayCanvas.offsetLeft),
+      y: (mouse.y - this.displayCanvas.offsetTop)
+    };
+  },
+  // Get the pixel position of the cursor on the canvas
+  getPixelPos(event) {
+    const mouse = this.getCursorPos(event);
+    return {
+      x: ((mouse.x / this.zoom) + (this.pan.x / this.zoom)) | 0,
+      y: ((mouse.y / this.zoom) + (this.pan.y / this.zoom)) | 0
     };
   },
   

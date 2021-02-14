@@ -163,8 +163,40 @@ const Tools = {
 // Handle mousedown on canvas
 function mouseHold(event) {
   if (event.target.tagName !== "CANVAS") return;
-  const point = Canvas.getCursorPos(event);
+  
+  // Scrollbars
+  const mouse = Canvas.getCursorPos(event);
+  if (mouse.y > Canvas.scrollbarX.trough.y) {
+    event.preventDefault();
+    if (Canvas.scrollbarX.thumb.x < mouse.x && mouse.x < Canvas.scrollbarX.thumb.x + Canvas.scrollbarX.thumb.width) {
+      Canvas.scrollbarX.drag = {
+        mouse: {...mouse},
+        thumb: {
+          x: Canvas.scrollbarX.thumb.x,
+          y: Canvas.scrollbarX.thumb.y
+        },
+        pan: {...Canvas.pan}
+      };
+    }
+    return;
+  } else if (mouse.x > Canvas.scrollbarY.trough.x) {
+    event.preventDefault();
+    if (Canvas.scrollbarY.thumb.y < mouse.y && mouse.y < Canvas.scrollbarY.thumb.y + Canvas.scrollbarY.thumb.height) {
+      Canvas.scrollbarY.drag = {
+        mouse: {...mouse},
+        thumb: {
+          x: Canvas.scrollbarY.thumb.x,
+          y: Canvas.scrollbarY.thumb.y
+        },
+        pan: {...Canvas.pan}
+      };
+    }
+    return;
+  }
+  
+  const point = Canvas.getPixelPos(event);
   if (point.x > Session.canvas.width || point.y > Session.canvas.height) return;
+  
   switch (event.button) {
     case 0: {
       currentPen = 0;
@@ -374,8 +406,22 @@ function mouseMove(event) {
   // If not on the drawing "page", ignore
   if (!document.getElementById("drawScreen").contains(event.target)) return;
   
-  const point = Canvas.getCursorPos(event);
+  const point = Canvas.getPixelPos(event);
   document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
+  
+  const mouse = Canvas.getCursorPos(event);
+  if (Canvas.scrollbarX.drag) {
+    event.preventDefault();
+    Canvas.pan.x = ((Canvas.scrollbarX.drag.thumb.x + (mouse.x - Canvas.scrollbarX.drag.mouse.x)) / Canvas.scrollbarX.trough.width) * (Session.canvas.width * Canvas.zoom);
+    Canvas.drawCanvas();
+    return;
+  } else if (Canvas.scrollbarY.drag) {
+    event.preventDefault();
+    Canvas.pan.y = ((Canvas.scrollbarY.drag.thumb.y + (mouse.y - Canvas.scrollbarY.drag.mouse.y)) / Canvas.scrollbarY.trough.height) * (Session.canvas.height * Canvas.zoom);
+    Canvas.drawCanvas();
+    return;
+  }
+  
   const currentAction = clients[Client.id].action;
   switch (currentAction.type) {
     case "stroke": {
@@ -523,12 +569,15 @@ function mouseMove(event) {
 function clearMouseHold(event) {
   if (!clients.hasOwnProperty(Client.id)) return;
   
+  Canvas.scrollbarX.drag = null;
+  Canvas.scrollbarY.drag = null;
+  
   const currentAction = clients[Client.id].action;
   var keepAction = false;
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
-      const point = Canvas.getCursorPos(event);
+      const point = Canvas.getPixelPos(event);
       Pen.draw(point.x, point.y);
       Client.sendMessage({
         type: "end-stroke",

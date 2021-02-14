@@ -454,8 +454,8 @@ const Client = {
         if (data.outside) {
           cursor.style.display = "none";
         } else {
-          const x = (data.pos[0] * Canvas.zoom) + (Canvas.displayCanvas.offsetLeft + (Canvas.displayCanvas.clientLeft * Canvas.zoom));
-          const y = (data.pos[1] * Canvas.zoom) + (Canvas.displayCanvas.offsetTop + (Canvas.displayCanvas.clientTop * Canvas.zoom));
+          const x = (data.pos[0] * Canvas.zoom) + (Canvas.displayCanvas.offsetLeft - Canvas.pan.x);
+          const y = (data.pos[1] * Canvas.zoom) + (Canvas.displayCanvas.offsetTop - Canvas.pan.y);
           cursor.style.left = x + "px";
           cursor.style.top = y + "px";
           cursor.style.display = "block";
