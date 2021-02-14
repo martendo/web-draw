@@ -248,10 +248,21 @@ document.addEventListener("keydown", (event) => {
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
 Canvas.displayCanvas.addEventListener("pointerdown", (event) => mouseHold(event));
 Canvas.displayCanvas.addEventListener("wheel", (event) => {
-  if (!event.ctrlKey) return;
   event.preventDefault();
-  const delta = Math.sign(event.deltaY) * -0.25;
-  Canvas.changeZoom(delta);
+  if (!event.ctrlKey) {
+    // Scroll
+    const delta = Math.sign(event.deltaY) * 75;
+    if (event.shiftKey) {
+      Canvas.pan.x += delta;
+    } else {
+      Canvas.pan.y += delta;
+    }
+    Canvas.drawCanvas();
+  } else {
+    // Zoom
+    const delta = Math.sign(event.deltaY) * -0.25;
+    Canvas.changeZoom(delta);
+  }
 });
 
 // Set up inputs
