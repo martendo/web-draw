@@ -253,9 +253,9 @@ Canvas.displayCanvas.addEventListener("wheel", (event) => {
     // Scroll
     const delta = Math.sign(event.deltaY) * 75;
     if (event.shiftKey) {
-      Canvas.pan.x += delta;
+      Canvas.pan.x = Math.min(Math.max(Canvas.pan.x + delta, 0), Session.canvas.width * Canvas.zoom - Canvas.scrollbarX.trough.width);
     } else {
-      Canvas.pan.y += delta;
+      Canvas.pan.y = Math.min(Math.max(Canvas.pan.y + delta, 0), Session.canvas.height * Canvas.zoom - Canvas.scrollbarY.trough.height);
     }
     Canvas.drawCanvas();
   } else {
