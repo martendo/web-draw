@@ -111,6 +111,11 @@ function isPointInside(x, y, rect) {
           rect.y < y && y < rect.y + rect.height);
 }
 
+// Use an upper and lower bound on a number
+function minmax(num, min, max) {
+  return Math.min(Math.max(num, min), max);
+}
+
 // Tell the user if their browser does not support WebSockets
 if (!("WebSocket" in window)) Modal.open("noWsModal");
 
@@ -253,9 +258,9 @@ Canvas.displayCanvas.addEventListener("wheel", (event) => {
     // Scroll
     const delta = Math.sign(event.deltaY) * 75;
     if (event.shiftKey) {
-      Canvas.pan.x = Math.min(Math.max(Canvas.pan.x + delta, 0), Session.canvas.width * Canvas.zoom - Canvas.scrollbarX.trough.width);
+      Canvas.pan.x = minmax(Canvas.pan.x + delta, 0, Session.canvas.width * Canvas.zoom - Canvas.scrollbarX.trough.width);
     } else {
-      Canvas.pan.y = Math.min(Math.max(Canvas.pan.y + delta, 0), Session.canvas.height * Canvas.zoom - Canvas.scrollbarY.trough.height);
+      Canvas.pan.y = minmax(Canvas.pan.y + delta, 0, Session.canvas.height * Canvas.zoom - Canvas.scrollbarY.trough.height);
     }
     Canvas.drawCanvas();
   } else {
@@ -413,13 +418,13 @@ resizeWidth.addEventListener("input", () => {
   const delta = resizeWidth.value - Session.canvas.width;
   offsetX.min = Math.min(delta, 0);
   offsetX.max = Math.max(delta, 0);
-  offsetX.value = Math.max(Math.min(offsetX.value, offsetX.max), offsetX.min);
+  offsetX.value = minmax(offsetX.value, offsetX.min, offsetX.max);
 });
 resizeHeight.addEventListener("input", () => {
   const delta = resizeHeight.value - Session.canvas.height;
   offsetY.min = Math.min(delta, 0);
   offsetY.max = Math.max(delta, 0);
-  offsetY.value = Math.max(Math.min(offsetY.value, offsetY.max), offsetY.min);
+  offsetY.value = minmax(offsetY.value, offsetY.min, offsetY.max);
 });
 document.getElementById("editResizeBtn").addEventListener("click", () => {
   resizeWidth.value = Session.canvas.width;
