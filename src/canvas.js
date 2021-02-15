@@ -404,8 +404,7 @@ const Canvas = {
     }
     Session.ctx.fillStyle = Colour.BLANK;
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
-    this.mixingCtx.fillStyle = Colour.BLANK;
-    this.mixingCtx.fillRect(0, 0, this.mixingCanvas.width, this.mixingCanvas.height);
+    this.update();
     if (user) {
       ActionHistory.addToUndo({
         type: "clear-blank"
@@ -421,7 +420,7 @@ const Canvas = {
       });
     }
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
-    this.mixingCtx.clearRect(0, 0, this.mixingCanvas.width, this.mixingCanvas.height);
+    this.update();
     if (user) {
       ActionHistory.addToUndo({
         type: "clear"
