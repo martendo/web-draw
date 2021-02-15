@@ -55,8 +55,10 @@ const Session = {
   removeUsers(c, total) {
     c.forEach((client) => {
       delete clients[client.id];
+      this.endClientAction(client.id);
       const img = document.getElementById("cursorIcon-" + client.id);
       if (img) img.remove();
+      Canvas.update();
     });
     this.updateUserInfo(total);
   },
