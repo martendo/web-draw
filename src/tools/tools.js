@@ -412,12 +412,12 @@ function mouseMove(event) {
   const mouse = Canvas.getCursorPos(event);
   if (Canvas.scrollbarX.drag) {
     event.preventDefault();
-    Canvas.pan.x = minmax(((Canvas.scrollbarX.drag.thumb.x + (mouse.x - Canvas.scrollbarX.drag.mouse.x)) / (Canvas.scrollbarX.trough.width - 2)) * (Session.canvas.width * Canvas.zoom), 0, Session.canvas.width * Canvas.zoom - Canvas.canvasArea.width);
+    Canvas.pan.x = ((Canvas.scrollbarX.drag.thumb.x + (mouse.x - Canvas.scrollbarX.drag.mouse.x)) / (Canvas.scrollbarX.trough.width - 2)) * (Session.canvas.width * Canvas.zoom);
     Canvas.drawCanvas();
     return;
   } else if (Canvas.scrollbarY.drag) {
     event.preventDefault();
-    Canvas.pan.y = minmax(((Canvas.scrollbarY.drag.thumb.y + (mouse.y - Canvas.scrollbarY.drag.mouse.y)) / (Canvas.scrollbarY.trough.height - 2)) * (Session.canvas.height * Canvas.zoom), 0, Session.canvas.height * Canvas.zoom - Canvas.canvasArea.height);
+    Canvas.pan.y = ((Canvas.scrollbarY.drag.thumb.y + (mouse.y - Canvas.scrollbarY.drag.mouse.y)) / (Canvas.scrollbarY.trough.height - 2)) * (Session.canvas.height * Canvas.zoom);
     Canvas.drawCanvas();
     return;
   }

@@ -258,9 +258,9 @@ Canvas.displayCanvas.addEventListener("wheel", (event) => {
     // Scroll
     const delta = Math.sign(event.deltaY) * 75;
     if (event.shiftKey) {
-      Canvas.pan.x = minmax(Canvas.pan.x + delta, 0, Session.canvas.width * Canvas.zoom - Canvas.canvasArea.width);
+      Canvas.pan.x += delta;
     } else {
-      Canvas.pan.y = minmax(Canvas.pan.y + delta, 0, Session.canvas.height * Canvas.zoom - Canvas.canvasArea.height);
+      Canvas.pan.y += delta;
     }
     Canvas.drawCanvas();
   } else {

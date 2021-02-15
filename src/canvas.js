@@ -166,6 +166,10 @@ const Canvas = {
       height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
     };
     
+    // Ensure canvas is visible
+    this.pan.x = minmax(this.pan.x, 0, width - this.canvasArea.width);
+    this.pan.y = minmax(this.pan.y, 0, height - this.canvasArea.height);
+    
     // Calculate scroll bar positions and dimensions
     this.scrollbarX.trough = {
       x: 0,
