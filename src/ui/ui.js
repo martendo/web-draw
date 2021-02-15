@@ -46,7 +46,7 @@ function copyText(text, event = null) {
 function setTheme(theme) {
   document.documentElement.className = theme;
   localStorage.setItem("theme", theme);
-  // Background colour (extra space) has changed
+  // Background and scrollbar colours have changed
   Canvas.drawCanvas();
 }
 

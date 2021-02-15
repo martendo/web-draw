@@ -188,15 +188,15 @@ const Canvas = {
       height: Math.min((this.scrollbarY.trough.height / Session.canvas.height) * (this.scrollbarY.trough.height / this.zoom), this.displayCanvas.height - this.SCROLLBAR_WIDTH - 1) - 1
     };
     
-    this.displayCtx.fillStyle = "#808080";
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
     this.displayCtx.fillRect(...Object.values(this.scrollbarX.trough));
     this.displayCtx.fillRect(...Object.values(this.scrollbarY.trough));
     
-    this.displayCtx.fillStyle = "#f8f8f8";
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-thumb-colour");
     this.displayCtx.fillRect(...Object.values(this.scrollbarX.thumb));
     this.displayCtx.fillRect(...Object.values(this.scrollbarY.thumb));
     
-    this.displayCtx.fillStyle = "#c0c0c0";
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-corner-colour");
     this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH, this.displayCanvas.height - this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
   },
   
