@@ -165,45 +165,51 @@ const Canvas = {
       width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
       height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
     };
-    // Show transparency pattern under image
-    this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
-    // Actual image
-    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x, -this.pan.y, width, height);
     
-    // Draw scroll bars
+    // Calculate scroll bar positions and dimensions
     this.scrollbarX.trough = {
       x: 0,
       y: this.displayCanvas.height - this.SCROLLBAR_WIDTH,
-      width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
+      width: this.canvasArea.width,
       height: this.SCROLLBAR_WIDTH
     };
     this.scrollbarX.thumb = {
-      x: (this.pan.x / Session.canvas.width) * (this.scrollbarX.trough.width / this.zoom) + 1,
+      x: (this.pan.x / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom) + 1,
       y: this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1,
-      width: Math.min((this.scrollbarX.trough.width / Session.canvas.width) * (this.scrollbarX.trough.width / this.zoom), this.displayCanvas.width - this.SCROLLBAR_WIDTH - 1) - 1,
+      width: Math.min((this.canvasArea.width / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom), this.scrollbarX.trough.width - 2),
       height: this.SCROLLBAR_WIDTH - 2
     };
     this.scrollbarY.trough = {
       x: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
       y: 0,
       width: this.SCROLLBAR_WIDTH,
-      height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
+      height: this.canvasArea.height
     };
     this.scrollbarY.thumb = {
       x: this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1,
-      y: (this.pan.y / Session.canvas.height) * (this.scrollbarY.trough.height / this.zoom) + 1,
+      y: (this.pan.y / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom) + 1,
       width: this.SCROLLBAR_WIDTH - 2,
-      height: Math.min((this.scrollbarY.trough.height / Session.canvas.height) * (this.scrollbarY.trough.height / this.zoom), this.displayCanvas.height - this.SCROLLBAR_WIDTH - 1) - 1
+      height: Math.min((this.canvasArea.height / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom), this.scrollbarY.trough.height - 2)
     };
     
     // Centre canvas in canvas area if smaller than it
     if (width < this.canvasArea.width) {
       this.pan.x = -((this.canvasArea.width - width) / 2);
+      this.scrollbarX.thumb.x = 1;
+      this.scrollbarX.thumb.width = this.scrollbarX.trough.width - 2;
     }
     if (height < this.canvasArea.height) {
       this.pan.y = -((this.canvasArea.height - height) / 2);
+      this.scrollbarY.thumb.y = 1;
+      this.scrollbarY.thumb.height = this.scrollbarY.trough.height - 2;
     }
     
+    // Show transparency pattern under image
+    this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
+    // Actual image
+    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x, -this.pan.y, width, height);
+    
+    // Draw scroll bars
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
     this.displayCtx.fillRect(...Object.values(this.scrollbarX.trough));
     this.displayCtx.fillRect(...Object.values(this.scrollbarY.trough));
@@ -213,7 +219,7 @@ const Canvas = {
     this.displayCtx.fillRect(...Object.values(this.scrollbarY.thumb));
     
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-corner-colour");
-    this.displayCtx.fillRect(this.displayCanvas.width - this.SCROLLBAR_WIDTH, this.displayCanvas.height - this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
+    this.displayCtx.fillRect(this.scrollbarX.trough.width, this.scrollbarY.trough.height, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
   },
   
   // Export canvas image
