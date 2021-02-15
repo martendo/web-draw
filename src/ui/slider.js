@@ -55,7 +55,7 @@ const Slider = {
     const dx = event.clientX - rect.left;
     const fraction = dx / rect.width;
     const min = parseFloat(input.dataset.min);
-    const value = Math.min(Math.max((fraction * (parseFloat(input.dataset.width) - min)) + min, min), parseFloat(input.dataset.max));
+    const value = minmax((fraction * (parseFloat(input.dataset.width) - min)) + min, min, parseFloat(input.dataset.max));
     this.setValue(this.current, value, { fraction });
   },
   setValue(id, value, { fraction = null, callback = true } = {}) {
@@ -66,13 +66,13 @@ const Slider = {
     
     const min = parseFloat(input.dataset.min);
     if (!fraction) fraction = (value - min) / (parseFloat(input.dataset.width) - min);
-    document.getElementById(id + "Bar").style.width = Math.max(Math.min(fraction * 100, 100), 0) + "%";
+    document.getElementById(id + "Bar").style.width = minmax(fraction * 100, 0, 100) + "%";
     
     if (input.dataset.callback && callback) this.CALLBACKS[input.dataset.callback](value);
   },
   arrow(id, dir) {
     const slider = document.getElementById(id + "Input");
-    const newVal = Math.min(Math.max(parseFloat(slider.dataset.value) + (dir === "up" ? 1 : -1), parseFloat(slider.dataset.min)), parseFloat(slider.dataset.max));
+    const newVal = minmax(parseFloat(slider.dataset.value) + (dir === "up" ? 1 : -1), parseFloat(slider.dataset.min), parseFloat(slider.dataset.max));
     this.setValue(id, newVal);
   }
 };

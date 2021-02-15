@@ -163,6 +163,39 @@ const Tools = {
 // Handle mousedown on canvas
 function mouseHold(event) {
   if (event.target.tagName !== "CANVAS") return;
+  
+  // Scrollbars
+  const mouse = Canvas.getCursorPos(event);
+  if (mouse.y > Canvas.scrollbarX.trough.y) {
+    event.preventDefault();
+    if (Canvas.scrollbarX.thumb.x < mouse.x && mouse.x < Canvas.scrollbarX.thumb.x + Canvas.scrollbarX.thumb.width) {
+      Canvas.scrollbarX.drag = {
+        mouse: {...mouse},
+        thumb: {
+          x: Canvas.scrollbarX.thumb.x,
+          y: Canvas.scrollbarX.thumb.y
+        },
+        pan: {...Canvas.pan}
+      };
+    }
+    return;
+  } else if (mouse.x > Canvas.scrollbarY.trough.x) {
+    event.preventDefault();
+    if (Canvas.scrollbarY.thumb.y < mouse.y && mouse.y < Canvas.scrollbarY.thumb.y + Canvas.scrollbarY.thumb.height) {
+      Canvas.scrollbarY.drag = {
+        mouse: {...mouse},
+        thumb: {
+          x: Canvas.scrollbarY.thumb.x,
+          y: Canvas.scrollbarY.thumb.y
+        },
+        pan: {...Canvas.pan}
+      };
+    }
+    return;
+  }
+  
+  const point = Canvas.getPixelPos(event);
+  
   switch (event.button) {
     case 0: {
       currentPen = 0;
@@ -175,7 +208,6 @@ function mouseHold(event) {
     default: return;
   }
   event.preventDefault();
-  const point = Canvas.getCursorPos(event);
   const currentAction = clients[Client.id].action;
   if (currentAction.data && currentAction.data.selected) {
     const handle = Selection.getResizeHandle(point, [0, 1, 2, 3, 4, 5, 6, 7]);
@@ -204,6 +236,8 @@ function mouseHold(event) {
       return;
     }
   }
+  if (point.x < 0 || point.x > Session.canvas.width ||
+      point.y < 0 || point.y > Session.canvas.height) return;
   startTool(point);
 }
 function startTool(point) {
@@ -373,8 +407,22 @@ function mouseMove(event) {
   // If not on the drawing "page", ignore
   if (!document.getElementById("drawScreen").contains(event.target)) return;
   
-  const point = Canvas.getCursorPos(event);
+  const point = Canvas.getPixelPos(event);
   document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
+  
+  const mouse = Canvas.getCursorPos(event);
+  if (Canvas.scrollbarX.drag) {
+    event.preventDefault();
+    Canvas.pan.x = ((Canvas.scrollbarX.drag.thumb.x + (mouse.x - Canvas.scrollbarX.drag.mouse.x)) / (Canvas.scrollbarX.trough.width - 2)) * (Session.canvas.width * Canvas.zoom);
+    Canvas.drawCanvas();
+    return;
+  } else if (Canvas.scrollbarY.drag) {
+    event.preventDefault();
+    Canvas.pan.y = ((Canvas.scrollbarY.drag.thumb.y + (mouse.y - Canvas.scrollbarY.drag.mouse.y)) / (Canvas.scrollbarY.trough.height - 2)) * (Session.canvas.height * Canvas.zoom);
+    Canvas.drawCanvas();
+    return;
+  }
+  
   const currentAction = clients[Client.id].action;
   switch (currentAction.type) {
     case "stroke": {
@@ -501,14 +549,14 @@ function mouseMove(event) {
       "nesw-resize", "ns-resize", "nwse-resize"
     ]);
     if (cursor !== null) {
-      Canvas.canvas.style.cursor = cursor;
+      Canvas.displayCanvas.style.cursor = cursor;
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
-      Canvas.canvas.style.cursor = "move";
+      Canvas.displayCanvas.style.cursor = "move";
     } else {
-      Canvas.canvas.style.cursor = "auto";
+      Canvas.displayCanvas.style.cursor = "auto";
     }
   } else {
-    Canvas.canvas.style.cursor = "auto";
+    Canvas.displayCanvas.style.cursor = "auto";
   }
   mouseMoved.moved = true;
   if (event.target.tagName !== "CANVAS") {
@@ -522,12 +570,15 @@ function mouseMove(event) {
 function clearMouseHold(event) {
   if (!clients.hasOwnProperty(Client.id)) return;
   
+  Canvas.scrollbarX.drag = null;
+  Canvas.scrollbarY.drag = null;
+  
   const currentAction = clients[Client.id].action;
   var keepAction = false;
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
-      const point = Canvas.getCursorPos(event);
+      const point = Canvas.getPixelPos(event);
       Pen.draw(point.x, point.y);
       Client.sendMessage({
         type: "end-stroke",

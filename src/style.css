@@ -39,6 +39,10 @@
   --button-selected-hover-colour: #a0a0a0;
   --button-active-colour: #b0b0b0;
   
+  --scrollbar-trough-colour: #e8e8e8;
+  --scrollbar-thumb-colour: #c0c0c0;
+  --scrollbar-corner-colour: #d8d8d8;
+  
   /* <code>, chat box [X] button */
   --highlight-background-colour: rgba(0, 0, 0, 0.05);
   
@@ -121,6 +125,10 @@
   --button-selected-colour: #808080;
   --button-selected-hover-colour: #909090;
   --button-active-colour: #606060;
+  
+  --scrollbar-trough-colour: #303030;
+  --scrollbar-thumb-colour: #808080;
+  --scrollbar-corner-colour: #505050;
   
   /* <code>, chat box [X] button */
   --highlight-background-colour: rgba(255, 255, 255, 0.15);
@@ -365,12 +373,9 @@ button:active:not(:disabled) {
 #canvasContainer {
   grid-column: 2;
   grid-row: 3;
-  overflow-x: auto;
-  overflow-y: auto;
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto;
-  padding: 15px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding: 0;
   margin: 0;
   touch-action: none;
   background-color: var(--background-1-colour);
@@ -462,7 +467,7 @@ div.separator {
 #topBox, #bottomBox, #statusBox, #leftBox, #rightBoxContent {
   padding: 8px;
 }
-#rightBox, #menubar, #canvasContainer {
+#leftBox, #rightBox, #menubar, #statusBox, canvas {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

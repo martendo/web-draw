@@ -26,24 +26,49 @@ const Canvas = {
   DEFAULT_ZOOM: 1,
   MIN_ZOOM:     0,
   
+  SCROLLBAR_WIDTH: 15,
+  
   zoom: null,
+  pan: {
+    x: 0,
+    y: 0
+  },
+  scrollbarX: {
+    trough: null,
+    thumb: null,
+    drag: null
+  },
+  scrollbarY: {
+    trough: null,
+    thumb: null,
+    drag: null
+  },
+  canvasArea: {
+    width: 0,
+    height: 0
+  },
   
   container: document.getElementById("canvasContainer"),
-  canvas: document.getElementById("displayCanvas"),
-  ctx: document.getElementById("displayCanvas").getContext("2d"),
+  displayCanvas: document.getElementById("displayCanvas"),
+  displayCtx: document.getElementById("displayCanvas").getContext("2d"),
+  mixingCanvas: document.createElement("canvas"),
+  mixingCtx: null,
   
   init() {
     // Set canvas size
     Session.canvas.width = this.CANVAS_WIDTH;
     Session.canvas.height = this.CANVAS_HEIGHT;
-    this.canvas.width = this.CANVAS_WIDTH;
-    this.canvas.height = this.CANVAS_HEIGHT;
+    this.mixingCanvas.width = this.CANVAS_WIDTH;
+    this.mixingCanvas.height = this.CANVAS_HEIGHT;
+    this.displayCanvas.width = this.container.clientWidth;
+    this.displayCanvas.height = this.container.clientHeight;
     for (const client of Object.values(clients)) {
       client.canvas.width = this.CANVAS_WIDTH;
       client.canvas.height = this.CANVAS_HEIGHT;
     }
     // Start with the canvas cleared
     this.clearBlank(false);
+    this.drawCanvas();
   },
   
   // Zoom the canvas with the mouse wheel
@@ -57,10 +82,10 @@ const Canvas = {
   setZoomValue(event) {
     this.setZoom(parseFloat(event.currentTarget.value / 100));
   },
-  // Set the canvas zoom to whatever fits in the container, optionally only if it doesn't already fit
+  // Set the canvas zoom to whatever fits in the canvas area, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {
-    const widthZoom = (this.container.clientWidth - (15 * 2)) / Session.canvas.width;
-    const heightZoom = (this.container.clientHeight - (15 * 2)) / Session.canvas.height;
+    const widthZoom = this.canvasArea.width / Session.canvas.width;
+    const heightZoom = this.canvasArea.height / Session.canvas.height;
     const fitZoom = type === "fit" ? Math.min(widthZoom, heightZoom) : Math.max(widthZoom, heightZoom);
     const newZoom = (fitZoom < this.zoom || allowLarger) ? fitZoom : this.zoom;
     this.setZoom(newZoom);
@@ -69,51 +94,40 @@ const Canvas = {
   setZoom(zoom) {
     this.zoom = zoom;
     document.getElementById("canvasZoom").value = Math.round(this.zoom * 100);
-    this.canvas.style.transform = `scale(${this.zoom})`;
+    this.drawCanvas();
   },
   
   update({ extras = [], save = false, only = null } = {}) {
-    this.canvas.width = Session.canvas.width;
-    this.canvas.height = Session.canvas.height;
-    this.ctx.drawImage(Session.canvas, 0, 0);
+    this.mixingCanvas.width = Session.canvas.width;
+    this.mixingCanvas.height = Session.canvas.height;
+    this.mixingCtx.drawImage(Session.canvas, 0, 0);
     
     if (only) {
       // Used in ActionHistory
-      this.ctx.globalCompositeOperation = COMP_OPS[only.compOp];
-      this.ctx.drawImage(clients[only.id].canvas, 0, 0);
+      this.mixingCtx.globalCompositeOperation = COMP_OPS[only.compOp];
+      this.mixingCtx.drawImage(clients[only.id].canvas, 0, 0);
     } else {
-      const onTop = [];
       for (const clientId of Session.actionOrder) {
         const client = clients[clientId];
         // Selections are not part of the actual image
         // Type is only null when a selection is present but not currently being modified
         const type = client.action.type;
         if (type === null || type === "selecting" || type === "selection-move" || type === "selection-resize") {
-          if (!save) {
-            // Selections should be drawn on top of everything, save them for later
-            onTop.push(clientId);
-          }
           continue;
         }
         
-        this.ctx.globalCompositeOperation = COMP_OPS[client.action.data.compOp] || DEFAULT_COMP_OP;
-        this.ctx.drawImage(client.canvas, 0, 0);
+        this.mixingCtx.globalCompositeOperation = COMP_OPS[client.action.data.compOp] || DEFAULT_COMP_OP;
+        this.mixingCtx.drawImage(client.canvas, 0, 0);
       }
       for (const extra of extras) {
-        this.ctx.globalCompositeOperation = COMP_OPS[extra.compOp];
-        this.ctx.drawImage(extra.canvas, 0, 0);
-      }
-      
-      // Selections don't have special composite operations
-      this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
-      for (const clientId of onTop) {
-        this.ctx.drawImage(clients[clientId].canvas, 0, 0);
+        this.mixingCtx.globalCompositeOperation = COMP_OPS[extra.compOp];
+        this.mixingCtx.drawImage(extra.canvas, 0, 0);
       }
     }
-    this.ctx.globalCompositeOperation = DEFAULT_COMP_OP;
+    this.mixingCtx.globalCompositeOperation = DEFAULT_COMP_OP;
     if (save) {
       if (!only) {
-        const tempCanvas = this._copyCanvas(this.canvas);
+        const tempCanvas = this._copyCanvas(this.mixingCanvas);
         // Update display canvas
         this.update({
           extras: extras,
@@ -124,9 +138,91 @@ const Canvas = {
         Session.ctx.drawImage(tempCanvas, 0, 0);
       } else {
         Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
-        Session.ctx.drawImage(this.canvas, 0, 0);
+        Session.ctx.drawImage(this.mixingCanvas, 0, 0);
       }
     }
+    this.drawCanvas();
+  },
+  drawCanvas() {
+    // "Background" - extra space not filled with canvas
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-1-colour");
+    this.displayCtx.fillRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
+    
+    const width = this.mixingCanvas.width * this.zoom;
+    const height = this.mixingCanvas.height * this.zoom;
+    this.canvasArea = {
+      width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
+      height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
+    };
+    
+    // Ensure canvas is visible
+    this.pan.x = minmax(this.pan.x, 0, width - this.canvasArea.width);
+    this.pan.y = minmax(this.pan.y, 0, height - this.canvasArea.height);
+    
+    // Calculate scroll bar positions and dimensions
+    this.scrollbarX.trough = {
+      x: 0,
+      y: this.displayCanvas.height - this.SCROLLBAR_WIDTH,
+      width: this.canvasArea.width,
+      height: this.SCROLLBAR_WIDTH
+    };
+    this.scrollbarX.thumb = {
+      x: (this.pan.x / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom) + 1,
+      y: this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1,
+      width: Math.min((this.canvasArea.width / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom), this.scrollbarX.trough.width - 2),
+      height: this.SCROLLBAR_WIDTH - 2
+    };
+    this.scrollbarY.trough = {
+      x: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
+      y: 0,
+      width: this.SCROLLBAR_WIDTH,
+      height: this.canvasArea.height
+    };
+    this.scrollbarY.thumb = {
+      x: this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1,
+      y: (this.pan.y / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom) + 1,
+      width: this.SCROLLBAR_WIDTH - 2,
+      height: Math.min((this.canvasArea.height / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom), this.scrollbarY.trough.height - 2)
+    };
+    
+    // Centre canvas in canvas area if smaller than it
+    if (width < this.canvasArea.width) {
+      this.pan.x = -((this.canvasArea.width - width) / 2);
+      this.scrollbarX.thumb.x = 1;
+      this.scrollbarX.thumb.width = this.scrollbarX.trough.width - 2;
+    }
+    if (height < this.canvasArea.height) {
+      this.pan.y = -((this.canvasArea.height - height) / 2);
+      this.scrollbarY.thumb.y = 1;
+      this.scrollbarY.thumb.height = this.scrollbarY.trough.height - 2;
+    }
+    
+    // Show transparency pattern under image
+    this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
+    // Actual image
+    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x, -this.pan.y, width, height);
+    
+    // Draw selections
+    for (const clientId of Session.actionOrder) {
+      const client = clients[clientId];
+      const type = client.action.type;
+      if (type !== null && type !== "selecting" && type !== "selection-move" && type !== "selection-resize") {
+        continue;
+      }
+      Selection.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
+    }
+    
+    // Draw scroll bars
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
+    this.displayCtx.fillRect(...Object.values(this.scrollbarX.trough));
+    this.displayCtx.fillRect(...Object.values(this.scrollbarY.trough));
+    
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-thumb-colour");
+    this.displayCtx.fillRect(...Object.values(this.scrollbarX.thumb));
+    this.displayCtx.fillRect(...Object.values(this.scrollbarY.thumb));
+    
+    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-corner-colour");
+    this.displayCtx.fillRect(this.scrollbarX.trough.width, this.scrollbarY.trough.height, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
   },
   
   // Export canvas image
@@ -187,7 +283,7 @@ const Canvas = {
   
   setup(data) {
     this.init();
-    // Zoom canvas to fit in canvasContainer if it doesn't already
+    // Zoom canvas to fit in canvas area if it doesn't already
     this.zoomToWindow("fit", false);
     Session.ctx.fillStyle = Colour.BLANK;
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
@@ -218,8 +314,16 @@ const Canvas = {
       };
     }
     return {
-      x: (((mouse.x + Canvas.container.scrollLeft) - (this.canvas.offsetLeft + (this.canvas.clientLeft * Canvas.zoom))) / Canvas.zoom) | 0,
-      y: (((mouse.y + Canvas.container.scrollTop) - (this.canvas.offsetTop + (this.canvas.clientTop * Canvas.zoom))) / Canvas.zoom) | 0
+      x: (mouse.x - this.displayCanvas.offsetLeft),
+      y: (mouse.y - this.displayCanvas.offsetTop)
+    };
+  },
+  // Get the pixel position of the cursor on the canvas
+  getPixelPos(event) {
+    const mouse = this.getCursorPos(event);
+    return {
+      x: ((mouse.x / this.zoom) + (this.pan.x / this.zoom)) | 0,
+      y: ((mouse.y / this.zoom) + (this.pan.y / this.zoom)) | 0
     };
   },
   
@@ -300,8 +404,8 @@ const Canvas = {
     }
     Session.ctx.fillStyle = Colour.BLANK;
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
-    this.ctx.fillStyle = Colour.BLANK;
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    this.mixingCtx.fillStyle = Colour.BLANK;
+    this.mixingCtx.fillRect(0, 0, this.mixingCanvas.width, this.mixingCanvas.height);
     if (user) {
       ActionHistory.addToUndo({
         type: "clear-blank"
@@ -317,7 +421,7 @@ const Canvas = {
       });
     }
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.mixingCtx.clearRect(0, 0, this.mixingCanvas.width, this.mixingCanvas.height);
     if (user) {
       ActionHistory.addToUndo({
         type: "clear"
@@ -325,3 +429,4 @@ const Canvas = {
     }
   }
 };
+Canvas.mixingCtx = Canvas.mixingCanvas.getContext("2d");

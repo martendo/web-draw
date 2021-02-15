@@ -44,8 +44,6 @@ const CLOSE_CODES = Object.freeze({
   1015: "TLS Handshake"
 });
 
-var ctrlKey = false;
-
 // Values of tool setting <select>s
 // Pen stroke and line cap options
 const CAPS = Object.freeze([
@@ -113,6 +111,11 @@ function isPointInside(x, y, rect) {
           rect.y < y && y < rect.y + rect.height);
 }
 
+// Use an upper and lower bound on a number
+function minmax(num, min, max) {
+  return Math.min(Math.max(num, min), max);
+}
+
 // Tell the user if their browser does not support WebSockets
 if (!("WebSocket" in window)) Modal.open("noWsModal");
 
@@ -152,6 +155,12 @@ document.addEventListener("click", (event) => {
   for (var i = 0; i < selected.length; i++) {
     selected[i].classList.remove("menuSelected");
   }
+});
+
+window.addEventListener("resize", () => {
+  Canvas.displayCanvas.width = Canvas.container.clientWidth;
+  Canvas.displayCanvas.height = Canvas.container.clientHeight;
+  Canvas.drawCanvas();
 });
 
 document.addEventListener("keydown", (event) => {
@@ -241,20 +250,24 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Control") ctrlKey = true;
-});
-document.addEventListener("keyup", (event) => {
-  if (event.key === "Control") ctrlKey = false;
-});
-
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
-Canvas.container.addEventListener("pointerdown", (event) => mouseHold(event));
-Canvas.container.addEventListener("wheel", (event) => {
-  if (!ctrlKey) return;
+Canvas.displayCanvas.addEventListener("pointerdown", (event) => mouseHold(event));
+Canvas.displayCanvas.addEventListener("wheel", (event) => {
   event.preventDefault();
-  const delta = Math.sign(event.deltaY) * -0.25;
-  Canvas.changeZoom(delta);
+  if (!event.ctrlKey) {
+    // Scroll
+    const delta = Math.sign(event.deltaY) * 75;
+    if (event.shiftKey) {
+      Canvas.pan.x += delta;
+    } else {
+      Canvas.pan.y += delta;
+    }
+    Canvas.drawCanvas();
+  } else {
+    // Zoom
+    const delta = Math.sign(event.deltaY) * -0.25;
+    Canvas.changeZoom(delta);
+  }
 });
 
 // Set up inputs
@@ -405,13 +418,13 @@ resizeWidth.addEventListener("input", () => {
   const delta = resizeWidth.value - Session.canvas.width;
   offsetX.min = Math.min(delta, 0);
   offsetX.max = Math.max(delta, 0);
-  offsetX.value = Math.max(Math.min(offsetX.value, offsetX.max), offsetX.min);
+  offsetX.value = minmax(offsetX.value, offsetX.min, offsetX.max);
 });
 resizeHeight.addEventListener("input", () => {
   const delta = resizeHeight.value - Session.canvas.height;
   offsetY.min = Math.min(delta, 0);
   offsetY.max = Math.max(delta, 0);
-  offsetY.value = Math.max(Math.min(offsetY.value, offsetY.max), offsetY.min);
+  offsetY.value = minmax(offsetY.value, offsetY.min, offsetY.max);
 });
 document.getElementById("editResizeBtn").addEventListener("click", () => {
   resizeWidth.value = Session.canvas.width;

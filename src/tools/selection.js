@@ -88,8 +88,23 @@ const Selection = {
     return handle;
   },
   
-  draw(ctx, sel, handles, drawOld = true) {
-    ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
+  draw(ctx, sel, handles, drawOld = true, adjust = false) {
+    if (adjust) {
+      sel = {...sel};
+      sel.x = sel.x * Canvas.zoom - Canvas.pan.x;
+      sel.y = sel.y * Canvas.zoom - Canvas.pan.y;
+      sel.width *= Canvas.zoom;
+      sel.height *= Canvas.zoom;
+      if (sel.old && drawOld) {
+        sel.old = {...sel.old};
+        sel.old.x = sel.old.x * Canvas.zoom - Canvas.pan.x;
+        sel.old.y = sel.old.y * Canvas.zoom - Canvas.pan.y;
+        sel.old.width *= Canvas.zoom;
+        sel.old.height *= Canvas.zoom;
+      }
+    } else {
+      ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
+    }
     
     // Previously selected area
     if (sel.old && drawOld) {
@@ -104,7 +119,7 @@ const Selection = {
     }
     
     // Selected image data
-    if (sel.data) this.drawData(ctx, sel);
+    if (sel.data) this.drawData(ctx, sel, adjust);
     
     // Selection box
     ctx.strokeStyle = "#000000";
@@ -177,7 +192,7 @@ const Selection = {
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
     }
     
-    Canvas.update();
+    if (!adjust) Canvas.update();
   },
   update(handles) {
     const selection = clients[Client.id].action;
@@ -205,18 +220,28 @@ const Selection = {
     document.getElementById("selectPos").textContent = `${selection.data.x}, ${selection.data.y}`;
     document.getElementById("selectSize").textContent = `${selection.data.width}x${selection.data.height}`;
   },
-  drawData(ctx, sel) {
+  drawData(ctx, sel, adjust) {
     const tempCanvas = document.createElement("canvas");
     tempCanvas.width = sel.data.width;
     tempCanvas.height = sel.data.height;
-    tempCanvas.getContext("2d").putImageData(sel.data, 0, 0);
+    const tempCtx = tempCanvas.getContext("2d");
+    tempCtx.putImageData(sel.data, 0, 0);
+    if (adjust) {
+      ctx.save();
+      ctx.rect(-Canvas.pan.x, -Canvas.pan.y, Session.canvas.width * Canvas.zoom, Session.canvas.height * Canvas.zoom);
+      ctx.clip();
+    }
     ctx.translate(sel.flipped.x ? sel.width : 0, sel.flipped.y ? sel.height : 0);
     ctx.scale(sel.flipped.x ? -1 : 1, sel.flipped.y ? -1 : 1);
     const x = sel.x * (sel.flipped.x ? -1 : 1);
     const y = sel.y * (sel.flipped.y ? -1 : 1);
     ctx.drawImage(tempCanvas, x, y, sel.width, sel.height);
     ctx.setTransform(1, 0, 0, 1, 0, 0);
-    Canvas.update();
+    if (adjust) {
+      ctx.restore();
+    } else {
+      Canvas.update();
+    }
   },
   
   cut(ctx, sel, colour) {
