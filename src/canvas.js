@@ -84,8 +84,8 @@ const Canvas = {
   },
   // Set the canvas zoom to whatever fits in the canvas area, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {
-    const widthZoom = this.displayCanvas.width / Session.canvas.width;
-    const heightZoom = this.displayCanvas.height / Session.canvas.height;
+    const widthZoom = this.canvasArea.width / Session.canvas.width;
+    const heightZoom = this.canvasArea.height / Session.canvas.height;
     const fitZoom = type === "fit" ? Math.min(widthZoom, heightZoom) : Math.max(widthZoom, heightZoom);
     const newZoom = (fitZoom < this.zoom || allowLarger) ? fitZoom : this.zoom;
     this.setZoom(newZoom);
