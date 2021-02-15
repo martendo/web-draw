@@ -195,7 +195,6 @@ function mouseHold(event) {
   }
   
   const point = Canvas.getPixelPos(event);
-  if (point.x > Session.canvas.width || point.y > Session.canvas.height) return;
   
   switch (event.button) {
     case 0: {
@@ -237,6 +236,8 @@ function mouseHold(event) {
       return;
     }
   }
+  if (point.x < 0 || point.x > Session.canvas.width ||
+      point.y < 0 || point.y > Session.canvas.height) return;
   startTool(point);
 }
 function startTool(point) {

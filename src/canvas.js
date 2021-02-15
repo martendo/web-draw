@@ -107,17 +107,12 @@ const Canvas = {
       this.mixingCtx.globalCompositeOperation = COMP_OPS[only.compOp];
       this.mixingCtx.drawImage(clients[only.id].canvas, 0, 0);
     } else {
-      const onTop = [];
       for (const clientId of Session.actionOrder) {
         const client = clients[clientId];
         // Selections are not part of the actual image
         // Type is only null when a selection is present but not currently being modified
         const type = client.action.type;
         if (type === null || type === "selecting" || type === "selection-move" || type === "selection-resize") {
-          if (!save) {
-            // Selections should be drawn on top of everything, save them for later
-            onTop.push(clientId);
-          }
           continue;
         }
         
@@ -127,12 +122,6 @@ const Canvas = {
       for (const extra of extras) {
         this.mixingCtx.globalCompositeOperation = COMP_OPS[extra.compOp];
         this.mixingCtx.drawImage(extra.canvas, 0, 0);
-      }
-      
-      // Selections don't have special composite operations
-      this.mixingCtx.globalCompositeOperation = DEFAULT_COMP_OP;
-      for (const clientId of onTop) {
-        this.mixingCtx.drawImage(clients[clientId].canvas, 0, 0);
       }
     }
     this.mixingCtx.globalCompositeOperation = DEFAULT_COMP_OP;
@@ -212,6 +201,16 @@ const Canvas = {
     this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
     // Actual image
     this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x, -this.pan.y, width, height);
+    
+    // Draw selections
+    for (const clientId of Session.actionOrder) {
+      const client = clients[clientId];
+      const type = client.action.type;
+      if (type !== null && type !== "selecting" && type !== "selection-move" && type !== "selection-resize") {
+        continue;
+      }
+      Selection.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
+    }
     
     // Draw scroll bars
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
