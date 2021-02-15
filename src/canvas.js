@@ -43,6 +43,10 @@ const Canvas = {
     thumb: null,
     drag: null
   },
+  canvasArea: {
+    width: 0,
+    height: 0
+  },
   
   container: document.getElementById("canvasContainer"),
   displayCanvas: document.getElementById("displayCanvas"),
@@ -157,6 +161,10 @@ const Canvas = {
     
     const width = this.mixingCanvas.width * this.zoom;
     const height = this.mixingCanvas.height * this.zoom;
+    this.canvasArea = {
+      width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
+      height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
+    };
     // Show transparency pattern under image
     this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
     // Actual image
@@ -187,6 +195,14 @@ const Canvas = {
       width: this.SCROLLBAR_WIDTH - 2,
       height: Math.min((this.scrollbarY.trough.height / Session.canvas.height) * (this.scrollbarY.trough.height / this.zoom), this.displayCanvas.height - this.SCROLLBAR_WIDTH - 1) - 1
     };
+    
+    // Centre canvas in canvas area if smaller than it
+    if (width < this.canvasArea.width) {
+      this.pan.x = -((this.canvasArea.width - width) / 2);
+    }
+    if (height < this.canvasArea.height) {
+      this.pan.y = -((this.canvasArea.height - height) / 2);
+    }
     
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
     this.displayCtx.fillRect(...Object.values(this.scrollbarX.trough));
