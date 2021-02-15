@@ -91,7 +91,6 @@ const Session = {
       if (clientId === Client.id) row.classList.add("sessionInfoThisClient");
       row.title = "Click to send private message";
       row.addEventListener("click", () => {
-        Chat.box.classList.remove("displayNone");
         Chat.open();
         Chat.addMessageTo(clientId);
         Modal.close("sessionInfoModal");

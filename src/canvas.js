@@ -224,6 +224,11 @@ const Canvas = {
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-corner-colour");
     this.displayCtx.fillRect(this.scrollbarX.trough.width, this.scrollbarY.trough.height, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
   },
+  updateCanvasAreaSize() {
+    this.displayCanvas.width = this.container.clientWidth;
+    this.displayCanvas.height = this.container.clientHeight;
+    this.drawCanvas();
+  },
   
   // Export canvas image
   export() {

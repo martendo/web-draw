@@ -194,15 +194,25 @@ const Chat = {
   },
   
   toggle() {
-    if (!this.box.classList.toggle("displayNone")) this.open();
+    if (!this.box.classList.toggle("displayNone")) {
+      this.open();
+    } else {
+      this.close();
+    }
   },
   open() {
+    this.box.classList.remove("displayNone");
     const chatNew = document.getElementById("chatNew");
     chatNew.style.width = 0;
     chatNew.style.height = 0;
     chatNew.style.top = "4px";
     chatNew.style.right = "4px";
     this.input.focus();
+    Canvas.updateCanvasAreaSize();
+  },
+  close() {
+    this.box.classList.add("displayNone");
+    Canvas.updateCanvasAreaSize();
   }
 };
 

@@ -157,11 +157,7 @@ document.addEventListener("click", (event) => {
   }
 });
 
-window.addEventListener("resize", () => {
-  Canvas.displayCanvas.width = Canvas.container.clientWidth;
-  Canvas.displayCanvas.height = Canvas.container.clientHeight;
-  Canvas.drawCanvas();
-});
+window.addEventListener("resize", () => Canvas.updateCanvasAreaSize());
 
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
@@ -361,9 +357,7 @@ document.getElementById("userBtn").addEventListener("click", () => {
   Modal.open("userModal");
 });
 document.getElementById("chatBtn").addEventListener("click", () => Chat.toggle());
-document.getElementById("chatXBtn").addEventListener("click", () => {
-  Chat.box.classList.add("displayNone");
-});
+document.getElementById("chatXBtn").addEventListener("click", () => Chat.close());
 
 const tabs = [...document.getElementsByClassName("tab")];
 tabs.forEach((tab) => {
