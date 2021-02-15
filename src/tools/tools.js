@@ -548,14 +548,14 @@ function mouseMove(event) {
       "nesw-resize", "ns-resize", "nwse-resize"
     ]);
     if (cursor !== null) {
-      Canvas.mixingCanvas.style.cursor = cursor;
+      Canvas.displayCanvas.style.cursor = cursor;
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
-      Canvas.mixingCanvas.style.cursor = "move";
+      Canvas.displayCanvas.style.cursor = "move";
     } else {
-      Canvas.mixingCanvas.style.cursor = "auto";
+      Canvas.displayCanvas.style.cursor = "auto";
     }
   } else {
-    Canvas.mixingCanvas.style.cursor = "auto";
+    Canvas.displayCanvas.style.cursor = "auto";
   }
   mouseMoved.moved = true;
   if (event.target.tagName !== "CANVAS") {
