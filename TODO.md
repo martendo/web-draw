@@ -10,10 +10,6 @@
 - Rotation of selections
 - Edit settings of actions in action history (change colour, opacity, etc.)
 ## Later
-- Make the canvas container/area a `<canvas>` and draw the "canvas" (image) on that
-  - Allows better/nicer manipulation of view
-    - Panning that isn't awkward (scrolling is how it's done now)
-    - Zoom that isn't just CSS `scale()`
 - When changing zoom, keep the pixel at the cursor before the zoom at the cursor after the zoom
 ## Probably even later
 - Multiple layers
