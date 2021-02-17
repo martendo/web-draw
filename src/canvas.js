@@ -199,9 +199,9 @@ const Canvas = {
     }
     
     // Show transparency pattern under image
-    this.displayCtx.clearRect(-this.pan.x, -this.pan.y, width, height);
+    this.displayCtx.clearRect(-this.pan.x | 0, -this.pan.y | 0, width | 0, height | 0);
     // Actual image
-    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x, -this.pan.y, width, height);
+    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x | 0, -this.pan.y | 0, width | 0, height | 0);
     
     // Draw selections
     for (const clientId of Session.actionOrder) {

@@ -229,7 +229,7 @@ const Selection = {
     if (adjust) {
       ctx.save();
       ctx.beginPath();
-      ctx.rect(-Canvas.pan.x, -Canvas.pan.y, Session.canvas.width * Canvas.zoom, Session.canvas.height * Canvas.zoom);
+      ctx.rect(-Canvas.pan.x | 0, -Canvas.pan.y | 0, (Session.canvas.width * Canvas.zoom) | 0, (Session.canvas.height * Canvas.zoom) | 0);
       ctx.clip();
     }
     ctx.translate(sel.flipped.x ? sel.width : 0, sel.flipped.y ? sel.height : 0);
