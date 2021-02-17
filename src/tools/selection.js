@@ -228,6 +228,7 @@ const Selection = {
     tempCtx.putImageData(sel.data, 0, 0);
     if (adjust) {
       ctx.save();
+      ctx.beginPath();
       ctx.rect(-Canvas.pan.x, -Canvas.pan.y, Session.canvas.width * Canvas.zoom, Session.canvas.height * Canvas.zoom);
       ctx.clip();
     }
