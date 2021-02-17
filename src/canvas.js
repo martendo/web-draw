@@ -144,6 +144,7 @@ const Canvas = {
     this.drawCanvas();
   },
   drawCanvas() {
+    this.displayCtx.imageSmoothingEnabled = false;
     // "Background" - extra space not filled with canvas
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-1-colour");
     this.displayCtx.fillRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);

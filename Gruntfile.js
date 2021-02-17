@@ -6,9 +6,10 @@ const UglifyJS = require("uglify-es");
 
 // Missing in uglify-es/tools/domprops.json
 const otherDomprops = [
+  "imageSmoothingEnabled",
   "clipboard",
-  "writeText",
-  "fromEntries"
+  "fromEntries",
+  "writeText"
 ];
 
 const reserved = [
