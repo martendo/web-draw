@@ -74,7 +74,16 @@ const Canvas = {
   // Zoom the canvas with the mouse wheel
   changeZoom(delta) {
     if (this.zoom + delta >= this.MIN_ZOOM) {
+      const pixelPan = {
+        x: this.pan.x / this.zoom,
+        y: this.pan.y / this.zoom
+      };
+      const oldPixelPos = this.getPixelPos(cachedMouseEvent, false);
       this.zoom += delta;
+      const newPixelPos = this.getPixelPos(cachedMouseEvent, false);
+      this.pan.x += (oldPixelPos.x - newPixelPos.x) * this.zoom;
+      this.pan.y += (oldPixelPos.y - newPixelPos.y) * this.zoom;
+      
       this.setZoom(this.zoom);
     }
   },
@@ -325,12 +334,17 @@ const Canvas = {
     };
   },
   // Get the pixel position of the cursor on the canvas
-  getPixelPos(event) {
-    const mouse = this.getCursorPos(event);
-    return {
-      x: ((mouse.x / this.zoom) + (this.pan.x / this.zoom)) | 0,
-      y: ((mouse.y / this.zoom) + (this.pan.y / this.zoom)) | 0
+  getPixelPos(event, round = true) {
+    var mouse = this.getCursorPos(event);
+    mouse = {
+      x: (mouse.x + this.pan.x) / this.zoom,
+      y: (mouse.y + this.pan.y) / this.zoom
     };
+    if (round) {
+      mouse.x |= 0;
+      mouse.y |= 0;
+    }
+    return mouse;
   },
   
   _copyCanvas(canvas) {

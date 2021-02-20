@@ -7,7 +7,6 @@
 - Editing of shapes and lines in a similar fashion to selections
 - Rotation of selections
 - Edit settings of actions in action history (change colour, opacity, etc.)
-- When changing zoom, keep the pixel at the cursor before the zoom at the cursor after the zoom
 - Multiple layers
   - Requires huge changes, but layers are super useful
 - Text

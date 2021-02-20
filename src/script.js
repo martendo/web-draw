@@ -102,6 +102,9 @@ var mouseMoved = {
   moved: false,
   outside: false
 };
+// Cache mousemove event so it may be used outside of a MouseEvent listener
+var cachedMouseEvent = null;
+
 // Most recent custom colours
 var customColours = [];
 
@@ -158,6 +161,10 @@ document.addEventListener("click", (event) => {
 });
 
 window.addEventListener("resize", () => Canvas.updateCanvasAreaSize());
+
+Canvas.displayCanvas.addEventListener("pointermove", (event) => {
+  cachedMouseEvent = event;
+});
 
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
