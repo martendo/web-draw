@@ -52,22 +52,22 @@ const ActionHistory = {
         const previousAction = this.undoActions.pop();
         if (previousAction) {
           this.redoActions.push(previousAction);
-          Canvas.init();
-          for (const action of this.undoActions) {
-            this.doAction(action);
-          }
-          this.enableRedo();
-          Session.drawCurrentActions();
-          this.updateLastAction();
         } else {
           this.clearUndo();
-          return;
+          break;
         }
         if (!this.undoActions.length) {
           this.clearUndo();
-          return;
+          break;
         }
       }
+      Canvas.init();
+      for (const action of this.undoActions) {
+        this.doAction(action);
+      }
+      this.enableRedo();
+      Session.drawCurrentActions();
+      this.updateLastAction();
     } else {
       // Redo
       for (var i = 0; i < offset; i++) {
