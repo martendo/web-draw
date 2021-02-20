@@ -176,7 +176,9 @@ const Session = {
     for (var i = 0; i < cursors.length; i++) {
       cursors[i].remove();
     }
-    window.history.replaceState({}, "Web Draw", "/");
+    const title = "Web Draw";
+    document.title = title;
+    window.history.replaceState({}, title, "/");
     document.getElementById("sessionIdInfo").textContent = "N/A";
     
     this.id = null;
@@ -191,7 +193,9 @@ const Session = {
   
   updateId(id) {
     this.id = id;
-    window.history.replaceState({}, `${this.id} - Web Draw`, `/s/${encodeURIComponent(this.id)}`);
+    const title = `Web Draw - ${this.id}`;
+    document.title = title;
+    window.history.replaceState({}, title, `/s/${encodeURIComponent(this.id)}`);
     document.getElementById("sessionId").textContent = this.id;
     document.getElementById("sessionIdInfo").textContent = this.id;
     document.getElementById("sessionIdCurrent").textContent = this.id;
