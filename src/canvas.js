@@ -172,8 +172,8 @@ const Canvas = {
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-1-colour");
     this.displayCtx.fillRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
     
-    const width = this.mixingCanvas.width * this.zoom;
-    const height = this.mixingCanvas.height * this.zoom;
+    const width = Session.canvas.width * this.zoom;
+    const height = Session.canvas.height * this.zoom;
     this.canvasArea = {
       width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
       height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
