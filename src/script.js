@@ -173,23 +173,23 @@ document.addEventListener("keydown", (event) => {
     if (!event.ctrlKey) {
       switch (event.key) {
         case "1": {
-          Canvas.setZoom(1);
+          Canvas.setZoom(1, true);
           break;
         }
         case "2": {
-          Canvas.setZoom(2);
+          Canvas.setZoom(2, true);
           break;
         }
         case "3": {
-          Canvas.setZoom(4);
+          Canvas.setZoom(4, true);
           break;
         }
         case "4": {
-          Canvas.setZoom(8);
+          Canvas.setZoom(8, true);
           break;
         }
         case "5": {
-          Canvas.setZoom(16);
+          Canvas.setZoom(16, true);
           break;
         }
         case "=": {

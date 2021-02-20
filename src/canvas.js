@@ -89,7 +89,7 @@ const Canvas = {
   },
   // Set the canvas zoom with the number input
   setZoomValue(event) {
-    this.setZoom(parseFloat(event.currentTarget.value / 100));
+    this.setZoom(parseFloat(event.currentTarget.value / 100), true);
   },
   // Set the canvas zoom to whatever fits in the canvas area, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {
@@ -100,8 +100,22 @@ const Canvas = {
     this.setZoom(newZoom);
   },
   // Set the canvas zoom
-  setZoom(zoom) {
-    this.zoom = zoom;
+  setZoom(zoom, keepCentre = false) {
+    if (keepCentre) {
+      const centre = {
+        x: (this.canvasArea.width / 2) + this.pan.x,
+        y: (this.canvasArea.height / 2) + this.pan.y
+      };
+      const oldCentre = {
+        x: centre.x / this.zoom,
+        y: centre.y / this.zoom
+      };
+      this.zoom = zoom;
+      this.pan.x += (oldCentre.x - (centre.x / this.zoom)) * this.zoom;
+      this.pan.y += (oldCentre.y - (centre.y / this.zoom)) * this.zoom;
+    } else {
+      this.zoom = zoom;
+    }
     document.getElementById("canvasZoom").value = Math.round(this.zoom * 100);
     this.drawCanvas();
   },
