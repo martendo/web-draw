@@ -221,10 +221,11 @@ const Canvas = {
       this.scrollbarY.thumb.height = this.scrollbarY.trough.height - 2;
     }
     
+    const imageRect = [-this.pan.x | 0, -this.pan.y | 0, width | 0, height | 0];
     // Show transparency pattern under image
-    this.displayCtx.clearRect(-this.pan.x | 0, -this.pan.y | 0, width | 0, height | 0);
+    this.displayCtx.clearRect(...imageRect);
     // Actual image
-    this.displayCtx.drawImage(this.mixingCanvas, -this.pan.x | 0, -this.pan.y | 0, width | 0, height | 0);
+    this.displayCtx.drawImage(this.mixingCanvas, ...imageRect);
     
     // Draw selections
     for (const clientId of Session.actionOrder) {
@@ -235,6 +236,18 @@ const Canvas = {
       }
       Selection.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
     }
+    
+    // Border around image
+    const imageBorderRect = [imageRect[0] + 0.5, imageRect[1] + 0.5, imageRect[2] - 1, imageRect[3] - 1];
+    this.displayCtx.strokeStyle = "#ffff00";
+    this.displayCtx.lineWidth = 1;
+    this.displayCtx.setLineDash([5, 5]);
+    this.displayCtx.lineDashOffset = 0.5;
+    this.displayCtx.strokeRect(...imageBorderRect);
+    this.displayCtx.strokeStyle = "#000000";
+    this.displayCtx.lineDashOffset = 5.5;
+    this.displayCtx.strokeRect(...imageBorderRect);
+    this.displayCtx.setLineDash([]);
     
     // Draw scroll bars
     this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
