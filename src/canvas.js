@@ -361,13 +361,13 @@ const Canvas = {
     };
   },
   // Get the pixel position of the cursor on the canvas
-  getPixelPos(event, round = true) {
+  getPixelPos(event, floor = true) {
     var mouse = this.getCursorPos(event);
     mouse = {
       x: (mouse.x + this.pan.x) / this.zoom,
       y: (mouse.y + this.pan.y) / this.zoom
     };
-    if (round) {
+    if (floor) {
       mouse.x |= 0;
       mouse.y |= 0;
     }
