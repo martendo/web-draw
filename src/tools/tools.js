@@ -210,7 +210,7 @@ function mouseHold(event) {
   event.preventDefault();
   const currentAction = clients[Client.id].action;
   if (currentAction.data && currentAction.data.selected) {
-    const handle = Selection.getResizeHandle(point, [0, 1, 2, 3, 4, 5, 6, 7]);
+    const handle = Selection.getResizeHandle(mouse, [0, 1, 2, 3, 4, 5, 6, 7]);
     if (handle !== null) {
       currentAction.data.resize = {
         handle: handle,
@@ -543,14 +543,15 @@ function mouseMove(event) {
     }
   }
   if (currentAction.data && currentAction.data.selected) {
-    const cursor = Selection.getResizeHandle(point, [
+    const cursor = Selection.getResizeHandle(mouse, [
       "nwse-resize", "ns-resize", "nesw-resize",
       "ew-resize",                "ew-resize",
       "nesw-resize", "ns-resize", "nwse-resize"
     ]);
+    const exactPoint = Canvas.getPixelPos(event, false);
     if (cursor !== null) {
       Canvas.displayCanvas.style.cursor = cursor;
-    } else if (isPointInside(point.x, point.y, currentAction.data)) {
+    } else if (isPointInside(exactPoint.x, exactPoint.y, currentAction.data)) {
       Canvas.displayCanvas.style.cursor = "move";
     } else {
       Canvas.displayCanvas.style.cursor = "auto";

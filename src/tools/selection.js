@@ -24,62 +24,66 @@ const Selection = {
   HANDLE_GRAB_SIZE: 15,
   
   getResizeHandle(point, handles) {
-    const selection = clients[Client.id].action;
+    const selection = {...clients[Client.id].action.data};
+    selection.x = selection.x * Canvas.zoom - Canvas.pan.x;
+    selection.y = selection.y * Canvas.zoom - Canvas.pan.y;
+    selection.width *= Canvas.zoom;
+    selection.height *= Canvas.zoom;
     
-    if (!selection.data.selected) return false;
+    if (!selection.selected) return false;
     var handle = null;
     if (isPointInside(point.x, point.y, {
-      x: selection.data.x - (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[0];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x + (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y - (this.HANDLE_GRAB_SIZE / 2),
-      width: selection.data.width - this.HANDLE_GRAB_SIZE,
+      x: selection.x + (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y - (this.HANDLE_GRAB_SIZE / 2),
+      width: selection.width - this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[1];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x + selection.data.width - (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.x + selection.width - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[2];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x - (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y + (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: selection.data.height - this.HANDLE_GRAB_SIZE
+      height: selection.height - this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[3];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x + selection.data.width - (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y + (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.x + selection.width - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: selection.data.height - this.HANDLE_GRAB_SIZE
+      height: selection.height - this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[4];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x - (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y + selection.data.height - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y + selection.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[5];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x + (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y + selection.data.height - (this.HANDLE_GRAB_SIZE / 2),
-      width: selection.data.width - this.HANDLE_GRAB_SIZE,
+      x: selection.x + (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y + selection.height - (this.HANDLE_GRAB_SIZE / 2),
+      width: selection.width - this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
       handle = handles[6];
     } else if (isPointInside(point.x, point.y, {
-      x: selection.data.x + selection.data.width - (this.HANDLE_GRAB_SIZE / 2),
-      y: selection.data.y + selection.data.height - (this.HANDLE_GRAB_SIZE / 2),
+      x: selection.x + selection.width - (this.HANDLE_GRAB_SIZE / 2),
+      y: selection.y + selection.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
       height: this.HANDLE_GRAB_SIZE
     })) {
