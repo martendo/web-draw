@@ -32,12 +32,18 @@ const ActionHistory = {
       data: data
     });
     this.pos++;
-    this.enableUndo();
+    this.enableAvailableButtons();
     this.addActionToTable(data.type);
   },
   // Undo an action, and send a message to undo (from the user)
   moveWithOffset(offset) {
-    const num = this.pos + offset;
+    var num = this.pos + offset;
+    while (num >= 0 && num < this.actions.length && !this.actions[num].enabled) {
+      num += offset;
+    }
+    if (num < 0 || num >= this.actions.length) {
+      return;
+    }
     Client.sendMessage({
       type: "move-history",
       num: num
@@ -53,7 +59,6 @@ const ActionHistory = {
       while (this.pos > num) {
         this.pos--;
         if (this.pos <= 0) {
-          this.clearUndo();
           break;
         }
       }
@@ -61,25 +66,19 @@ const ActionHistory = {
       for (var i = 0; i <= this.pos; i++) {
         this.doAction(this.actions[i]);
       }
-      this.enableRedo();
-      Session.drawCurrentActions();
-      this.updateLastAction();
     } else {
       // Redo
       while (num > this.pos) {
         this.pos++;
-        if (this.pos >= this.actions.length - 1) {
-          this.clearRedo();
-          if (this.pos >= this.actions.length) {
-            break;
-          }
+        if (this.pos >= this.actions.length) {
+          break;
         }
         this.doAction(this.actions[this.pos]);
-        this.enableUndo();
       }
-      Session.drawCurrentActions();
-      this.updateLastAction();
     }
+    Session.drawCurrentActions();
+    this.updateLastAction();
+    this.enableAvailableButtons();
   },
   
   toggleAction(num, user = true) {
@@ -204,17 +203,7 @@ const ActionHistory = {
       this.doAction(this.actions[i]);
     }
     this.updateLastAction();
-    
-    if (this.pos > 0) {
-      this.enableUndo();
-    } else {
-      this.clearUndo();
-    }
-    if (this.pos < this.actions.length - 1) {
-      this.enableRedo();
-    } else {
-      this.clearRedo();
-    }
+    this.enableAvailableButtons();
     Session.drawCurrentActions();
   },
   
@@ -366,21 +355,40 @@ const ActionHistory = {
   enableRedo() {
     this._redoBtn.disabled = false;
   },
-  // Disable undo/redo buttons and clear the actions just in case
-  clearUndo() {
+  disableUndo() {
     this._undoBtn.disabled = true;
     // KeyboardEvents do not fire when a disabled button is focused
     this._undoBtn.blur();
   },
-  clearRedo() {
+  disableRedo() {
     this._redoBtn.disabled = true;
     // KeyboardEvents do not fire when a disabled button is focused
     this._redoBtn.blur();
+  },
+  // Disable undo/redo buttons and clear the actions just in case
+  clearUndo() {
+    this.pos -= this.actions.splice(0, this.pos).length;
+    this.disableUndo();
+  },
+  clearRedo() {
     this.actions.splice(this.pos + 1, this.actions.length - (this.pos + 1));
+    this.disableRedo();
     
     // Remove redo actions from action history table - they've been erased
     [...this._table.children[0].children].slice(this.pos + 1).forEach((el) => {
       el.remove();
     });
+  },
+  enableAvailableButtons() {
+    if (this.actions.slice(0, this.pos).some((action) => action.enabled)) {
+      this.enableUndo();
+    } else {
+      this.disableUndo();
+    }
+    if (this.actions.slice(this.pos + 1).some((action) => action.enabled)) {
+      this.enableRedo();
+    } else {
+      this.disableRedo();
+    }
   }
 };
