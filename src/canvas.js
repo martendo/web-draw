@@ -221,7 +221,7 @@ const Canvas = {
       this.scrollbarY.thumb.height = this.scrollbarY.trough.height - 2;
     }
     
-    const imageRect = [-this.pan.x | 0, -this.pan.y | 0, width | 0, height | 0];
+    const imageRect = [-this.pan.x, -this.pan.y, width, height].map((x) => Math.round(x));
     // Show transparency pattern under image
     this.displayCtx.clearRect(...imageRect);
     // Actual image
