@@ -493,7 +493,7 @@ function mouseMove(event) {
       // 5-6-7
       var changeX = 0, changeY = 0, changeW = 0, changeH = 0;
       switch (currentAction.data.resize.handle) {
-        case 0:{
+        case 0: {
           changeX = changeW = changeY = changeH = -1;
           break;
         }
@@ -542,23 +542,26 @@ function mouseMove(event) {
       break;
     }
   }
+  var cursor = "auto";
   if (currentAction.data && currentAction.data.selected) {
-    const cursor = Selection.getResizeHandle(mouse, [
-      "nwse-resize", "ns-resize", "nesw-resize",
-      "ew-resize",                "ew-resize",
-      "nesw-resize", "ns-resize", "nwse-resize"
-    ]);
-    const exactPoint = Canvas.getPixelPos(event, false);
-    if (cursor !== null) {
-      Canvas.displayCanvas.style.cursor = cursor;
-    } else if (isPointInside(exactPoint.x, exactPoint.y, currentAction.data)) {
-      Canvas.displayCanvas.style.cursor = "move";
+    if (currentAction.type === "selection-resize") {
+      // Always use resizing cursors
+      cursor = Selection.RESIZE_CURSORS[currentAction.data.resize.handle];
+    } else if (currentAction.type === "selection-move") {
+      // Always use move cursor
+      cursor = "move";
     } else {
-      Canvas.displayCanvas.style.cursor = "auto";
+      const resizeCursor = Selection.getResizeHandle(mouse, Selection.RESIZE_CURSORS);
+      const exactPoint = Canvas.getPixelPos(event, false);
+      if (resizeCursor !== null) {
+        cursor = resizeCursor;
+      } else if (isPointInside(exactPoint.x, exactPoint.y, currentAction.data)) {
+        cursor = "move";
+      }
     }
-  } else {
-    Canvas.displayCanvas.style.cursor = "auto";
   }
+  Canvas.displayCanvas.style.cursor = cursor;
+  
   mouseMoved.moved = true;
   if (event.target.tagName !== "CANVAS") {
     mouseMoved.x = -1;

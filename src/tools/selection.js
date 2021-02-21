@@ -23,6 +23,13 @@ const Selection = {
   HANDLE_SIZE: 5,
   HANDLE_GRAB_SIZE: 15,
   
+  // Resize cursor names
+  RESIZE_CURSORS: [
+    "nwse-resize", "ns-resize", "nesw-resize",
+    "ew-resize",                "ew-resize",
+    "nesw-resize", "ns-resize", "nwse-resize"
+  ],
+  
   getResizeHandle(point, handles) {
     const selection = {...clients[Client.id].action.data};
     selection.x = selection.x * Canvas.zoom - Canvas.pan.x;
