@@ -266,8 +266,8 @@ const Canvas = {
     const a = document.createElement("a");
     a.style.display = "none";
     const file = new Blob([msgpack.encode({
-      undoActions: ActionHistory.undoActions,
-      redoActions: ActionHistory.redoActions
+      history: ActionHistory.actions,
+      pos: ActionHistory.pos
     })], { type: "application/octet-stream" });
     const url = URL.createObjectURL(file);
     a.href = url;
@@ -286,8 +286,8 @@ const Canvas = {
       Modal.open("retrieveModal");
       
       const backupHistory = {
-        undo: ActionHistory.undoActions.slice(),
-        redo: ActionHistory.redoActions.slice()
+        actions: ActionHistory.actions.slice(),
+        pos: ActionHistory.pos
       };
       
       const data = new Uint8Array(reader.result);
@@ -300,8 +300,8 @@ const Canvas = {
         });
       } catch (err) {
         console.error("Error setting up canvas: " + err);
-        ActionHistory.undoActions = backupHistory.undo;
-        ActionHistory.redoActions = backupHistory.redo;
+        ActionHistory.actions = backupHistory.actions;
+        ActionHistory.pos = backupHistory.pos;
         ActionHistory.doAllActions();
         Modal.close("retrieveModal");
         Modal.open("oldCanvasFileModal");
@@ -316,8 +316,8 @@ const Canvas = {
     this.zoomToWindow("fit", false);
     Session.ctx.fillStyle = Colour.BLANK;
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
-    ActionHistory.undoActions = data.undoActions;
-    ActionHistory.redoActions = data.redoActions;
+    ActionHistory.actions = data.history;
+    ActionHistory.pos = data.pos;
     if (data.actions) {
       for (const [clientId, action] of Object.entries(data.actions.clients)) {
         clients[clientId].action = action;

@@ -422,8 +422,8 @@ const Client = {
             order: Session.actionOrder,
             clients: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action]))
           },
-          undoActions: ActionHistory.undoActions,
-          redoActions: ActionHistory.redoActions,
+          history: ActionHistory.actions,
+          pos: ActionHistory.pos,
           clientId: data.clientId
         });
         break;
@@ -545,7 +545,9 @@ const Client = {
         Chat.box.classList.add("displayNone");
         
         Canvas.init();
-        ActionHistory.addActionToTable("[ Base Image ]");
+        ActionHistory.addToUndo({
+          type: "[ Base Image ]"
+        });
         
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);
