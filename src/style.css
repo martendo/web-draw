@@ -697,6 +697,9 @@ div.separator {
 #chatXBtn:hover {
   background-color: var(--highlight-background-colour);
 }
+#chatXBtn:active {
+  background-color: var(--highlight-active-background-colour);
+}
 #chatNew {
   position: absolute;
   padding: 0;
