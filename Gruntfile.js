@@ -328,7 +328,7 @@ module.exports = function(grunt) {
   // copy
   grunt.registerMultiTask("copy", function () {
     this.files.forEach((file) => {
-      grunt.file.write(file.dest, grunt.file.read(file.src));
+      grunt.file.copy(file.src[0], file.dest);
     });
   });
   
