@@ -89,6 +89,7 @@
   --modal-border-colour: #202020;
   --modal-header-colour: #d9d9d9;
   --modal-body-colour: #fafafa;
+  --modal-footer-colour: #f2f2f2;
   --modal-blur-background-colour: rgba(0, 0, 0, 0.25);
   
   --table-border-colour: #404040;
@@ -176,6 +177,7 @@
   --modal-border-colour: #000000;
   --modal-header-colour: #282828;
   --modal-body-colour: #383838;
+  --modal-footer-colour: #323232;
   --modal-blur-background-colour: rgba(0, 0, 0, 0.4);
   
   --table-border-colour: #000000;
@@ -774,7 +776,7 @@ small {
 .modalFooter {
   padding: 5px;
   border-top: 2px solid var(--toolbar-1-border-colour);
-  background-color: var(--modal-body-colour);
+  background-color: var(--modal-footer-colour);
   text-align: right;
 }
 .modalBody {
