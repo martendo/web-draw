@@ -368,10 +368,10 @@ const Selection = {
         },
         data: data
       };
-      clients[clientId].action = {
+      Session.startClientAction(clientId, {
         type: null, // Not editing the selection, but it should exist
         data: selection
-      };
+      });
       this.draw(clients[clientId].ctx, selection, clientId === Client.id ? true : false, false);
       if (clientId === Client.id) this.updateSizeAndPos();
     });
