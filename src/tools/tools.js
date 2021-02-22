@@ -236,8 +236,9 @@ function mouseHold(event) {
       return;
     }
   }
-  if (point.x < 0 || point.x > Session.canvas.width ||
-      point.y < 0 || point.y > Session.canvas.height) return;
+  if (tool !== "select" &&
+      (point.x < 0 || point.x > Session.canvas.width ||
+       point.y < 0 || point.y > Session.canvas.height)) return;
   startTool(point);
 }
 function startTool(point) {
