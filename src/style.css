@@ -860,6 +860,10 @@ table.table.border.alternate tr:nth-child(even) {
 #infoModalTable td {
   vertical-align: top;
 }
+/* Ping number cells */
+#pingTableBody > tr > td:nth-child(1) {
+  text-align: center;
+}
 
 /* .penColourContainer has the transparency pattern, make it the same size */
 .penColour, .penColourContainer {
