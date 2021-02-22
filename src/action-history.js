@@ -310,6 +310,7 @@ const ActionHistory = {
       const toggleCell = row.insertCell(-1);
       toggleCell.classList.add("actionButtons");
       const toggleBtn = document.createElement("img");
+      toggleBtn.classList.add("actionToggle");
       toggleBtn.title = "Toggle this action";
       toggleBtn.src = enabled ? Icons.visible : Icons.noVisible;
       toggleBtn.addEventListener("click", () => this.toggleAction(num));
@@ -319,6 +320,7 @@ const ActionHistory = {
       moveCell.classList.add("actionButtons");
       if (num > 1) {
         const upBtn = document.createElement("img");
+        upBtn.classList.add("actionMoveUp");
         upBtn.title = "Move this action up";
         upBtn.src = Icons.up;
         upBtn.addEventListener("click", () => this.moveAction(num, -1));
