@@ -117,10 +117,11 @@ module.exports = function(grunt) {
       build: {
         options: {
           separator: "\n",
-          main: "src/script.js",
+          begin: "src/begin.js",
+          end: "src/end.js",
           // Immediately Invoked Function Expression
-          start: "\"use strict\";(() => {",
-          end: "})();"
+          prepend: "\"use strict\";(() => {",
+          append: "})();"
         },
         files: {
           "public/script.js": ["src/**/*.js"]
@@ -129,8 +130,9 @@ module.exports = function(grunt) {
       debug: {
         options: {
           separator: "\n",
-          main: "src/script.js",
-          start: "\"use strict\";"
+          begin: "src/begin.js",
+          end: "src/end.js",
+          prepend: "\"use strict\";"
         },
         files: {
           "public/script.js": ["src/**/*.js"]
@@ -305,17 +307,18 @@ module.exports = function(grunt) {
     const options = this.options();
     this.files.forEach((file) => {
       var result = "";
+      result += grunt.file.read(options.begin);
       file.src.forEach((filename) => {
-        if (filename === options.main) return;
+        if (filename === options.begin || filename === options.end) return;
         result += grunt.file.read(filename); + options.separator
       });
-      result += grunt.file.read(options.main);
+      result += grunt.file.read(options.end);
       
-      if (options.start) {
-        result = options.start + result;
+      if (options.prepend) {
+        result = options.prepend + result;
       }
-      if (options.end) {
-        result += options.end;
+      if (options.append) {
+        result += options.append;
       }
       
       grunt.file.write(file.dest, result);
