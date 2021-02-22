@@ -372,7 +372,7 @@ const Selection = {
         type: null, // Not editing the selection, but it should exist
         data: selection
       });
-      this.draw(clients[clientId].ctx, selection, clientId === Client.id ? true : false, false);
+      this.draw(clients[clientId].ctx, selection, clientId === Client.id, false);
       if (clientId === Client.id) this.updateSizeAndPos();
     });
     img.src = src;
