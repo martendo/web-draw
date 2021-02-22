@@ -345,6 +345,13 @@ const ActionHistory = {
     this._table.children[0].children[this.pos].classList.add("lastAction");
   },
   
+  reset() {
+    this.actions = [];
+    this.pos = -1;
+    this.disableUndo();
+    this.disableRedo();
+  },
+  
   _undoBtn: document.getElementById("undoBtn"),
   _redoBtn: document.getElementById("redoBtn"),
   

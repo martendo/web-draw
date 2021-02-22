@@ -499,8 +499,7 @@ const Client = {
         
         if (data.restore) break;
         
-        ActionHistory.clearUndo();
-        ActionHistory.clearRedo();
+        ActionHistory.reset();
         
         Slider.init();
         
