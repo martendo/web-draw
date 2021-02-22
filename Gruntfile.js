@@ -77,7 +77,13 @@ const reserved = [
   "lastValue",
   "max",
   "min",
-  "timestamp"
+  "timestamp",
+  
+  // msgpack-lite
+  "codec",
+  "preset",
+  "addExtPacker",
+  "addExtUnpacker"
 ];
 
 module.exports = function(grunt) {

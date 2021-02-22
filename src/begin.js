@@ -87,6 +87,19 @@ const NO_ACTION = Object.freeze({
   data: null
 });
 
+// Add ImageData object to msgpack codec
+msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
+  return msgpack.encode([
+    imageData.data,
+    imageData.width,
+    imageData.height
+  ]);
+});
+msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
+  const properties = msgpack.decode(buffer);
+  return new ImageData(properties[0], properties[1], properties[2]);
+});
+
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
   return (rect.x < x && x < rect.x + rect.width &&
