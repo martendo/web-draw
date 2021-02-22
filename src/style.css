@@ -43,8 +43,9 @@
   --scrollbar-thumb-colour: #c0c0c0;
   --scrollbar-corner-colour: #d8d8d8;
   
-  /* <code>, chat box [X] button */
+  /* <code>, icon button hover background colour */
   --highlight-background-colour: rgba(0, 0, 0, 0.05);
+  --highlight-active-background-colour: rgba(0, 0, 0, 0.1);
   
   --important-colour: #ff0000;
   
@@ -131,8 +132,9 @@
   --scrollbar-thumb-colour: #808080;
   --scrollbar-corner-colour: #505050;
   
-  /* <code>, chat box [X] button */
+  /* <code>, icon button hover background colour */
   --highlight-background-colour: rgba(255, 255, 255, 0.15);
+  --highlight-active-background-colour: rgba(255, 255, 255, 0.25);
   
   --important-colour: #ff0000;
   
@@ -568,7 +570,14 @@ div.separator {
   padding-right: 0;
 }
 #historyTabBox .actionButtons > img {
-  padding: 2px;
+  padding: 3px;
+  border-radius: 5px;
+}
+#historyTabBox .actionButtons > img:hover {
+  background-color: var(--highlight-background-colour);
+}
+#historyTabBox .actionButtons > img:active {
+  background-color: var(--highlight-active-background-colour);
 }
 #historyTabBox .lastAction {
   background-color: var(--toolbar-2-colour-2);
