@@ -431,6 +431,7 @@ function mouseMove(event) {
   }
   
   const currentAction = clients[Client.id].action;
+  const roundedPoint = Canvas.getPixelPos(event, { round: true });
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
@@ -477,18 +478,18 @@ function mouseMove(event) {
     }
     case "selecting": {
       event.preventDefault();
-      currentAction.data.width = point.x - currentAction.data.x;
-      currentAction.data.height = point.y - currentAction.data.y;
+      currentAction.data.width = roundedPoint.x - currentAction.data.x;
+      currentAction.data.height = roundedPoint.y - currentAction.data.y;
       clients[Client.id].action = currentAction;
       Selection.update(false);
       break;
     }
     case "selection-move": {
       event.preventDefault();
-      currentAction.data.x += point.x - currentAction.data.move.x;
-      currentAction.data.y += point.y - currentAction.data.move.y;
-      currentAction.data.move.x = point.x;
-      currentAction.data.move.y = point.y;
+      currentAction.data.x += roundedPoint.x - currentAction.data.move.x;
+      currentAction.data.y += roundedPoint.y - currentAction.data.move.y;
+      currentAction.data.move.x = roundedPoint.x;
+      currentAction.data.move.y = roundedPoint.y;
       clients[Client.id].action = currentAction;
       Selection.update(true);
       break;
@@ -535,14 +536,14 @@ function mouseMove(event) {
           break;
         }
       }
-      const dx = point.x - currentAction.data.resize.x;
-      const dy = point.y - currentAction.data.resize.y;
+      const dx = roundedPoint.x - currentAction.data.resize.x;
+      const dy = roundedPoint.y - currentAction.data.resize.y;
       currentAction.data.width += dx * changeW;
       currentAction.data.x -= dx * changeX;
       currentAction.data.height += dy * changeH;
       currentAction.data.y -= dy * changeY;
-      currentAction.data.resize.x = point.x;
-      currentAction.data.resize.y = point.y;
+      currentAction.data.resize.x = roundedPoint.x;
+      currentAction.data.resize.y = roundedPoint.y;
       clients[Client.id].action = currentAction;
       Selection.adjustSizeAbsolute();
       Selection.update(true);
