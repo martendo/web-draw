@@ -736,6 +736,9 @@ div.separator {
   padding: 3px 6px;
   display: inline-block;
 }
+.disabled {
+  color: var(--text-disabled-colour);
+}
 code {
   background-color: var(--highlight-background-colour);
   border-radius: 0.2em;

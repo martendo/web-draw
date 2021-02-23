@@ -409,7 +409,13 @@ function mouseMove(event) {
   if (!document.getElementById("drawScreen").contains(event.target)) return;
   
   const point = Canvas.getPixelPos(event);
-  document.getElementById("cursorPos").textContent = `${point.x}, ${point.y}`;
+  const posInfo = document.getElementById("cursorPos");
+  posInfo.textContent = `${point.x}, ${point.y}`;
+  if (point.x >= 0 && point.x < Session.canvas.width && point.y >= 0 && point.y < Session.canvas.height) {
+    posInfo.classList.remove("disabled")
+  } else {
+    posInfo.classList.add("disabled");
+  }
   
   const mouse = Canvas.getCursorPos(event);
   if (Canvas.scrollbarX.drag) {
