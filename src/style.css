@@ -112,7 +112,7 @@
   --background-1-colour: #383838;
   
   --text-colour: #e8e8e8;
-  --text-disabled-colour: #808080;
+  --text-disabled-colour: #a0a0a0;
   --border-colour: #282828;
   --border-disabled-colour: #606060;
   
@@ -122,7 +122,7 @@
   --external-link-icon: url("{{ BASE64:src/img/external-dark.png }}");
   
   --button-colour: #585858;
-  --button-disabled-colour: #303030;
+  --button-disabled-colour: #404040;
   --button-hover-colour: #686868;
   --button-selected-colour: #808080;
   --button-selected-hover-colour: #909090;
