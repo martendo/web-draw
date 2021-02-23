@@ -122,11 +122,11 @@ const Selection = {
       ctx.strokeStyle = "#000000";
       ctx.lineWidth = 1;
       ctx.setLineDash([2, 2]);
-      ctx.lineDashOffset = 0;
-      ctx.strokeRect(sel.old.x + 0.5, sel.old.y + 0.5, sel.old.width, sel.old.height);
+      ctx.lineDashOffset = 0.5;
+      ctx.strokeRect(Math.round(sel.old.x) + 0.5, Math.round(sel.old.y) + 0.5, Math.round(sel.old.width), Math.round(sel.old.height));
       ctx.strokeStyle = "#ffffff";
-      ctx.lineDashOffset = 2;
-      ctx.strokeRect(sel.old.x + 0.5, sel.old.y + 0.5, sel.old.width, sel.old.height);
+      ctx.lineDashOffset = 2.5;
+      ctx.strokeRect(Math.round(sel.old.x) + 0.5, Math.round(sel.old.y) + 0.5, Math.round(sel.old.width), Math.round(sel.old.height));
     }
     
     // Selected image data
@@ -136,11 +136,11 @@ const Selection = {
     ctx.strokeStyle = "#000000";
     ctx.lineWidth = 1;
     ctx.setLineDash([5, 5]);
-    ctx.lineDashOffset = 0;
-    ctx.strokeRect(sel.x + 0.5, sel.y + 0.5, sel.width, sel.height);
+    ctx.lineDashOffset = 0.5;
+    ctx.strokeRect(Math.round(sel.x) + 0.5, Math.round(sel.y) + 0.5, Math.round(sel.width), Math.round(sel.height));
     ctx.strokeStyle = "#ffffff";
-    ctx.lineDashOffset = 5;
-    ctx.strokeRect(sel.x + 0.5, sel.y + 0.5, sel.width, sel.height);
+    ctx.lineDashOffset = 5.5;
+    ctx.strokeRect(Math.round(sel.x) + 0.5, Math.round(sel.y) + 0.5, Math.round(sel.width), Math.round(sel.height));
     ctx.setLineDash([]);
     
     if (handles) {
@@ -152,54 +152,54 @@ const Selection = {
       // FILL
       ctx.fillStyle = "#ffffff";
       // Top left
-      ctx.fillRect(sel.x - (this.HANDLE_SIZE / 2), sel.y - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x - (this.HANDLE_SIZE / 2)), Math.round(sel.y - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Top middle
-      ctx.fillRect(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2), sel.y - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2)), Math.round(sel.y - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Top right
-      ctx.fillRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x + sel.width - (this.HANDLE_SIZE / 2)), Math.round(sel.y - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Left middle
-      ctx.fillRect(sel.x - (this.HANDLE_SIZE / 2), sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x - (this.HANDLE_SIZE / 2)), Math.round(sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Right middle
-      ctx.fillRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x + sel.width - (this.HANDLE_SIZE / 2)), Math.round(sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Bottom left
-      ctx.fillRect(sel.x - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x - (this.HANDLE_SIZE / 2)), Math.round(sel.y + sel.height - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Bottom middle
-      ctx.fillRect(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2)), Math.round(sel.y + sel.height - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Bottom right
-      ctx.fillRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
+      ctx.fillRect(Math.round(sel.x + sel.width - (this.HANDLE_SIZE / 2)), Math.round(sel.y + sel.height - (this.HANDLE_SIZE / 2)),
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // STROKE
       ctx.strokeStyle = "#000000";
       // Top left
-      ctx.strokeRect(sel.x - (this.HANDLE_SIZE / 2), sel.y - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Top middle
-      ctx.strokeRect(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2), sel.y - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Top right
-      ctx.strokeRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x + sel.width - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Left middle
-      ctx.strokeRect(sel.x - (this.HANDLE_SIZE / 2), sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Right middle
-      ctx.strokeRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x + sel.width - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y + (sel.height / 2) - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Bottom left
-      ctx.strokeRect(sel.x - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y + sel.height - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Bottom middle
-      ctx.strokeRect(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x + (sel.width / 2) - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y + sel.height - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
       // Bottom right
-      ctx.strokeRect(sel.x + sel.width - (this.HANDLE_SIZE / 2), sel.y + sel.height - (this.HANDLE_SIZE / 2),
+      ctx.strokeRect(Math.round(sel.x + sel.width - (this.HANDLE_SIZE / 2)) + 0.5, Math.round(sel.y + sel.height - (this.HANDLE_SIZE / 2)) + 0.5,
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
     }
     
