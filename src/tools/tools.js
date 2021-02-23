@@ -559,7 +559,7 @@ function mouseMove(event) {
       cursor = "move";
     } else {
       const resizeCursor = Selection.getResizeHandle(mouse, Selection.RESIZE_CURSORS);
-      const exactPoint = Canvas.getPixelPos(event, false);
+      const exactPoint = Canvas.getPixelPos(event, { floor: false });
       if (resizeCursor !== null) {
         cursor = resizeCursor;
       } else if (isPointInside(exactPoint.x, exactPoint.y, currentAction.data)) {

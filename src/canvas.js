@@ -78,9 +78,9 @@ const Canvas = {
         x: this.pan.x / this.zoom,
         y: this.pan.y / this.zoom
       };
-      const oldPixelPos = this.getPixelPos(cachedMouseEvent, false);
+      const oldPixelPos = this.getPixelPos(cachedMouseEvent, { floor: false });
       this.zoom += delta;
-      const newPixelPos = this.getPixelPos(cachedMouseEvent, false);
+      const newPixelPos = this.getPixelPos(cachedMouseEvent, { floor: false });
       this.pan.x += (oldPixelPos.x - newPixelPos.x) * this.zoom;
       this.pan.y += (oldPixelPos.y - newPixelPos.y) * this.zoom;
       
@@ -361,13 +361,16 @@ const Canvas = {
     };
   },
   // Get the pixel position of the cursor on the canvas
-  getPixelPos(event, floor = true) {
+  getPixelPos(event, { floor = true, round = false } = {}) {
     var mouse = this.getCursorPos(event);
     mouse = {
       x: (mouse.x + this.pan.x) / this.zoom,
       y: (mouse.y + this.pan.y) / this.zoom
     };
-    if (floor) {
+    if (round) {
+      mouse.x = Math.round(mouse.x);
+      mouse.y = Math.round(mouse.y);
+    } else if (floor) {
       mouse.x |= 0;
       mouse.y |= 0;
     }
