@@ -187,6 +187,10 @@ const ActionHistory = {
   },
   
   doAllActions() {
+    // Save scroll amount because the table will be deleted
+    const rightBoxContent = document.getElementById("rightBoxContent");
+    const tempScrollTop = rightBoxContent.scrollTop;
+    
     [...this._table.children[0].children].forEach((el) => {
       el.remove();
     });
@@ -197,6 +201,10 @@ const ActionHistory = {
       this.doAction(action);
       this.addActionToTable(action.data.type, action.enabled, false);
     }
+    
+    // Restore scroll
+    rightBoxContent.scrollTop = tempScrollTop;
+    
     // Undo the redone actions (only done to get canvas images for history)
     Canvas.init();
     for (var i = 0; i <= this.pos; i++) {
