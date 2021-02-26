@@ -785,7 +785,7 @@ small {
   margin: auto;
   border: 2px solid var(--modal-border-colour);
   max-height: 90%;
-  max-width: 90%;
+  max-width: min(80%, 50em);
 }
 .modalHeader {
   background-color: var(--modal-header-colour);
