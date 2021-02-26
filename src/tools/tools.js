@@ -212,10 +212,11 @@ function mouseHold(event) {
   if (currentAction.data && currentAction.data.selected) {
     const handle = Selection.getResizeHandle(mouse, [0, 1, 2, 3, 4, 5, 6, 7]);
     if (handle !== null) {
+      const roundedPoint = Canvas.getPixelPos(event, { round: true });
       currentAction.data.resize = {
         handle: handle,
-        x: point.x,
-        y: point.y
+        x: roundedPoint.x,
+        y: roundedPoint.y
       };
       currentAction.data.old = {
         x: currentAction.data.x,
