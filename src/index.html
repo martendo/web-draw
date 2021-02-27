@@ -400,12 +400,6 @@
                 </div>
               </td>
             </tr>
-            <tr class="toolSettings fillSettings">
-              <td>
-                <input id="fillChangeAlpha" type="checkbox">
-                <label for="fillChangeAlpha">Change alpha value</label>
-              </td>
-            </tr>
             <tr class="toolSettings colourPickerSettings">
               <td>
                 <input id="colourPickerMerge" type="checkbox">
@@ -509,7 +503,6 @@
                   <li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
                     <li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
                     <li><a href="#help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
-                    <li><a href="#help-right_toolbar-flood_fill-alpha">Change alpha value</a></li>
                   </ul></li>
                   <li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
                     <li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
@@ -640,8 +633,6 @@
           The maximum colour difference of a pixel from the original clicked colour to be recoloured. This is the maximum difference for each of the channels selected with the "Fill by" setting, not the total of all the colour differences. If all values are within the threshold, the pixel will be recoloured.
           <h6 id="help-right_toolbar-flood_fill-fill_by">Fill by</h6>
           This setting determines which channels to check for colour difference to decide whether or not to recolour the pixel. Available options are: RGBA (default), RGB, Red, Green, Blue, and Alpha.
-          <h6 id="help-right_toolbar-flood_fill-alpha">Change alpha value</h6>
-          If this box is unchecked, the alpha values of the recoloured pixels will be taken from the image before the flood fill.
           <h5 id="help-right_toolbar-colour_picker">Colour Picker Settings</h5>
           You can merge the sampled colour with the current and/or sample the opacity in addition to colour.
           <h6 id="help-right_toolbar-colour_picker-merge">Merge with current</h6>

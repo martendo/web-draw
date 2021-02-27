@@ -19,7 +19,7 @@
  */
 
 class Fill {
-  constructor({ x, y, colour, threshold, opacity, compOp, fillBy, changeAlpha }) {
+  constructor({ x, y, colour, threshold, opacity, compOp, fillBy }) {
     this.x = x;
     this.y = y;
     this.colour = colour;
@@ -27,7 +27,6 @@ class Fill {
     this.opacity = opacity;
     this.compOp = compOp;
     this.fillBy = fillBy;
-    this.changeAlpha = changeAlpha;
   }
   
   static packer(fill) {
@@ -38,8 +37,7 @@ class Fill {
       fill.threshold,
       fill.opacity,
       fill.compOp,
-      fill.fillBy,
-      fill.changeAlpha
+      fill.fillBy
     ]);
   }
   static unpacker(buffer) {
@@ -51,8 +49,7 @@ class Fill {
       threshold: properties[3],
       opacity: properties[4],
       compOp: properties[5],
-      fillBy: properties[6],
-      changeAlpha: properties[7]
+      fillBy: properties[6]
     });
   }
 }
@@ -129,13 +126,8 @@ const FillTool = {
       y++;
       var reachLeft = reachRight = false;
       while(y++ < canvasHeight - 1 && this.checkPixel(pixels, pixelPos, originalColour, fill.threshold, fill.fillBy)) {
-        for (var i = 0; i < 3; i++) {
-          fillPixels[pixelPos + i] = pixels[pixelPos + i] - ((pixels[pixelPos + i] - fillColour[i]) * fill.opacity);
-        }
-        if (fill.changeAlpha) {
-          fillPixels[pixelPos + 3] = Math.min(pixels[pixelPos + 3] + fillColour[3], 255);
-        } else {
-          fillPixels[pixelPos + 3] = pixels[pixelPos + 3];
+        for (var i = 0; i < 4; i++) {
+          fillPixels[pixelPos + i] = fillColour[i];
         }
         seen[pixelPos] = true;
         if (x > 0 && !seen[pixelPos - 4]) {

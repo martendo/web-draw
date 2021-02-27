@@ -55,9 +55,6 @@ const Tools = {
       "slider": {
         "opacity": 100,
         "fillThreshold": 15
-      },
-      "checked": {
-        "fillChangeAlpha": true
       }
     },
     
@@ -277,20 +274,14 @@ function startTool(point) {
       break;
     }
     case "fill": {
-      const thresholdInput = document.getElementById("fillThresholdInput");
-      var threshold = parseInt(thresholdInput.dataset.value, 10);
-      const fillColour = penColours[currentPen];
-      const fillBy = parseInt(document.getElementById("fillBySelect").value, 10);
-      const changeAlpha = document.getElementById("fillChangeAlpha").checked;
       const fill = new Fill({
         x: point.x,
         y: point.y,
-        colour: fillColour,
-        threshold: threshold,
+        colour: penColours[currentPen],
+        threshold: parseInt(document.getElementById("fillThresholdInput").dataset.value, 10),
         opacity: opacity,
         compOp: compOp,
-        fillBy: fillBy,
-        changeAlpha: changeAlpha
+        fillBy: parseInt(document.getElementById("fillBySelect").value, 10)
       });
       Client.sendMessage({
         type: "fill",
