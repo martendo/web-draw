@@ -258,7 +258,7 @@ function startTool(point) {
     case "pen": {
       Session.startClientAction(Client.id, new Action({
         type: "stroke",
-        data: {
+        data: new Stroke({
           points: [],
           colour: penColours[currentPen],
           size: size,
@@ -266,7 +266,7 @@ function startTool(point) {
           opacity: opacity,
           compOp: compOp,
           smoothen: document.getElementById("smoothenStrokes").checked
-        }
+        })
       }));
       Client.sendMessage({
         type: "start-stroke",

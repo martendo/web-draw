@@ -18,6 +18,42 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+class Stroke {
+  constructor({ points, colour, size, caps, opacity, compOp, smoothen }) {
+    this.points = points;
+    this.colour = colour;
+    this.size = size;
+    this.caps = caps;
+    this.opacity = opacity;
+    this.compOp = compOp;
+    this.smoothen = smoothen;
+  }
+  
+  static packer(stroke) {
+    return msgpack.encode([
+      stroke.points,
+      stroke.colour,
+      stroke.size,
+      stroke.caps,
+      stroke.opacity,
+      stroke.compOp,
+      stroke.smoothen
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Stroke({
+      points: properties[0],
+      colour: properties[1],
+      size: properties[2],
+      caps: properties[3],
+      opacity: properties[4],
+      compOp: properties[5],
+      smoothen: properties[6]
+    });
+  }
+}
+
 const PenTool = {
   // Add a point to the current stroke and draw it
   draw(x, y) {
@@ -45,7 +81,7 @@ const PenTool = {
     Canvas.update({ save: true });
     srcCanvas.getContext("2d").clearRect(0, 0, srcCanvas.width, srcCanvas.height);
     if (user) {
-      ActionHistory.addToUndo("stroke", {...stroke});
+      ActionHistory.addToUndo("stroke", stroke);
     }
   },
   
