@@ -173,13 +173,7 @@ const ActionHistory = {
         break;
       }
       case "selection-paste": {
-        const sel = {...action.data};
-        sel.data = new ImageData(
-          action.data.data.data,
-          action.data.data.width,
-          action.data.data.height
-        );
-        Selection.paste(sel, false);
+        Selection.paste(action.data, false);
         break;
       }
       case "line": {
