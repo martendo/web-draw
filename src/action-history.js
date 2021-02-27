@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-class Action {
+class PastAction {
   constructor({ enabled, type, data = null }) {
     this.enabled = enabled;
     this.type = type;
@@ -39,7 +39,7 @@ class Action {
   }
   static unpacker(buffer) {
     const properties = msgpack.decode(buffer);
-    return new Action({
+    return new PastAction({
       enabled: properties[0],
       type: properties[1],
       data: properties[2]
@@ -56,7 +56,7 @@ const ActionHistory = {
   // Clear redoable actions, push an action onto action history, enable the undo button
   addToUndo(type, data = null) {
     this.clearRedo();
-    this.actions.push(new Action({
+    this.actions.push(new PastAction({
       enabled: true,
       type: type,
       data: data

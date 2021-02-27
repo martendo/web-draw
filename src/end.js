@@ -19,9 +19,9 @@
  */
 
 // Add various objects to msgpack codec
-// Action
-msgpack.codec.preset.addExtPacker(0x20, Action, (action) => Action.packer(action));
-msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => Action.unpacker(buffer));
+// PastAction
+msgpack.codec.preset.addExtPacker(0x20, PastAction, (action) => PastAction.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => PastAction.unpacker(buffer));
 
 // List of ping latency measurements to calculate average
 var prevPings = [];
