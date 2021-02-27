@@ -256,7 +256,7 @@ function startTool(point) {
   
   switch (tool) {
     case "pen": {
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "stroke",
         data: {
           points: [],
@@ -267,7 +267,7 @@ function startTool(point) {
           compOp: compOp,
           smoothen: document.getElementById("smoothenStrokes").checked
         }
-      });
+      }));
       Client.sendMessage({
         type: "start-stroke",
         clientId: Client.id,
@@ -326,7 +326,7 @@ function startTool(point) {
         type: "create-selection",
         clientId: Client.id
       });
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "selecting",
         data: {
           selected: false,
@@ -341,11 +341,11 @@ function startTool(point) {
             y: false
           }
         }
-      });
+      }));
       break;
     }
     case "line": {
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "line",
         data: {
           x0: point.x,
@@ -358,12 +358,12 @@ function startTool(point) {
           opacity: opacity,
           compOp: compOp
         }
-      });
+      }));
       break;
     }
     case "rect": {
       if (!shapeOutline && !shapeFill) break;
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "rect",
         data: {
           x: point.x,
@@ -380,12 +380,12 @@ function startTool(point) {
           outline: shapeOutline,
           fill: shapeFill
         }
-      });
+      }));
       break;
     }
     case "ellipse": {
       if (!shapeOutline && !shapeFill) break;
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "ellipse",
         data: {
           x: point.x,
@@ -402,7 +402,7 @@ function startTool(point) {
           outline: shapeOutline,
           fill: shapeFill
         }
-      });
+      }));
       break;
     }
   }

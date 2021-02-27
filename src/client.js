@@ -300,10 +300,10 @@ const Client = {
         break;
       }
       case "create-selection": {
-        Session.startClientAction(data.clientId, {
+        Session.startClientAction(data.clientId, new Action({
           type: "selecting",
           data: {}
-        });
+        }));
         break;
       }
       case "remove-selection": {
@@ -341,10 +341,10 @@ const Client = {
         break;
       }
       case "line": {
-        Session.startClientAction(data.clientId, {
+        Session.startClientAction(data.clientId, new Action({
           type: "line",
           data: data.line
-        });
+        }));
         LineTool.draw(data.line, clients[data.clientId].ctx);
         break;
       }
@@ -355,10 +355,10 @@ const Client = {
         break;
       }
       case "rect": {
-        Session.startClientAction(data.clientId, {
+        Session.startClientAction(data.clientId, new Action({
           type: "rect",
           data: data.rect
-        });
+        }));
         RectTool.draw(data.rect, clients[data.clientId].ctx);
         break;
       }
@@ -369,10 +369,10 @@ const Client = {
         break;
       }
       case "ellipse": {
-        Session.startClientAction(data.clientId, {
+        Session.startClientAction(data.clientId, new Action({
           type: "ellipse",
           data: data.ellipse
-        });
+        }));
         EllipseTool.draw(data.ellipse, clients[data.clientId].ctx);
         break;
       }

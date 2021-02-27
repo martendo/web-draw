@@ -18,6 +18,27 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+class Action {
+  constructor({ type, data }) {
+    this.type = type;
+    this.data = data;
+  }
+  
+  static packer(action) {
+    return msgpack.encode([
+      action.type,
+      action.data
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Action({
+      type: properties[0],
+      data: properties[1]
+    });
+  }
+}
+
 const Session = {
   id: null,
   password: null,
