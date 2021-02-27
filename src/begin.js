@@ -108,6 +108,71 @@ class Pos2D {
   }
 }
 
+class Shape {
+  constructor({ x, y, width, height, colours, lineWidth, opacity, compOp, outline, fill }) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.colours = colours;
+    this.lineWidth = lineWidth;
+    this.opacity = opacity;
+    this.compOp = compOp;
+    this.outline = outline;
+    this.fill = fill;
+  }
+  
+  static packer(shape) {
+    return msgpack.encode([
+      shape.x,
+      shape.y,
+      shape.width,
+      shape.height,
+      shape.colours,
+      shape.lineWidth,
+      shape.opacity,
+      shape.compOp,
+      shape.outline,
+      shape.fill
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Shape({
+      x: properties[0],
+      y: properties[1],
+      width: properties[2],
+      height: properties[3],
+      colours: properties[4],
+      lineWidth: properties[5],
+      opacity: properties[6],
+      compOp: properties[7],
+      outline: properties[8],
+      fill: properties[9],
+    });
+  }
+}
+class ShapeColours {
+  constructor({ outline, fill }) {
+    this.outline = outline;
+    this.fill = fill;
+  }
+  
+  static packer(colours) {
+    return msgpack.encode([
+      colours.outline,
+      colours.fill
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new ShapeColours({
+      outline: properties[0],
+      fill: properties[1]
+    });
+  }
+}
+
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
   return (rect.x <= x && x < rect.x + rect.width &&

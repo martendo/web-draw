@@ -367,21 +367,21 @@ function startTool(point) {
       if (!shapeOutline && !shapeFill) break;
       Session.startClientAction(Client.id, new Action({
         type: "rect",
-        data: {
+        data: new Shape({
           x: point.x,
           y: point.y,
           width: 0,
           height: 0,
-          colours: {
+          colours: new ShapeColours({
             outline: penColours[currentPen],
             fill: penColours[(currentPen + 1) % 2]
-          },
+          }),
           lineWidth: size,
           opacity: opacity,
           compOp: compOp,
           outline: shapeOutline,
           fill: shapeFill
-        }
+        })
       }));
       break;
     }
@@ -389,21 +389,21 @@ function startTool(point) {
       if (!shapeOutline && !shapeFill) break;
       Session.startClientAction(Client.id, new Action({
         type: "ellipse",
-        data: {
+        data: new Shape({
           x: point.x,
           y: point.y,
           width: 0,
           height: 0,
-          colours: {
+          colours: new ShapeColours({
             outline: penColours[currentPen],
             fill: penColours[(currentPen + 1) % 2]
-          },
+          }),
           lineWidth: size,
           opacity: opacity,
           compOp: compOp,
           outline: shapeOutline,
           fill: shapeFill
-        }
+        })
       }));
       break;
     }

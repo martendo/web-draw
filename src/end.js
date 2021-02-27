@@ -61,6 +61,12 @@ msgpack.codec.preset.addExtUnpacker(0x28, (buffer) => ShortSelection.unpacker(bu
 // Line
 msgpack.codec.preset.addExtPacker(0x29, Line, (line) => Line.packer(line));
 msgpack.codec.preset.addExtUnpacker(0x29, (buffer) => Line.unpacker(buffer));
+// Shape
+msgpack.codec.preset.addExtPacker(0x2A, Shape, (shape) => Shape.packer(shape));
+msgpack.codec.preset.addExtUnpacker(0x2A, (buffer) => Shape.unpacker(buffer));
+// ShapeColours
+msgpack.codec.preset.addExtPacker(0x2B, ShapeColours, (colours) => ShapeColours.packer(colours));
+msgpack.codec.preset.addExtUnpacker(0x2B, (buffer) => ShapeColours.unpacker(buffer));
 
 // List of ping latency measurements to calculate average
 var prevPings = [];
