@@ -15,61 +15,37 @@ const otherDomprops = [
 const reserved = [
   // Sent over WebSockets
   "actions",
-  "caps",
-  "changeAlpha",
   "client",
   "clientId",
   "clients",
-  "colour",
-  "compOp",
   "data",
   "ellipse",
   "file",
   "fill",
-  "fillBy",
-  "flipped",
-  "handle",
   "height",
   "id",
   "image",
   "latency",
   "line",
-  "lineWidth",
   "message",
-  "move",
   "name",
   "num",
   "offset",
-  "old",
-  "opacity",
   "options",
   "order",
-  "outline",
   "outside",
   "password",
-  "points",
   "pos",
   "priv",
   "rect",
-  "redoActions",
-  "resize",
-  "selected",
   "selection",
   "session",
-  "size",
-  "smoothen",
-  "threshold",
   "total",
   "type",
-  "undoActions",
   "value",
   "width",
   "x",
-  "x0",
-  "x1",
   "y",
-  "y0",
-  "y1",
   
   // HTML data-*
   "callback",
@@ -130,7 +106,7 @@ module.exports = function(grunt) {
           append: "})();"
         },
         files: {
-          "public/script.js": ["src/**/*.js"]
+          "public/script.js": ["message.js", "src/**/*.js"]
         }
       },
       debug: {
@@ -141,7 +117,7 @@ module.exports = function(grunt) {
           prepend: "\"use strict\";"
         },
         files: {
-          "public/script.js": ["src/**/*.js"]
+          "public/script.js": ["message.js", "src/**/*.js"]
         }
       }
     },
@@ -191,6 +167,14 @@ module.exports = function(grunt) {
     },
     
     replace: {
+      module: {
+        files: {
+          "public/script.js": [{
+            from: "module.exports",
+            to: "const Message"
+          }]
+        }
+      },
       build: {
         files: {
           "public/index.html": [{
@@ -355,6 +339,6 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace", "base64Replace", "banner"]);
-  grunt.registerTask("debug", ["copy", "concat:debug", "replace", "base64Replace"]);
+  grunt.registerTask("build", ["copy", "concat:build", "replace:module", "htmlmin", "cssmin", "uglify", "replace:build", "base64Replace", "banner"]);
+  grunt.registerTask("debug", ["copy", "concat:debug", "replace:module", "replace:build", "base64Replace"]);
 };

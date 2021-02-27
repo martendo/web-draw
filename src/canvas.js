@@ -234,7 +234,7 @@ const Canvas = {
       if (type !== null && type !== "selecting" && type !== "selection-move" && type !== "selection-resize") {
         continue;
       }
-      Selection.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
+      SelectTool.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
     }
     
     // Border around image
@@ -308,7 +308,7 @@ const Canvas = {
         this.setup(msgpack.decode(data));
         // Only send to other clients if setup was successful
         Client.sendMessage({
-          type: "open-canvas",
+          type: Message.OPEN_CANVAS,
           file: data
         });
       } catch (err) {
@@ -425,10 +425,7 @@ const Canvas = {
     }
     Canvas.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "resize-canvas",
-        options: options
-      });
+      ActionHistory.addToUndo("resize-canvas", options);
     }
   },
   
@@ -441,7 +438,7 @@ const Canvas = {
       window.alert("There was an error reading the file.\n\n" + reader.error);
       console.error(`Error reading file ${file}:`, event);
     };
-    reader.onload = () => Selection.importPicture(reader.result, Client.id);
+    reader.onload = () => SelectTool.importPicture(reader.result, Client.id);
     reader.readAsDataURL(file);
   },
   
@@ -449,16 +446,14 @@ const Canvas = {
   clearBlank(user = true) {
     if (user) {
       Client.sendMessage({
-        type: "clear-blank"
+        type: Message.CLEAR_BLANK
       });
     }
     Session.ctx.fillStyle = Colour.BLANK;
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "clear-blank"
-      });
+      ActionHistory.addToUndo("clear-blank");
     }
   },
   
@@ -466,15 +461,13 @@ const Canvas = {
   clear(user = true) {
     if (user) {
       Client.sendMessage({
-        type: "clear"
+        type: Message.CLEAR
       });
     }
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "clear"
-      });
+      ActionHistory.addToUndo("clear");
     }
   }
 };

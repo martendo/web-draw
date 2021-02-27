@@ -18,6 +18,35 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+class PastAction {
+  constructor({ enabled, type, data = null }) {
+    this.enabled = enabled;
+    this.type = type;
+    if (data != null) {
+      this.data = data;
+    }
+  }
+  
+  static packer(action) {
+    const properties = [
+      action.enabled,
+      action.type
+    ];
+    if (action.data != null) {
+      properties.push(action.data);
+    }
+    return msgpack.encode(properties);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new PastAction({
+      enabled: properties[0],
+      type: properties[1],
+      data: properties[2]
+    });
+  }
+}
+
 const ActionHistory = {
   // All actions made to the session canvas
   actions: [],
@@ -25,15 +54,16 @@ const ActionHistory = {
   pos: -1,
   
   // Clear redoable actions, push an action onto action history, enable the undo button
-  addToUndo(data) {
+  addToUndo(type, data = null) {
     this.clearRedo();
-    this.actions.push({
+    this.actions.push(new PastAction({
       enabled: true,
+      type: type,
       data: data
-    });
+    }));
     this.pos++;
     this.enableAvailableButtons();
-    this.addActionToTable(data.type);
+    this.addActionToTable(type);
   },
   // Undo an action, and send a message to undo (from the user)
   moveWithOffset(offset) {
@@ -45,7 +75,7 @@ const ActionHistory = {
       return;
     }
     Client.sendMessage({
-      type: "move-history",
+      type: Message.MOVE_HISTORY,
       num: num
     });
     this.moveTo(num);
@@ -84,7 +114,7 @@ const ActionHistory = {
   toggleAction(num, user = true) {
     if (user) {
       Client.sendMessage({
-        type: "toggle-action",
+        type: Message.TOGGLE_ACTION,
         num: num
       });
     }
@@ -96,7 +126,7 @@ const ActionHistory = {
   moveAction(num, offset, user = true) {
     if (user) {
       Client.sendMessage({
-        type: "move-action",
+        type: Message.MOVE_ACTION,
         num: num,
         offset: offset
       });
@@ -111,20 +141,19 @@ const ActionHistory = {
   doAction(action) {
     if (!action.enabled) return;
     
-    action = action.data;
     switch (action.type) {
       case "stroke": {
-        Pen.drawStroke(Client.ctx, action.stroke, {
+        PenTool.drawStroke(Client.ctx, action.data, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.stroke.compOp
+            compOp: action.data.compOp
           }
         });
         break;
       }
       case "fill": {
-        Fill.fill(action.x, action.y, action.colour, action.threshold, action.opacity, action.compOp, action.fillBy, action.changeAlpha, false);
+        FillTool.fill(action.data, false);
         break;
       }
       case "clear": {
@@ -136,49 +165,43 @@ const ActionHistory = {
         break;
       }
       case "resize-canvas": {
-        Canvas.resize(action.options, false);
+        Canvas.resize(action.data, false);
         break;
       }
       case "selection-clear": {
-        Selection.clear(action.selection, action.colour, false);
+        SelectTool.clear(action.data, action.data.colour, false);
         break;
       }
       case "selection-paste": {
-        const sel = {...action.selection};
-        sel.data = new ImageData(
-          action.selection.data.data,
-          action.selection.data.width,
-          action.selection.data.height
-        );
-        Selection.paste(sel, false);
+        SelectTool.paste(action.data, false);
         break;
       }
       case "line": {
-        Line.draw(action.line, Client.ctx, {
+        LineTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.line.compOp
+            compOp: action.data.compOp
           }
         });
         break;
       }
       case "rect": {
-        Rect.draw(action.rect, Client.ctx, {
+        RectTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.rect.compOp
+            compOp: action.data.compOp
           }
         });
         break;
       }
       case "ellipse": {
-        Ellipse.draw(action.ellipse, Client.ctx, {
+        EllipseTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.ellipse.compOp
+            compOp: action.data.compOp
           }
         });
         break;
@@ -199,7 +222,7 @@ const ActionHistory = {
     // Add all actions to the action history table
     for (const action of this.actions) {
       this.doAction(action);
-      this.addActionToTable(action.data.type, action.enabled, false);
+      this.addActionToTable(action.type, action.enabled, false);
     }
     
     // Restore scroll
@@ -291,7 +314,7 @@ const ActionHistory = {
     row.addEventListener("click", (event) => {
       if (event.target.tagName === "IMG") return;
       Client.sendMessage({
-        type: "move-history",
+        type: Message.MOVE_HISTORY,
         num: num
       });
       this.moveTo(num);

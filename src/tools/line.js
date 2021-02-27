@@ -18,7 +18,49 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Line = {
+class Line {
+  constructor({ x0, y0, x1, y1, colour, width, caps, opacity, compOp }) {
+    this.x0 = x0;
+    this.y0 = y0;
+    this.x1 = x1;
+    this.y1 = y1;
+    this.colour = colour;
+    this.width = width;
+    this.caps = caps;
+    this.opacity = opacity;
+    this.compOp = compOp;
+  }
+  
+  static packer(line) {
+    return msgpack.encode([
+      line.x0,
+      line.y0,
+      line.x1,
+      line.y1,
+      line.colour,
+      line.width,
+      line.caps,
+      line.opacity,
+      line.compOp
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Line({
+      x0: properties[0],
+      y0: properties[1],
+      x1: properties[2],
+      y1: properties[3],
+      colour: properties[4],
+      width: properties[5],
+      caps: properties[6],
+      opacity: properties[7],
+      compOp: properties[8],
+    });
+  }
+}
+
+const LineTool = {
   draw(line, ctx, options) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     

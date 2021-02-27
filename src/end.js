@@ -18,6 +18,56 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Add various objects to msgpack codec
+// ImageData
+msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
+  return msgpack.encode([
+    imageData.data,
+    imageData.width,
+    imageData.height
+  ]);
+});
+msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
+  const properties = msgpack.decode(buffer);
+  return new ImageData(properties[0], properties[1], properties[2]);
+});
+// Pos2D
+msgpack.codec.preset.addExtPacker(0x20, Pos2D, (pos) => Pos2D.packer(pos));
+msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => Pos2D.unpacker(buffer));
+// PastAction
+msgpack.codec.preset.addExtPacker(0x21, PastAction, (action) => PastAction.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x21, (buffer) => PastAction.unpacker(buffer));
+// Action
+msgpack.codec.preset.addExtPacker(0x22, Action, (action) => Action.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x22, (buffer) => Action.unpacker(buffer));
+// Stroke
+msgpack.codec.preset.addExtPacker(0x23, Stroke, (stroke) => Stroke.packer(stroke));
+msgpack.codec.preset.addExtUnpacker(0x23, (buffer) => Stroke.unpacker(buffer));
+// Fill
+msgpack.codec.preset.addExtPacker(0x24, Fill, (fill) => Fill.packer(fill));
+msgpack.codec.preset.addExtUnpacker(0x24, (buffer) => Fill.unpacker(buffer));
+// Selection
+msgpack.codec.preset.addExtPacker(0x25, Selection, (selection) => Selection.packer(selection));
+msgpack.codec.preset.addExtUnpacker(0x25, (buffer) => Selection.unpacker(buffer));
+// SelectionResize
+msgpack.codec.preset.addExtPacker(0x26, SelectionResize, (selectionResize) => SelectionResize.packer(selectionResize));
+msgpack.codec.preset.addExtUnpacker(0x26, (buffer) => SelectionResize.unpacker(buffer));
+// OldSelection
+msgpack.codec.preset.addExtPacker(0x27, OldSelection, (old) => OldSelection.packer(old));
+msgpack.codec.preset.addExtUnpacker(0x27, (buffer) => OldSelection.unpacker(buffer));
+// ShortSelection
+msgpack.codec.preset.addExtPacker(0x28, ShortSelection, (shortSel) => ShortSelection.packer(shortSel));
+msgpack.codec.preset.addExtUnpacker(0x28, (buffer) => ShortSelection.unpacker(buffer));
+// Line
+msgpack.codec.preset.addExtPacker(0x29, Line, (line) => Line.packer(line));
+msgpack.codec.preset.addExtUnpacker(0x29, (buffer) => Line.unpacker(buffer));
+// Shape
+msgpack.codec.preset.addExtPacker(0x2A, Shape, (shape) => Shape.packer(shape));
+msgpack.codec.preset.addExtUnpacker(0x2A, (buffer) => Shape.unpacker(buffer));
+// ShapeColours
+msgpack.codec.preset.addExtPacker(0x2B, ShapeColours, (colours) => ShapeColours.packer(colours));
+msgpack.codec.preset.addExtUnpacker(0x2B, (buffer) => ShapeColours.unpacker(buffer));
+
 // List of ping latency measurements to calculate average
 var prevPings = [];
 
@@ -137,17 +187,17 @@ document.addEventListener("keydown", (event) => {
         }
         case "c": {
           if (tool !== "select") return;
-          Selection.doCopy();
+          SelectTool.doCopy();
           break;
         }
         case "x": {
           if (tool !== "select") return;
-          Selection.doCut();
+          SelectTool.doCut();
           break;
         }
         case "v": {
           if (tool !== "select") return;
-          Selection.doPaste();
+          SelectTool.doPaste();
           break;
         }
         default: break notTyping;
@@ -390,7 +440,7 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
     colour: bgColour
   };
   Client.sendMessage({
-    type: "resize-canvas",
+    type: Message.RESIZE_CANVAS,
     options: options
   });
   Canvas.resize(options);
@@ -425,7 +475,7 @@ document.getElementById("sessionHasIdModalOkBtn").addEventListener("click", () =
 
 document.getElementById("setSessionPasswordModalRemoveBtn").addEventListener("click", () => {
   Client.sendMessage({
-    type: "session-password",
+    type: Message.SESSION_PASSWORD,
     password: null
   });
 });
@@ -454,16 +504,16 @@ document.getElementById("userModalCancelBtn").addEventListener("click", () => Mo
 
 document.getElementById("canvasZoom").addEventListener("input", (event) => Canvas.setZoomValue(event));
 
-document.getElementById("selectCopyBtn").addEventListener("click", () => Selection.doCopy());
-document.getElementById("selectCutBtn").addEventListener("click", () => Selection.doCut());
-document.getElementById("selectPasteBtn").addEventListener("click", () => Selection.doPaste());
+document.getElementById("selectCopyBtn").addEventListener("click", () => SelectTool.doCopy());
+document.getElementById("selectCutBtn").addEventListener("click", () => SelectTool.doCut());
+document.getElementById("selectPasteBtn").addEventListener("click", () => SelectTool.doPaste());
 document.getElementById("selectClearBtn").addEventListener("click", () => {
   Client.sendMessage({
-    type: "selection-clear",
+    type: Message.SELECTION_CLEAR,
     colour: penColours[1],
     clientId: Client.id
   });
-  Selection.clear(clients[Client.id].action.data, penColours[1]);
+  SelectTool.clear(clients[Client.id].action.data, penColours[1]);
 });
 
 window.addEventListener("beforeunload", () => {

@@ -18,7 +18,43 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Pen = {
+class Stroke {
+  constructor({ points, colour, size, caps, opacity, compOp, smoothen }) {
+    this.points = points;
+    this.colour = colour;
+    this.size = size;
+    this.caps = caps;
+    this.opacity = opacity;
+    this.compOp = compOp;
+    this.smoothen = smoothen;
+  }
+  
+  static packer(stroke) {
+    return msgpack.encode([
+      stroke.points,
+      stroke.colour,
+      stroke.size,
+      stroke.caps,
+      stroke.opacity,
+      stroke.compOp,
+      stroke.smoothen
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Stroke({
+      points: properties[0],
+      colour: properties[1],
+      size: properties[2],
+      caps: properties[3],
+      opacity: properties[4],
+      compOp: properties[5],
+      smoothen: properties[6]
+    });
+  }
+}
+
+const PenTool = {
   // Add a point to the current stroke and draw it
   draw(x, y) {
     const currentAction = clients[Client.id].action;
@@ -26,7 +62,7 @@ const Pen = {
     const lastPoint = currentAction.data.points[currentAction.data.points.length - 1];
     if (currentAction.data.points.length > 0 && x === lastPoint[0] && y === lastPoint[1]) return;
     Client.sendMessage({
-      type: "add-stroke",
+      type: Message.ADD_STROKE,
       clientId: Client.id,
       pos: [x, y]
     });
@@ -45,10 +81,7 @@ const Pen = {
     Canvas.update({ save: true });
     srcCanvas.getContext("2d").clearRect(0, 0, srcCanvas.width, srcCanvas.height);
     if (user) {
-      ActionHistory.addToUndo({
-        type: "stroke",
-        stroke: {...stroke}
-      });
+      ActionHistory.addToUndo("stroke", stroke);
     }
   },
   

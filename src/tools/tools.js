@@ -55,9 +55,6 @@ const Tools = {
       "slider": {
         "opacity": 100,
         "fillThreshold": 15
-      },
-      "checked": {
-        "fillChangeAlpha": true
       }
     },
     
@@ -210,7 +207,7 @@ function mouseHold(event) {
   event.preventDefault();
   const currentAction = clients[Client.id].action;
   if (currentAction.data && currentAction.data.selected) {
-    const handle = Selection.getResizeHandle(mouse, [0, 1, 2, 3, 4, 5, 6, 7]);
+    const handle = SelectTool.getResizeHandle(mouse, [0, 1, 2, 3, 4, 5, 6, 7]);
     if (handle !== null) {
       const roundedPoint = Canvas.getPixelPos(event, { round: true });
       currentAction.data.resize = {
@@ -252,13 +249,13 @@ function startTool(point) {
   const shapeFill    = document.getElementById("shapeFill").checked;
   const caps         = parseInt(document.getElementById("lineCapSelect").value);
   
-  if (tool !== "select") Selection.remove();
+  if (tool !== "select") SelectTool.remove();
   
   switch (tool) {
     case "pen": {
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "stroke",
-        data: {
+        data: new Stroke({
           points: [],
           colour: penColours[currentPen],
           size: size,
@@ -266,34 +263,31 @@ function startTool(point) {
           opacity: opacity,
           compOp: compOp,
           smoothen: document.getElementById("smoothenStrokes").checked
-        }
-      });
+        })
+      }));
       Client.sendMessage({
-        type: "start-stroke",
+        type: Message.START_STROKE,
         clientId: Client.id,
         action: clients[Client.id].action
       });
-      Pen.draw(point.x, point.y);
+      PenTool.draw(point.x, point.y);
       break;
     }
     case "fill": {
-      const thresholdInput = document.getElementById("fillThresholdInput");
-      var threshold = parseInt(thresholdInput.dataset.value, 10);
-      const fillColour = penColours[currentPen];
-      const fillBy = parseInt(document.getElementById("fillBySelect").value, 10);
-      const changeAlpha = document.getElementById("fillChangeAlpha").checked;
-      Client.sendMessage({
-        type: "fill",
+      const fill = new Fill({
         x: point.x,
         y: point.y,
-        colour: fillColour,
-        threshold: threshold,
+        colour: penColours[currentPen],
+        threshold: parseInt(document.getElementById("fillThresholdInput").dataset.value, 10),
         opacity: opacity,
         compOp: compOp,
-        fillBy: fillBy,
-        changeAlpha: changeAlpha
+        fillBy: parseInt(document.getElementById("fillBySelect").value, 10)
       });
-      Fill.fill(point.x, point.y, fillColour, threshold, opacity, compOp, fillBy, changeAlpha);
+      Client.sendMessage({
+        type: Message.FILL,
+        fill: fill
+      });
+      FillTool.fill(fill);
       break;
     }
     case "colourPicker": {
@@ -319,32 +313,43 @@ function startTool(point) {
       break;
     }
     case "select": {
+      const selection = new Selection({
+        selected: false,
+        x: point.x,
+        y: point.y,
+        width: 0,
+        height: 0,
+        move: new Pos2D({
+          x: null,
+          y: null
+        }),
+        resize: new SelectionResize({
+          handle: null,
+          x: null,
+          y: null
+        }),
+        flipped: new Pos2D({
+          x: false,
+          y: false
+        }),
+        data: null,
+        old: null
+      });
       Client.sendMessage({
-        type: "create-selection",
-        clientId: Client.id
+        type: Message.SELECTION_CREATE,
+        clientId: Client.id,
+        selection: selection
       });
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "selecting",
-        data: {
-          selected: false,
-          x: point.x,
-          y: point.y,
-          width: 0,
-          height: 0,
-          move: {},
-          resize: {},
-          flipped: {
-            x: false,
-            y: false
-          }
-        }
-      });
+        data: selection
+      }));
       break;
     }
     case "line": {
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "line",
-        data: {
+        data: new Line({
           x0: point.x,
           y0: point.y,
           x1: point.x,
@@ -354,52 +359,52 @@ function startTool(point) {
           caps: caps,
           opacity: opacity,
           compOp: compOp
-        }
-      });
+        })
+      }));
       break;
     }
     case "rect": {
       if (!shapeOutline && !shapeFill) break;
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "rect",
-        data: {
+        data: new Shape({
           x: point.x,
           y: point.y,
           width: 0,
           height: 0,
-          colours: {
+          colours: new ShapeColours({
             outline: penColours[currentPen],
             fill: penColours[(currentPen + 1) % 2]
-          },
+          }),
           lineWidth: size,
           opacity: opacity,
           compOp: compOp,
           outline: shapeOutline,
           fill: shapeFill
-        }
-      });
+        })
+      }));
       break;
     }
     case "ellipse": {
       if (!shapeOutline && !shapeFill) break;
-      Session.startClientAction(Client.id, {
+      Session.startClientAction(Client.id, new Action({
         type: "ellipse",
-        data: {
+        data: new Shape({
           x: point.x,
           y: point.y,
           width: 0,
           height: 0,
-          colours: {
+          colours: new ShapeColours({
             outline: penColours[currentPen],
             fill: penColours[(currentPen + 1) % 2]
-          },
+          }),
           lineWidth: size,
           opacity: opacity,
           compOp: compOp,
           outline: shapeOutline,
           fill: shapeFill
-        }
-      });
+        })
+      }));
       break;
     }
   }
@@ -436,19 +441,19 @@ function mouseMove(event) {
   switch (currentAction.type) {
     case "stroke": {
       event.preventDefault();
-      Pen.draw(point.x, point.y);
+      PenTool.draw(point.x, point.y);
       break;
     }
     case "line": {
       event.preventDefault();
       currentAction.data.x1 = point.x, currentAction.data.y1 = point.y;
       Client.sendMessage({
-        type: "line",
+        type: Message.LINE,
         clientId: Client.id,
         line: currentAction.data
       });
       clients[Client.id].action = currentAction;
-      Line.draw(currentAction.data, Client.ctx);
+      LineTool.draw(currentAction.data, Client.ctx);
       break;
     }
     case "rect": {
@@ -456,12 +461,12 @@ function mouseMove(event) {
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
       Client.sendMessage({
-        type: "rect",
+        type: Message.RECT,
         clientId: Client.id,
         rect: currentAction.data
       });
       clients[Client.id].action = currentAction;
-      Rect.draw(currentAction.data, Client.ctx);
+      RectTool.draw(currentAction.data, Client.ctx);
       break;
     }
     case "ellipse": {
@@ -469,12 +474,12 @@ function mouseMove(event) {
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
       Client.sendMessage({
-        type: "ellipse",
+        type: Message.ELLIPSE,
         clientId: Client.id,
         ellipse: currentAction.data
       });
       clients[Client.id].action = currentAction;
-      Ellipse.draw(currentAction.data, Client.ctx);
+      EllipseTool.draw(currentAction.data, Client.ctx);
       break;
     }
     case "selecting": {
@@ -482,7 +487,7 @@ function mouseMove(event) {
       currentAction.data.width = roundedPoint.x - currentAction.data.x;
       currentAction.data.height = roundedPoint.y - currentAction.data.y;
       clients[Client.id].action = currentAction;
-      Selection.update(false);
+      SelectTool.update(false);
       break;
     }
     case "selection-move": {
@@ -492,7 +497,7 @@ function mouseMove(event) {
       currentAction.data.move.x = roundedPoint.x;
       currentAction.data.move.y = roundedPoint.y;
       clients[Client.id].action = currentAction;
-      Selection.update(true);
+      SelectTool.update(true);
       break;
     }
     case "selection-resize": {
@@ -546,8 +551,8 @@ function mouseMove(event) {
       currentAction.data.resize.x = roundedPoint.x;
       currentAction.data.resize.y = roundedPoint.y;
       clients[Client.id].action = currentAction;
-      Selection.adjustSizeAbsolute();
-      Selection.update(true);
+      SelectTool.adjustSizeAbsolute();
+      SelectTool.update(true);
       break;
     }
   }
@@ -555,12 +560,12 @@ function mouseMove(event) {
   if (currentAction.data && currentAction.data.selected) {
     if (currentAction.type === "selection-resize") {
       // Always use resizing cursors
-      cursor = Selection.RESIZE_CURSORS[currentAction.data.resize.handle];
+      cursor = SelectTool.RESIZE_CURSORS[currentAction.data.resize.handle];
     } else if (currentAction.type === "selection-move") {
       // Always use move cursor
       cursor = "move";
     } else {
-      const resizeCursor = Selection.getResizeHandle(mouse, Selection.RESIZE_CURSORS);
+      const resizeCursor = SelectTool.getResizeHandle(mouse, SelectTool.RESIZE_CURSORS);
       const exactPoint = Canvas.getPixelPos(event, { floor: false });
       if (resizeCursor !== null) {
         cursor = resizeCursor;
@@ -592,57 +597,48 @@ function clearMouseHold(event) {
     case "stroke": {
       event.preventDefault();
       const point = Canvas.getPixelPos(event);
-      Pen.draw(point.x, point.y);
+      PenTool.draw(point.x, point.y);
       Client.sendMessage({
-        type: "end-stroke",
+        type: Message.END_STROKE,
         clientId: Client.id
       });
-      Pen.commitStroke(Client.canvas, currentAction.data);
+      PenTool.commitStroke(Client.canvas, currentAction.data);
       break;
     }
     case "line": {
       event.preventDefault();
       Client.sendMessage({
-        type: "commit-line",
+        type: Message.COMMIT_LINE,
         line: currentAction.data,
         clientId: Client.id
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
-      ActionHistory.addToUndo({
-        type: "line",
-        line: currentAction.data
-      });
+      ActionHistory.addToUndo("line", currentAction.data);
       break;
     }
     case "rect": {
       event.preventDefault();
       Client.sendMessage({
-        type: "commit-rect",
+        type: Message.COMMIT_RECT,
         rect: currentAction.data,
         clientId: Client.id
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
-      ActionHistory.addToUndo({
-        type: "rect",
-        rect: currentAction.data
-      });
+      ActionHistory.addToUndo("rect", currentAction.data);
       break;
     }
     case "ellipse": {
       event.preventDefault();
       Client.sendMessage({
-        type: "commit-ellipse",
+        type: Message.COMMIT_ELLIPSE,
         ellipse: currentAction.data,
         clientId: Client.id
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
-      ActionHistory.addToUndo({
-        type: "ellipse",
-        ellipse: currentAction.data
-      });
+      ActionHistory.addToUndo("ellipse", currentAction.data);
       break;
     }
     case "selecting": {
@@ -650,11 +646,11 @@ function clearMouseHold(event) {
       if (currentAction.data.width && currentAction.data.height) {
         currentAction.data.selected = true;
         clients[Client.id].action = currentAction;
-        Selection.adjustSizeAbsolute();
-        Selection.draw(Client.ctx, clients[Client.id].action.data, true);
+        SelectTool.adjustSizeAbsolute();
+        SelectTool.draw(Client.ctx, clients[Client.id].action.data, true);
         keepAction = true;
       } else {
-        Selection.remove();
+        SelectTool.remove();
       }
       break;
     }
@@ -669,7 +665,7 @@ function clearMouseHold(event) {
         clients[Client.id].action = currentAction;
       }
       delete clients[Client.id].action.data.old;
-      Selection.draw(Client.ctx, clients[Client.id].action.data, true);
+      SelectTool.draw(Client.ctx, clients[Client.id].action.data, true);
       keepAction = true;
       break;
     }
@@ -705,5 +701,5 @@ function switchTool(newTool) {
       settings[s].classList.add("currentToolSettings");
     }
   }
-  Selection.remove();
+  SelectTool.remove();
 }

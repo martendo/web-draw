@@ -18,6 +18,27 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+class Action {
+  constructor({ type, data }) {
+    this.type = type;
+    this.data = data;
+  }
+  
+  static packer(action) {
+    return msgpack.encode([
+      action.type,
+      action.data
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Action({
+      type: properties[0],
+      data: properties[1]
+    });
+  }
+}
+
 const Session = {
   id: null,
   password: null,
@@ -114,34 +135,34 @@ const Session = {
       const action = client.action;
       switch (action.type) {
         case "stroke": {
-          Pen.drawStroke(client.ctx, action.data);
+          PenTool.drawStroke(client.ctx, action.data);
           break;
         }
         case "line": {
-          Line.draw(action.data, client.ctx);
+          LineTool.draw(action.data, client.ctx);
           break;
         }
         case "rect": {
-          Rect.draw(action.data, client.ctx);
+          RectTool.draw(action.data, client.ctx);
           break;
         }
         case "ellipse": {
-          Ellipse.draw(action.data, client.ctx);
+          EllipseTool.draw(action.data, client.ctx);
           break;
         }
         case "selecting": {
-          Selection.draw(client.ctx, action.data, false, isThisClient);
+          SelectTool.draw(client.ctx, action.data, false, isThisClient);
           break;
         }
         case "selection-move":
         case "selection-resize": {
-          Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
+          SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           break;
         }
         case null: {
           // Area is selected but currently not being modified
           if (action.data && action.data.hasOwnProperty("selected")) {
-            Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
+            SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           }
           break;
         }
@@ -153,21 +174,21 @@ const Session = {
   // Request to create a new session
   create() {
     Client.sendMessage({
-      type: "create-session",
+      type: Message.CREATE_SESSION,
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Request to join a session
   join() {
     Client.sendMessage({
-      type: "join-session",
+      type: Message.JOIN_SESSION,
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Leave a session
   leave() {
     Client.sendMessage({
-      type: "leave-session"
+      type: Message.LEAVE_SESSION
     });
     
     document.getElementById("menuScreen").style.display = "grid";
@@ -186,7 +207,7 @@ const Session = {
   
   changeId() {
     Client.sendMessage({
-      type: "session-id",
+      type: Message.SESSION_ID,
       id: document.getElementById("sessionIdNew").value
     });
   },
@@ -231,14 +252,14 @@ const Session = {
   
   setPassword() {
     Client.sendMessage({
-      type: "session-password",
+      type: Message.SESSION_PASSWORD,
       password: document.getElementById("sessionPasswordNew").value
     });
   },
   
   enterPassword() {
     Client.sendMessage({
-      type: "enter-password",
+      type: Message.ENTER_PASSWORD,
       password: document.getElementById("enterSessionPassword").value,
       id: document.getElementById("enterSessionPasswordId").textContent
     });
@@ -249,7 +270,7 @@ const Session = {
     if (name.length < 1) name = null;
     if (name !== clients[Client.id].name) {
       Client.sendMessage({
-        type: "user-name",
+        type: Message.USER_NAME,
         name: name,
         clientId: Client.id
       });

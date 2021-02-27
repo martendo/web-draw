@@ -87,18 +87,91 @@ const NO_ACTION = Object.freeze({
   data: null
 });
 
-// Add ImageData object to msgpack codec
-msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
-  return msgpack.encode([
-    imageData.data,
-    imageData.width,
-    imageData.height
-  ]);
-});
-msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
-  const properties = msgpack.decode(buffer);
-  return new ImageData(properties[0], properties[1], properties[2]);
-});
+class Pos2D {
+  constructor({ x, y }) {
+    this.x = x;
+    this.y = y;
+  }
+  
+  static packer(pos) {
+    return msgpack.encode([
+      pos.x,
+      pos.y
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Pos2D({
+      x: properties[0],
+      y: properties[1]
+    });
+  }
+}
+
+class Shape {
+  constructor({ x, y, width, height, colours, lineWidth, opacity, compOp, outline, fill }) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.colours = colours;
+    this.lineWidth = lineWidth;
+    this.opacity = opacity;
+    this.compOp = compOp;
+    this.outline = outline;
+    this.fill = fill;
+  }
+  
+  static packer(shape) {
+    return msgpack.encode([
+      shape.x,
+      shape.y,
+      shape.width,
+      shape.height,
+      shape.colours,
+      shape.lineWidth,
+      shape.opacity,
+      shape.compOp,
+      shape.outline,
+      shape.fill
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Shape({
+      x: properties[0],
+      y: properties[1],
+      width: properties[2],
+      height: properties[3],
+      colours: properties[4],
+      lineWidth: properties[5],
+      opacity: properties[6],
+      compOp: properties[7],
+      outline: properties[8],
+      fill: properties[9],
+    });
+  }
+}
+class ShapeColours {
+  constructor({ outline, fill }) {
+    this.outline = outline;
+    this.fill = fill;
+  }
+  
+  static packer(colours) {
+    return msgpack.encode([
+      colours.outline,
+      colours.fill
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new ShapeColours({
+      outline: properties[0],
+      fill: properties[1]
+    });
+  }
+}
 
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
