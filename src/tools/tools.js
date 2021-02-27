@@ -349,7 +349,7 @@ function startTool(point) {
     case "line": {
       Session.startClientAction(Client.id, new Action({
         type: "line",
-        data: {
+        data: new Line({
           x0: point.x,
           y0: point.y,
           x1: point.x,
@@ -359,7 +359,7 @@ function startTool(point) {
           caps: caps,
           opacity: opacity,
           compOp: compOp
-        }
+        })
       }));
       break;
     }

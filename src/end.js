@@ -58,6 +58,9 @@ msgpack.codec.preset.addExtUnpacker(0x27, (buffer) => OldSelection.unpacker(buff
 // ShortSelection
 msgpack.codec.preset.addExtPacker(0x28, ShortSelection, (shortSel) => ShortSelection.packer(shortSel));
 msgpack.codec.preset.addExtUnpacker(0x28, (buffer) => ShortSelection.unpacker(buffer));
+// Line
+msgpack.codec.preset.addExtPacker(0x29, Line, (line) => Line.packer(line));
+msgpack.codec.preset.addExtUnpacker(0x29, (buffer) => Line.unpacker(buffer));
 
 // List of ping latency measurements to calculate average
 var prevPings = [];
