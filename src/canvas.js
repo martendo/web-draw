@@ -234,7 +234,7 @@ const Canvas = {
       if (type !== null && type !== "selecting" && type !== "selection-move" && type !== "selection-resize") {
         continue;
       }
-      Selection.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
+      SelectTool.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
     }
     
     // Border around image
@@ -438,7 +438,7 @@ const Canvas = {
       window.alert("There was an error reading the file.\n\n" + reader.error);
       console.error(`Error reading file ${file}:`, event);
     };
-    reader.onload = () => Selection.importPicture(reader.result, Client.id);
+    reader.onload = () => SelectTool.importPicture(reader.result, Client.id);
     reader.readAsDataURL(file);
   },
   

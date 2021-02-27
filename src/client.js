@@ -250,12 +250,12 @@ const Client = {
       // Another user has added a point in their current stroke
       case "add-stroke": {
         clients[data.clientId].action.data.points.push([data.pos[0], data.pos[1]]);
-        Pen.drawClientStroke(data.clientId);
+        PenTool.drawClientStroke(data.clientId);
         break;
       }
       // Another user has ended their stroke
       case "end-stroke": {
-        Pen.commitStroke(
+        PenTool.commitStroke(
           clients[data.clientId].canvas,
           clients[data.clientId].action.data
         );
@@ -280,7 +280,7 @@ const Client = {
       }
       // Another user has used the flood fill tool
       case "fill": {
-        Fill.fill(data.fill);
+        FillTool.fill(data.fill);
         break;
       }
       // Another user has cleared the canvas
@@ -296,7 +296,7 @@ const Client = {
       }
       // Another user has imported a picture onto the canvas
       case "import-picture": {
-        Selection.importPicture(data.image, data.clientId);
+        SelectTool.importPicture(data.image, data.clientId);
         break;
       }
       case "create-selection": {
@@ -321,23 +321,23 @@ const Client = {
         sel.width = data.selection.width;
         sel.height = data.selection.height;
         sel.flipped = data.selection.flipped;
-        Selection.draw(clients[data.clientId].ctx, sel, false, false);
+        SelectTool.draw(clients[data.clientId].ctx, sel, false, false);
         break;
       }
       case "selection-copy": {
-        Selection.copy(clients[data.clientId].ctx, clients[data.clientId].action.data);
+        SelectTool.copy(clients[data.clientId].ctx, clients[data.clientId].action.data);
         break;
       }
       case "selection-cut": {
-        Selection.cut(clients[data.clientId].ctx, clients[data.clientId].action.data, data.colour);
+        SelectTool.cut(clients[data.clientId].ctx, clients[data.clientId].action.data, data.colour);
         break;
       }
       case "selection-paste": {
-        Selection.paste(clients[data.clientId].action.data);
+        SelectTool.paste(clients[data.clientId].action.data);
         break;
       }
       case "selection-clear": {
-        Selection.clear(clients[data.clientId].action.data, data.colour);
+        SelectTool.clear(clients[data.clientId].action.data, data.colour);
         break;
       }
       case "line": {
@@ -345,11 +345,11 @@ const Client = {
           type: "line",
           data: data.line
         });
-        Line.draw(data.line, clients[data.clientId].ctx);
+        LineTool.draw(data.line, clients[data.clientId].ctx);
         break;
       }
       case "commit-line": {
-        Line.draw(data.line, clients[data.clientId].ctx, { save: true });
+        LineTool.draw(data.line, clients[data.clientId].ctx, { save: true });
         ActionHistory.addToUndo("line", data.line);
         Session.endClientAction(data.clientId);
         break;
@@ -359,11 +359,11 @@ const Client = {
           type: "rect",
           data: data.rect
         });
-        Rect.draw(data.rect, clients[data.clientId].ctx);
+        RectTool.draw(data.rect, clients[data.clientId].ctx);
         break;
       }
       case "commit-rect": {
-        Rect.draw(data.rect, clients[data.clientId].ctx, { save: true });
+        RectTool.draw(data.rect, clients[data.clientId].ctx, { save: true });
         ActionHistory.addToUndo("rect", data.rect);
         Session.endClientAction(data.clientId);
         break;
@@ -373,11 +373,11 @@ const Client = {
           type: "ellipse",
           data: data.ellipse
         });
-        Ellipse.draw(data.ellipse, clients[data.clientId].ctx);
+        EllipseTool.draw(data.ellipse, clients[data.clientId].ctx);
         break;
       }
       case "commit-ellipse": {
-        Ellipse.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
+        EllipseTool.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
         ActionHistory.addToUndo("ellipse", data.ellipse);
         Session.endClientAction(data.clientId);
         break;

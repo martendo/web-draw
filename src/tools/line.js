@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Line = {
+const LineTool = {
   draw(line, ctx, options) {
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     

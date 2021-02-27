@@ -114,34 +114,34 @@ const Session = {
       const action = client.action;
       switch (action.type) {
         case "stroke": {
-          Pen.drawStroke(client.ctx, action.data);
+          PenTool.drawStroke(client.ctx, action.data);
           break;
         }
         case "line": {
-          Line.draw(action.data, client.ctx);
+          LineTool.draw(action.data, client.ctx);
           break;
         }
         case "rect": {
-          Rect.draw(action.data, client.ctx);
+          RectTool.draw(action.data, client.ctx);
           break;
         }
         case "ellipse": {
-          Ellipse.draw(action.data, client.ctx);
+          EllipseTool.draw(action.data, client.ctx);
           break;
         }
         case "selecting": {
-          Selection.draw(client.ctx, action.data, false, isThisClient);
+          SelectTool.draw(client.ctx, action.data, false, isThisClient);
           break;
         }
         case "selection-move":
         case "selection-resize": {
-          Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
+          SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           break;
         }
         case null: {
           // Area is selected but currently not being modified
           if (action.data && action.data.hasOwnProperty("selected")) {
-            Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
+            SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           }
           break;
         }

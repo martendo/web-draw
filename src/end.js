@@ -142,17 +142,17 @@ document.addEventListener("keydown", (event) => {
         }
         case "c": {
           if (tool !== "select") return;
-          Selection.doCopy();
+          SelectTool.doCopy();
           break;
         }
         case "x": {
           if (tool !== "select") return;
-          Selection.doCut();
+          SelectTool.doCut();
           break;
         }
         case "v": {
           if (tool !== "select") return;
-          Selection.doPaste();
+          SelectTool.doPaste();
           break;
         }
         default: break notTyping;
@@ -459,16 +459,16 @@ document.getElementById("userModalCancelBtn").addEventListener("click", () => Mo
 
 document.getElementById("canvasZoom").addEventListener("input", (event) => Canvas.setZoomValue(event));
 
-document.getElementById("selectCopyBtn").addEventListener("click", () => Selection.doCopy());
-document.getElementById("selectCutBtn").addEventListener("click", () => Selection.doCut());
-document.getElementById("selectPasteBtn").addEventListener("click", () => Selection.doPaste());
+document.getElementById("selectCopyBtn").addEventListener("click", () => SelectTool.doCopy());
+document.getElementById("selectCutBtn").addEventListener("click", () => SelectTool.doCut());
+document.getElementById("selectPasteBtn").addEventListener("click", () => SelectTool.doPaste());
 document.getElementById("selectClearBtn").addEventListener("click", () => {
   Client.sendMessage({
     type: "selection-clear",
     colour: penColours[1],
     clientId: Client.id
   });
-  Selection.clear(clients[Client.id].action.data, penColours[1]);
+  SelectTool.clear(clients[Client.id].action.data, penColours[1]);
 });
 
 window.addEventListener("beforeunload", () => {

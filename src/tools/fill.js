@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Fill = {
+const FillTool = {
   // Determine whether a colour is within the flood fill threshold
   checkPixel(pixels, offset, colour, threshold, fillBy) {
     switch (fillBy) {

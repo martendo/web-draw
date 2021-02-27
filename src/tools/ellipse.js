@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Ellipse = {
+const EllipseTool = {
   draw(ellipse, ctx, options) {
     if (!ellipse.outline && !ellipse.fill) return;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);

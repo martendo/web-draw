@@ -143,7 +143,7 @@ const ActionHistory = {
     
     switch (action.type) {
       case "stroke": {
-        Pen.drawStroke(Client.ctx, action.data, {
+        PenTool.drawStroke(Client.ctx, action.data, {
           save: true,
           only: {
             id: Client.id,
@@ -153,7 +153,7 @@ const ActionHistory = {
         break;
       }
       case "fill": {
-        Fill.fill(action.data, false);
+        FillTool.fill(action.data, false);
         break;
       }
       case "clear": {
@@ -169,15 +169,15 @@ const ActionHistory = {
         break;
       }
       case "selection-clear": {
-        Selection.clear(action.data, action.data.colour, false);
+        SelectTool.clear(action.data, action.data.colour, false);
         break;
       }
       case "selection-paste": {
-        Selection.paste(action.data, false);
+        SelectTool.paste(action.data, false);
         break;
       }
       case "line": {
-        Line.draw(action.data, Client.ctx, {
+        LineTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
@@ -187,7 +187,7 @@ const ActionHistory = {
         break;
       }
       case "rect": {
-        Rect.draw(action.data, Client.ctx, {
+        RectTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
@@ -197,7 +197,7 @@ const ActionHistory = {
         break;
       }
       case "ellipse": {
-        Ellipse.draw(action.data, Client.ctx, {
+        EllipseTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,

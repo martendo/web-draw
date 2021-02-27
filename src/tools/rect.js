@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Rect = {
+const RectTool = {
   draw(rect, ctx, options) {
     if (!rect.outline && !rect.fill) return;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);

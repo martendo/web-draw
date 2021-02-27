@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Selection = {
+const SelectTool = {
   // Selection constants & variables
   HANDLE_SIZE: 5,
   HANDLE_GRAB_SIZE: 15,

@@ -18,7 +18,7 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Pen = {
+const PenTool = {
   // Add a point to the current stroke and draw it
   draw(x, y) {
     const currentAction = clients[Client.id].action;
