@@ -425,10 +425,7 @@ const Canvas = {
     }
     Canvas.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "resize-canvas",
-        options: options
-      });
+      ActionHistory.addToUndo("resize-canvas", options);
     }
   },
   
@@ -456,9 +453,7 @@ const Canvas = {
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "clear-blank"
-      });
+      ActionHistory.addToUndo("clear-blank");
     }
   },
   
@@ -472,9 +467,7 @@ const Canvas = {
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "clear"
-      });
+      ActionHistory.addToUndo("clear");
     }
   }
 };

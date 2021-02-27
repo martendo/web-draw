@@ -18,6 +18,11 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Add various objects to msgpack codec
+// Action
+msgpack.codec.preset.addExtPacker(0x20, Action, (action) => Action.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => Action.unpacker(buffer));
+
 // List of ping latency measurements to calculate average
 var prevPings = [];
 

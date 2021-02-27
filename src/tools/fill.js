@@ -131,8 +131,7 @@ const Fill = {
       save: true
     });
     if (user) {
-      ActionHistory.addToUndo({
-        type: "fill",
+      ActionHistory.addToUndo("fill", {
         x: startX,
         y: startY,
         colour: colour,

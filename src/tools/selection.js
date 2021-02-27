@@ -267,19 +267,16 @@ const Selection = {
   paste(sel, user = true) {
     if (sel.data) this.drawData(Session.ctx, sel);
     if (user) {
-      ActionHistory.addToUndo({
-        type: "selection-paste",
-        selection: {
-          x: sel.x,
-          y: sel.y,
-          width: sel.width,
-          height: sel.height,
-          flipped: sel.flipped,
-          data: {
-            data: sel.data.data,
-            width: sel.data.width,
-            height: sel.data.height
-          }
+      ActionHistory.addToUndo("selection-paste", {
+        x: sel.x,
+        y: sel.y,
+        width: sel.width,
+        height: sel.height,
+        flipped: sel.flipped,
+        data: {
+          data: sel.data.data,
+          width: sel.data.width,
+          height: sel.data.height
         }
       });
     }
@@ -289,14 +286,11 @@ const Selection = {
     Session.ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
     Canvas.update();
     if (user) {
-      ActionHistory.addToUndo({
-        type: "selection-clear",
-        selection: {
-          x: sel.x,
-          y: sel.y,
-          width: sel.width,
-          height: sel.height
-        },
+      ActionHistory.addToUndo("selection-clear", {
+        x: sel.x,
+        y: sel.y,
+        width: sel.width,
+        height: sel.height,
         colour: colour
       });
     }

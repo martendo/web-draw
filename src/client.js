@@ -286,16 +286,12 @@ const Client = {
       // Another user has cleared the canvas
       case "clear": {
         Canvas.clear(false);
-        ActionHistory.addToUndo({
-          type: "clear"
-        });
+        ActionHistory.addToUndo("clear");
         break;
       }
       case "clear-blank": {
         Canvas.clearBlank(false);
-        ActionHistory.addToUndo({
-          type: "clear-blank"
-        });
+        ActionHistory.addToUndo("clear-blank");
         break;
       }
       // Another user has imported a picture onto the canvas
@@ -354,10 +350,7 @@ const Client = {
       }
       case "commit-line": {
         Line.draw(data.line, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo({
-          type: "line",
-          line: data.line
-        });
+        ActionHistory.addToUndo("line", data.line);
         Session.endClientAction(data.clientId);
         break;
       }
@@ -371,10 +364,7 @@ const Client = {
       }
       case "commit-rect": {
         Rect.draw(data.rect, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo({
-          type: "rect",
-          rect: data.rect
-        });
+        ActionHistory.addToUndo("rect", data.rect);
         Session.endClientAction(data.clientId);
         break;
       }
@@ -388,10 +378,7 @@ const Client = {
       }
       case "commit-ellipse": {
         Ellipse.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo({
-          type: "ellipse",
-          ellipse: data.ellipse
-        });
+        ActionHistory.addToUndo("ellipse", data.ellipse);
         Session.endClientAction(data.clientId);
         break;
       }
@@ -544,9 +531,7 @@ const Client = {
         Chat.box.classList.add("displayNone");
         
         Canvas.init();
-        ActionHistory.addToUndo({
-          type: "[ Base Image ]"
-        });
+        ActionHistory.addToUndo("[ Base Image ]");
         
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);
