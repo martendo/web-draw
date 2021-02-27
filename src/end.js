@@ -19,18 +19,45 @@
  */
 
 // Add various objects to msgpack codec
+// ImageData
+msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
+  return msgpack.encode([
+    imageData.data,
+    imageData.width,
+    imageData.height
+  ]);
+});
+msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
+  const properties = msgpack.decode(buffer);
+  return new ImageData(properties[0], properties[1], properties[2]);
+});
+// Pos2D
+msgpack.codec.preset.addExtPacker(0x20, Pos2D, (pos) => Pos2D.packer(pos));
+msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => Pos2D.unpacker(buffer));
 // PastAction
-msgpack.codec.preset.addExtPacker(0x20, PastAction, (action) => PastAction.packer(action));
-msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => PastAction.unpacker(buffer));
+msgpack.codec.preset.addExtPacker(0x21, PastAction, (action) => PastAction.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x21, (buffer) => PastAction.unpacker(buffer));
 // Action
-msgpack.codec.preset.addExtPacker(0x21, Action, (action) => Action.packer(action));
-msgpack.codec.preset.addExtUnpacker(0x21, (buffer) => Action.unpacker(buffer));
+msgpack.codec.preset.addExtPacker(0x22, Action, (action) => Action.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x22, (buffer) => Action.unpacker(buffer));
 // Stroke
-msgpack.codec.preset.addExtPacker(0x22, Stroke, (stroke) => Stroke.packer(stroke));
-msgpack.codec.preset.addExtUnpacker(0x22, (buffer) => Stroke.unpacker(buffer));
+msgpack.codec.preset.addExtPacker(0x23, Stroke, (stroke) => Stroke.packer(stroke));
+msgpack.codec.preset.addExtUnpacker(0x23, (buffer) => Stroke.unpacker(buffer));
 // Fill
-msgpack.codec.preset.addExtPacker(0x23, Fill, (fill) => Fill.packer(fill));
-msgpack.codec.preset.addExtUnpacker(0x23, (buffer) => Fill.unpacker(buffer));
+msgpack.codec.preset.addExtPacker(0x24, Fill, (fill) => Fill.packer(fill));
+msgpack.codec.preset.addExtUnpacker(0x24, (buffer) => Fill.unpacker(buffer));
+// Selection
+msgpack.codec.preset.addExtPacker(0x25, Selection, (selection) => Selection.packer(selection));
+msgpack.codec.preset.addExtUnpacker(0x25, (buffer) => Selection.unpacker(buffer));
+// SelectionResize
+msgpack.codec.preset.addExtPacker(0x26, SelectionResize, (selectionResize) => SelectionResize.packer(selectionResize));
+msgpack.codec.preset.addExtUnpacker(0x26, (buffer) => SelectionResize.unpacker(buffer));
+// OldSelection
+msgpack.codec.preset.addExtPacker(0x27, OldSelection, (old) => OldSelection.packer(old));
+msgpack.codec.preset.addExtUnpacker(0x27, (buffer) => OldSelection.unpacker(buffer));
+// ShortSelection
+msgpack.codec.preset.addExtPacker(0x28, ShortSelection, (shortSel) => ShortSelection.packer(shortSel));
+msgpack.codec.preset.addExtUnpacker(0x28, (buffer) => ShortSelection.unpacker(buffer));
 
 // List of ping latency measurements to calculate average
 var prevPings = [];

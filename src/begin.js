@@ -87,18 +87,26 @@ const NO_ACTION = Object.freeze({
   data: null
 });
 
-// Add ImageData object to msgpack codec
-msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
-  return msgpack.encode([
-    imageData.data,
-    imageData.width,
-    imageData.height
-  ]);
-});
-msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
-  const properties = msgpack.decode(buffer);
-  return new ImageData(properties[0], properties[1], properties[2]);
-});
+class Pos2D {
+  constructor({ x, y }) {
+    this.x = x;
+    this.y = y;
+  }
+  
+  static packer(pos) {
+    return msgpack.encode([
+      pos.x,
+      pos.y
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Pos2D({
+      x: properties[0],
+      y: properties[1]
+    });
+  }
+}
 
 // Check if a point is within an area
 function isPointInside(x, y, rect) {

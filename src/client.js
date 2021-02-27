@@ -302,7 +302,7 @@ const Client = {
       case "create-selection": {
         Session.startClientAction(data.clientId, new Action({
           type: "selecting",
-          data: {}
+          data: data.selection
         }));
         break;
       }

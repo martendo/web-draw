@@ -313,25 +313,36 @@ function startTool(point) {
       break;
     }
     case "select": {
+      const selection = new Selection({
+        selected: false,
+        x: point.x,
+        y: point.y,
+        width: 0,
+        height: 0,
+        move: new Pos2D({
+          x: null,
+          y: null
+        }),
+        resize: new SelectionResize({
+          handle: null,
+          x: null,
+          y: null
+        }),
+        flipped: new Pos2D({
+          x: false,
+          y: false
+        }),
+        data: null,
+        old: null
+      });
       Client.sendMessage({
         type: "create-selection",
-        clientId: Client.id
+        clientId: Client.id,
+        selection: selection
       });
       Session.startClientAction(Client.id, new Action({
         type: "selecting",
-        data: {
-          selected: false,
-          x: point.x,
-          y: point.y,
-          width: 0,
-          height: 0,
-          move: {},
-          resize: {},
-          flipped: {
-            x: false,
-            y: false
-          }
-        }
+        data: selection
       }));
       break;
     }

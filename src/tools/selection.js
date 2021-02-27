@@ -18,6 +18,130 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+class Selection {
+  constructor({ selected, x, y, width, height, move, resize, flipped, data, old }) {
+    this.selected = selected;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.move = move;
+    this.resize = resize;
+    this.flipped = flipped;
+    this.data = data;
+    this.old = old;
+  }
+  
+  static packer(selection) {
+    return msgpack.encode([
+      selection.selected,
+      selection.x,
+      selection.y,
+      selection.width,
+      selection.height,
+      selection.move,
+      selection.resize,
+      selection.flipped,
+      selection.data,
+      selection.old
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Selection({
+      selected: properties[0],
+      x: properties[1],
+      y: properties[2],
+      width: properties[3],
+      height: properties[4],
+      move: properties[5],
+      resize: properties[6],
+      flipped: properties[7],
+      data: properties[8],
+      old: properties[9]
+    });
+  }
+}
+class ShortSelection {
+  constructor({ selected, x, y, width, height, flipped }) {
+    this.selected = selected;
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.flipped = flipped;
+  }
+  
+  static packer(shortSel) {
+    return msgpack.encode([
+      shortSel.x,
+      shortSel.y,
+      shortSel.width,
+      shortSel.height,
+      shortSel.flipped
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new ShortSelection({
+      x: properties[0],
+      y: properties[1],
+      width: properties[2],
+      height: properties[3],
+      flipped: properties[4]
+    });
+  }
+}
+class SelectionResize {
+  constructor({ handle, x, y }) {
+    this.handle = handle;
+    this.x = x;
+    this.y = y;
+  }
+  
+  static packer(selectionResize) {
+    return msgpack.encode([
+      selectionResize.handle,
+      selectionResize.x,
+      selectionResize.y
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new SelectionResize({
+      handle: properties[0],
+      x: properties[1],
+      y: properties[2]
+    });
+  }
+}
+class OldSelection {
+  constructor({ x, y, width, height }) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+  }
+  
+  static packer(old) {
+    return msgpack.encode([
+      old.x,
+      old.y,
+      old.width,
+      old.height
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new OldSelection({
+      x: properties[0],
+      y: properties[1],
+      width: properties[2],
+      height: properties[3]
+    });
+  }
+}
+
 const SelectTool = {
   // Selection constants & variables
   HANDLE_SIZE: 5,
@@ -31,7 +155,7 @@ const SelectTool = {
   ],
   
   getResizeHandle(point, handles) {
-    const selection = {...clients[Client.id].action.data};
+    const selection = new Selection({...clients[Client.id].action.data});
     selection.x = selection.x * Canvas.zoom - Canvas.pan.x;
     selection.y = selection.y * Canvas.zoom - Canvas.pan.y;
     selection.width *= Canvas.zoom;
@@ -101,13 +225,13 @@ const SelectTool = {
   
   draw(ctx, sel, handles, drawOld = true, adjust = false) {
     if (adjust) {
-      sel = {...sel};
+      sel = new Selection({...sel});
       sel.x = sel.x * Canvas.zoom - Canvas.pan.x;
       sel.y = sel.y * Canvas.zoom - Canvas.pan.y;
       sel.width *= Canvas.zoom;
       sel.height *= Canvas.zoom;
       if (sel.old && drawOld) {
-        sel.old = {...sel.old};
+        sel.old = new OldSelection({...sel.old});
         sel.old.x = sel.old.x * Canvas.zoom - Canvas.pan.x;
         sel.old.y = sel.old.y * Canvas.zoom - Canvas.pan.y;
         sel.old.width *= Canvas.zoom;
@@ -206,22 +330,15 @@ const SelectTool = {
     if (!adjust) Canvas.update();
   },
   update(handles) {
-    const selection = clients[Client.id].action;
+    const selection = clients[Client.id].action.data;
     
-    this.draw(Client.ctx, selection.data, handles);
+    this.draw(Client.ctx, selection, handles);
     this.updateSizeAndPos();
     
     // Send to other clients (remove unnecessary info too)
     Client.sendMessage({
       type: "selection-update",
-      selection: {
-        selected: selection.data.selected,
-        x: selection.data.x,
-        y: selection.data.y,
-        width: selection.data.width,
-        height: selection.data.height,
-        flipped: selection.data.flipped
-      },
+      selection: new ShortSelection({...selection}),
       clientId: Client.id
     });
   },
@@ -344,20 +461,28 @@ const SelectTool = {
       tempCtx.drawImage(img, 0, 0);
       const data = tempCtx.getImageData(0, 0, img.width, img.height);
       
-      const selection = {
+      const selection = new Selection({
         selected: true,
         x: 0,
         y: 0,
         width: data.width,
         height: data.height,
-        move: {},
-        resize: {},
-        flipped: {
+        move: new Pos2D({
+          x: null,
+          y: null
+        }),
+        resize: new SelectionResize({
+          handle: null,
+          x: null,
+          y: null
+        }),
+        flipped: new Pos2D({
           x: false,
           y: false
-        },
-        data: data
-      };
+        }),
+        data: data,
+        old: null
+      });
       Session.startClientAction(clientId, new Action({
         type: null, // Not editing the selection, but it should exist
         data: selection
