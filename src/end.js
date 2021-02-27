@@ -440,7 +440,7 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
     colour: bgColour
   };
   Client.sendMessage({
-    type: "resize-canvas",
+    type: Message.RESIZE_CANVAS,
     options: options
   });
   Canvas.resize(options);
@@ -475,7 +475,7 @@ document.getElementById("sessionHasIdModalOkBtn").addEventListener("click", () =
 
 document.getElementById("setSessionPasswordModalRemoveBtn").addEventListener("click", () => {
   Client.sendMessage({
-    type: "session-password",
+    type: Message.SESSION_PASSWORD,
     password: null
   });
 });
@@ -509,7 +509,7 @@ document.getElementById("selectCutBtn").addEventListener("click", () => SelectTo
 document.getElementById("selectPasteBtn").addEventListener("click", () => SelectTool.doPaste());
 document.getElementById("selectClearBtn").addEventListener("click", () => {
   Client.sendMessage({
-    type: "selection-clear",
+    type: Message.SELECTION_CLEAR,
     colour: penColours[1],
     clientId: Client.id
   });

@@ -130,7 +130,7 @@ module.exports = function(grunt) {
           append: "})();"
         },
         files: {
-          "public/script.js": ["src/**/*.js"]
+          "public/script.js": ["message.js", "src/**/*.js"]
         }
       },
       debug: {
@@ -141,7 +141,7 @@ module.exports = function(grunt) {
           prepend: "\"use strict\";"
         },
         files: {
-          "public/script.js": ["src/**/*.js"]
+          "public/script.js": ["message.js", "src/**/*.js"]
         }
       }
     },
@@ -191,6 +191,14 @@ module.exports = function(grunt) {
     },
     
     replace: {
+      module: {
+        files: {
+          "public/script.js": [{
+            from: "module.exports",
+            to: "const Message"
+          }]
+        }
+      },
       build: {
         files: {
           "public/index.html": [{
@@ -355,6 +363,6 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace", "base64Replace", "banner"]);
-  grunt.registerTask("debug", ["copy", "concat:debug", "replace", "base64Replace"]);
+  grunt.registerTask("build", ["copy", "concat:build", "replace:module", "htmlmin", "cssmin", "uglify", "replace:build", "base64Replace", "banner"]);
+  grunt.registerTask("debug", ["copy", "concat:debug", "replace:module", "replace:build", "base64Replace"]);
 };

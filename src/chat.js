@@ -61,7 +61,7 @@ const Chat = {
     elementFitHeight(this.input);
     if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
     Client.sendMessage({
-      type: "chat-message",
+      type: Message.CHAT_MESSAGE,
       message: msg,
       clientId: Client.id
     });

@@ -337,7 +337,7 @@ const SelectTool = {
     
     // Send to other clients (remove unnecessary info too)
     Client.sendMessage({
-      type: "selection-update",
+      type: Message.SELECTION_UPDATE,
       selection: new ShortSelection({...selection}),
       clientId: Client.id
     });
@@ -411,7 +411,7 @@ const SelectTool = {
   doCopy() {
     if (!clients[Client.id].action.data.selected) return;
     Client.sendMessage({
-      type: "selection-copy",
+      type: Message.SELECTION_COPY,
       clientId: Client.id
     });
     this.copy(Client.ctx, clients[Client.id].action.data);
@@ -419,7 +419,7 @@ const SelectTool = {
   doCut() {
     if (!clients[Client.id].action.data.selected) return;
     Client.sendMessage({
-      type: "selection-cut",
+      type: Message.SELECTION_CUT,
       colour: penColours[1],
       clientId: Client.id
     });
@@ -428,14 +428,14 @@ const SelectTool = {
   doPaste() {
     if (!clients[Client.id].action.data.selected || !clients[Client.id].action.data.data) return;
     Client.sendMessage({
-      type: "selection-paste",
+      type: Message.SELECTION_PASTE,
       clientId: Client.id
     });
     this.paste(clients[Client.id].action.data);
   },
   remove() {
     Client.sendMessage({
-      type: "remove-selection",
+      type: Message.SELECTION_REMOVE,
       clientId: Client.id
     });
     clients[Client.id].action = {...NO_ACTION};
@@ -449,7 +449,7 @@ const SelectTool = {
     img.addEventListener("load", () => {
       if (clientId === Client.id) {
         Client.sendMessage({
-          type: "import-picture",
+          type: Message.IMPORT_PICTURE,
           image: img.src,
           clientId: Client.id
         });

@@ -75,7 +75,7 @@ const ActionHistory = {
       return;
     }
     Client.sendMessage({
-      type: "move-history",
+      type: Message.MOVE_HISTORY,
       num: num
     });
     this.moveTo(num);
@@ -114,7 +114,7 @@ const ActionHistory = {
   toggleAction(num, user = true) {
     if (user) {
       Client.sendMessage({
-        type: "toggle-action",
+        type: Message.TOGGLE_ACTION,
         num: num
       });
     }
@@ -126,7 +126,7 @@ const ActionHistory = {
   moveAction(num, offset, user = true) {
     if (user) {
       Client.sendMessage({
-        type: "move-action",
+        type: Message.MOVE_ACTION,
         num: num,
         offset: offset
       });
@@ -314,7 +314,7 @@ const ActionHistory = {
     row.addEventListener("click", (event) => {
       if (event.target.tagName === "IMG") return;
       Client.sendMessage({
-        type: "move-history",
+        type: Message.MOVE_HISTORY,
         num: num
       });
       this.moveTo(num);

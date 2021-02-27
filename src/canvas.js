@@ -308,7 +308,7 @@ const Canvas = {
         this.setup(msgpack.decode(data));
         // Only send to other clients if setup was successful
         Client.sendMessage({
-          type: "open-canvas",
+          type: Message.OPEN_CANVAS,
           file: data
         });
       } catch (err) {
@@ -446,7 +446,7 @@ const Canvas = {
   clearBlank(user = true) {
     if (user) {
       Client.sendMessage({
-        type: "clear-blank"
+        type: Message.CLEAR_BLANK
       });
     }
     Session.ctx.fillStyle = Colour.BLANK;
@@ -461,7 +461,7 @@ const Canvas = {
   clear(user = true) {
     if (user) {
       Client.sendMessage({
-        type: "clear"
+        type: Message.CLEAR
       });
     }
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);

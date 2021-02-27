@@ -266,7 +266,7 @@ function startTool(point) {
         })
       }));
       Client.sendMessage({
-        type: "start-stroke",
+        type: Message.START_STROKE,
         clientId: Client.id,
         action: clients[Client.id].action
       });
@@ -284,7 +284,7 @@ function startTool(point) {
         fillBy: parseInt(document.getElementById("fillBySelect").value, 10)
       });
       Client.sendMessage({
-        type: "fill",
+        type: Message.FILL,
         fill: fill
       });
       FillTool.fill(fill);
@@ -336,7 +336,7 @@ function startTool(point) {
         old: null
       });
       Client.sendMessage({
-        type: "create-selection",
+        type: Message.SELECTION_CREATE,
         clientId: Client.id,
         selection: selection
       });
@@ -448,7 +448,7 @@ function mouseMove(event) {
       event.preventDefault();
       currentAction.data.x1 = point.x, currentAction.data.y1 = point.y;
       Client.sendMessage({
-        type: "line",
+        type: Message.LINE,
         clientId: Client.id,
         line: currentAction.data
       });
@@ -461,7 +461,7 @@ function mouseMove(event) {
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
       Client.sendMessage({
-        type: "rect",
+        type: Message.RECT,
         clientId: Client.id,
         rect: currentAction.data
       });
@@ -474,7 +474,7 @@ function mouseMove(event) {
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
       Client.sendMessage({
-        type: "ellipse",
+        type: Message.ELLIPSE,
         clientId: Client.id,
         ellipse: currentAction.data
       });
@@ -599,7 +599,7 @@ function clearMouseHold(event) {
       const point = Canvas.getPixelPos(event);
       PenTool.draw(point.x, point.y);
       Client.sendMessage({
-        type: "end-stroke",
+        type: Message.END_STROKE,
         clientId: Client.id
       });
       PenTool.commitStroke(Client.canvas, currentAction.data);
@@ -608,7 +608,7 @@ function clearMouseHold(event) {
     case "line": {
       event.preventDefault();
       Client.sendMessage({
-        type: "commit-line",
+        type: Message.COMMIT_LINE,
         line: currentAction.data,
         clientId: Client.id
       });
@@ -620,7 +620,7 @@ function clearMouseHold(event) {
     case "rect": {
       event.preventDefault();
       Client.sendMessage({
-        type: "commit-rect",
+        type: Message.COMMIT_RECT,
         rect: currentAction.data,
         clientId: Client.id
       });
@@ -632,7 +632,7 @@ function clearMouseHold(event) {
     case "ellipse": {
       event.preventDefault();
       Client.sendMessage({
-        type: "commit-ellipse",
+        type: Message.COMMIT_ELLIPSE,
         ellipse: currentAction.data,
         clientId: Client.id
       });

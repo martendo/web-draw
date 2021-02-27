@@ -62,7 +62,7 @@ const PenTool = {
     const lastPoint = currentAction.data.points[currentAction.data.points.length - 1];
     if (currentAction.data.points.length > 0 && x === lastPoint[0] && y === lastPoint[1]) return;
     Client.sendMessage({
-      type: "add-stroke",
+      type: Message.ADD_STROKE,
       clientId: Client.id,
       pos: [x, y]
     });

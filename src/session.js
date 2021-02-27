@@ -174,21 +174,21 @@ const Session = {
   // Request to create a new session
   create() {
     Client.sendMessage({
-      type: "create-session",
+      type: Message.CREATE_SESSION,
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Request to join a session
   join() {
     Client.sendMessage({
-      type: "join-session",
+      type: Message.JOIN_SESSION,
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Leave a session
   leave() {
     Client.sendMessage({
-      type: "leave-session"
+      type: Message.LEAVE_SESSION
     });
     
     document.getElementById("menuScreen").style.display = "grid";
@@ -207,7 +207,7 @@ const Session = {
   
   changeId() {
     Client.sendMessage({
-      type: "session-id",
+      type: Message.SESSION_ID,
       id: document.getElementById("sessionIdNew").value
     });
   },
@@ -252,14 +252,14 @@ const Session = {
   
   setPassword() {
     Client.sendMessage({
-      type: "session-password",
+      type: Message.SESSION_PASSWORD,
       password: document.getElementById("sessionPasswordNew").value
     });
   },
   
   enterPassword() {
     Client.sendMessage({
-      type: "enter-password",
+      type: Message.ENTER_PASSWORD,
       password: document.getElementById("enterSessionPassword").value,
       id: document.getElementById("enterSessionPasswordId").textContent
     });
@@ -270,7 +270,7 @@ const Session = {
     if (name.length < 1) name = null;
     if (name !== clients[Client.id].name) {
       Client.sendMessage({
-        type: "user-name",
+        type: Message.USER_NAME,
         name: name,
         clientId: Client.id
       });
