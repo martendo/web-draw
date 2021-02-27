@@ -282,8 +282,7 @@ function startTool(point) {
       const fillColour = penColours[currentPen];
       const fillBy = parseInt(document.getElementById("fillBySelect").value, 10);
       const changeAlpha = document.getElementById("fillChangeAlpha").checked;
-      Client.sendMessage({
-        type: "fill",
+      const fill = {
         x: point.x,
         y: point.y,
         colour: fillColour,
@@ -292,8 +291,12 @@ function startTool(point) {
         compOp: compOp,
         fillBy: fillBy,
         changeAlpha: changeAlpha
+      };
+      Client.sendMessage({
+        type: "fill",
+        fill: fill
       });
-      Fill.fill(point.x, point.y, fillColour, threshold, opacity, compOp, fillBy, changeAlpha);
+      Fill.fill(fill);
       break;
     }
     case "colourPicker": {

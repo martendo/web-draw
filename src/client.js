@@ -280,7 +280,7 @@ const Client = {
       }
       // Another user has used the flood fill tool
       case "fill": {
-        Fill.fill(data.x, data.y, data.colour, data.threshold, data.opacity, data.compOp, data.fillBy, data.changeAlpha);
+        Fill.fill(data.fill);
         break;
       }
       // Another user has cleared the canvas

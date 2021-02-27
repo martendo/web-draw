@@ -153,7 +153,7 @@ const ActionHistory = {
         break;
       }
       case "fill": {
-        Fill.fill(action.data.x, action.data.y, action.data.colour, action.data.threshold, action.data.opacity, action.data.compOp, action.data.fillBy, action.data.changeAlpha, false);
+        Fill.fill(action.data, false);
         break;
       }
       case "clear": {

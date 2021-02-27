@@ -60,7 +60,8 @@ const Fill = {
     return true;
   },
   // Fill an area of the same colour
-  fill(startX, startY, colour, threshold, opacity, compOp, fillBy, changeAlpha, user = true) {
+  fill({ x, y, colour, threshold, opacity, compOp, fillBy, changeAlpha }, user = true) {
+    const startX = x, startY = y;
     const fillColour = Colour.hexToRgb(colour, 255 * opacity);
     const canvasWidth = Session.canvas.width, canvasHeight = Session.canvas.height;
     var pixelStack = [[startX, startY]],
