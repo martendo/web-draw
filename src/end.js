@@ -510,6 +510,6 @@ document.getElementById("selectClearBtn").addEventListener("click", () => {
 });
 
 window.addEventListener("beforeunload", () => {
-  Client.socket.onclose = () => Session.leave();
+  Session.leave();
   Client.socket.close(1000);
 });
