@@ -62,7 +62,7 @@ const Session = {
     c.forEach((client) => {
       if (client.id !== Client.id) {
         const img = document.createElement("img");
-        img.src = Icons.cursor;
+        img.src = Images.CURSOR;
         img.classList.add("cursorIcon");
         img.id = "cursorIcon-" + client.id;
         document.body.appendChild(img);

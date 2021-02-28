@@ -264,7 +264,7 @@ const ActionHistory = {
           const btn = document.createElement("img");
           btn.classList.add("actionMoveDown");
           btn.title = "Move this action down";
-          btn.src = Icons.down;
+          btn.src = Images.DOWN;
           btn.addEventListener("click", () => this.moveAction(num, +1));
           cells[1].appendChild(btn);
         }
@@ -360,7 +360,7 @@ const ActionHistory = {
       const toggleBtn = document.createElement("img");
       toggleBtn.classList.add("actionToggle");
       toggleBtn.title = "Toggle this action";
-      toggleBtn.src = enabled ? Icons.visible : Icons.noVisible;
+      toggleBtn.src = enabled ? Images.VISIBLE : Images.NO_VISIBLE;
       toggleBtn.addEventListener("click", () => this.toggleAction(num));
       toggleCell.appendChild(toggleBtn);
       
@@ -370,7 +370,7 @@ const ActionHistory = {
         const upBtn = document.createElement("img");
         upBtn.classList.add("actionMoveUp");
         upBtn.title = "Move this action up";
-        upBtn.src = Icons.up;
+        upBtn.src = Images.UP;
         upBtn.addEventListener("click", () => this.moveAction(num, -1));
         moveCell.appendChild(upBtn);
       }
@@ -379,7 +379,7 @@ const ActionHistory = {
         const downBtn = document.createElement("img");
         downBtn.classList.add("actionMoveDown");
         downBtn.title = "Move this action down";
-        downBtn.src = Icons.down;
+        downBtn.src = Images.DOWN;
         downBtn.addEventListener("click", () => this.moveAction(num, +1));
         moveCell.appendChild(downBtn);
       }
