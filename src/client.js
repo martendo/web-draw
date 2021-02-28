@@ -403,19 +403,21 @@ const Client = {
       case Message.REQUEST_CANVAS: {
         this.sendMessage({
           type: Message.RESPONSE_CANVAS,
-          actions: {
-            order: Session.actionOrder,
-            clients: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action]))
-          },
-          history: ActionHistory.actions,
-          pos: ActionHistory.pos,
+          data: [
+            ActionHistory.actions,
+            ActionHistory.pos,
+            [
+              Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action])),
+              Session.actionOrder
+            ]
+          ],
           clientId: data.clientId
         });
         break;
       }
       // The server has received a copy of the canvas from the first user
       case Message.RESPONSE_CANVAS: {
-        Canvas.setup(data);
+        Canvas.setup(data.data);
         break;
       }
       // Another user has opened a canvas file

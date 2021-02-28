@@ -278,10 +278,10 @@ const Canvas = {
   save() {
     const a = document.createElement("a");
     a.style.display = "none";
-    const file = new Blob([msgpack.encode({
-      history: ActionHistory.actions,
-      pos: ActionHistory.pos
-    })], { type: "application/octet-stream" });
+    const file = new Blob([msgpack.encode([
+      ActionHistory.actions,
+      ActionHistory.pos
+    ])], { type: "application/octet-stream" });
     const url = URL.createObjectURL(file);
     a.href = url;
     a.download = "image.bin";
@@ -298,10 +298,10 @@ const Canvas = {
     reader.onload = () => {
       Modal.open("retrieveModal");
       
-      const backupHistory = {
-        actions: ActionHistory.actions.slice(),
-        pos: ActionHistory.pos
-      };
+      const backupHistory = [
+        ActionHistory.actions.slice(),
+        ActionHistory.pos
+      ];
       
       const data = new Uint8Array(reader.result);
       try {
@@ -313,8 +313,8 @@ const Canvas = {
         });
       } catch (err) {
         console.error("Error setting up canvas: " + err);
-        ActionHistory.actions = backupHistory.actions;
-        ActionHistory.pos = backupHistory.pos;
+        ActionHistory.actions = backupHistory[0];
+        ActionHistory.pos = backupHistory[1];
         ActionHistory.doAllActions();
         Modal.close("retrieveModal");
         Modal.open("oldCanvasFileModal");
@@ -323,19 +323,19 @@ const Canvas = {
     reader.readAsArrayBuffer(file);
   },
   
-  setup(data) {
+  setup([ history, pos, [ clientActions, actionOrder ] = [] ]) {
     this.init();
     // Zoom canvas to fit in canvas area if it doesn't already
     this.zoomToWindow("fit", false);
     Session.ctx.fillStyle = Colour.BLANK;
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
-    ActionHistory.actions = data.history;
-    ActionHistory.pos = data.pos;
-    if (data.actions) {
-      for (const [clientId, action] of Object.entries(data.actions.clients)) {
+    ActionHistory.actions = history;
+    ActionHistory.pos = pos;
+    if (clientActions) {
+      for (const [clientId, action] of Object.entries(clientActions)) {
         clients[clientId].action = action;
       }
-      Session.actionOrder = data.actions.order;
+      Session.actionOrder = actionOrder;
     }
     ActionHistory.doAllActions();
     Modal.close("retrieveModal");
