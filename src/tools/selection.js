@@ -384,7 +384,7 @@ const SelectTool = {
   paste(sel, user = true) {
     if (sel.data) this.drawData(Session.ctx, sel);
     if (user) {
-      ActionHistory.addToUndo("selection-paste", {
+      ActionHistory.addToUndo(PastAction.SELECTION_PASTE, {
         x: sel.x,
         y: sel.y,
         width: sel.width,
@@ -399,7 +399,7 @@ const SelectTool = {
     Session.ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
     Canvas.update();
     if (user) {
-      ActionHistory.addToUndo("selection-clear", {
+      ActionHistory.addToUndo(PastAction.SELECTION_CLEAR, {
         x: sel.x,
         y: sel.y,
         width: sel.width,

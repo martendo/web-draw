@@ -286,12 +286,12 @@ const Client = {
       // Another user has cleared the canvas
       case Message.CLEAR: {
         Canvas.clear(false);
-        ActionHistory.addToUndo("clear");
+        ActionHistory.addToUndo(PastAction.CLEAR);
         break;
       }
       case Message.CLEAR_BLANK: {
         Canvas.clearBlank(false);
-        ActionHistory.addToUndo("clear-blank");
+        ActionHistory.addToUndo(PastAction.CLEAR_BLANK);
         break;
       }
       // Another user has imported a picture onto the canvas
@@ -350,7 +350,7 @@ const Client = {
       }
       case Message.COMMIT_LINE: {
         LineTool.draw(data.line, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo("line", data.line);
+        ActionHistory.addToUndo(PastAction.LINE, data.line);
         Session.endClientAction(data.clientId);
         break;
       }
@@ -364,7 +364,7 @@ const Client = {
       }
       case Message.COMMIT_RECT: {
         RectTool.draw(data.rect, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo("rect", data.rect);
+        ActionHistory.addToUndo(PastAction.RECT, data.rect);
         Session.endClientAction(data.clientId);
         break;
       }
@@ -378,7 +378,7 @@ const Client = {
       }
       case Message.COMMIT_ELLIPSE: {
         EllipseTool.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo("ellipse", data.ellipse);
+        ActionHistory.addToUndo(PastAction.ELLIPSE, data.ellipse);
         Session.endClientAction(data.clientId);
         break;
       }
@@ -531,7 +531,7 @@ const Client = {
         Chat.box.classList.add("displayNone");
         
         Canvas.init();
-        ActionHistory.addToUndo("[ Base Image ]");
+        ActionHistory.addToUndo(PastAction.BASE);
         
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);

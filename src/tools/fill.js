@@ -162,7 +162,7 @@ const FillTool = {
       save: true
     });
     if (user) {
-      ActionHistory.addToUndo("fill", fill);
+      ActionHistory.addToUndo(PastAction.FILL, fill);
     }
   }
 };

@@ -46,6 +46,17 @@ class PastAction {
     });
   }
 }
+PastAction.BASE = 0;
+PastAction.STROKE = 1;
+PastAction.FILL = 2;
+PastAction.SELECTION_CLEAR = 3;
+PastAction.SELECTION_PASTE = 4;
+PastAction.LINE = 5;
+PastAction.RECT = 6;
+PastAction.ELLIPSE = 7;
+PastAction.CLEAR = 8;
+PastAction.CLEAR_BLANK = 9;
+PastAction.RESIZE_CANVAS = 10;
 
 const ActionHistory = {
   // All actions made to the session canvas
@@ -142,7 +153,7 @@ const ActionHistory = {
     if (!action.enabled) return;
     
     switch (action.type) {
-      case "stroke": {
+      case PastAction.STROKE: {
         PenTool.drawStroke(Client.ctx, action.data, {
           save: true,
           only: {
@@ -152,31 +163,31 @@ const ActionHistory = {
         });
         break;
       }
-      case "fill": {
+      case PastAction.FILL: {
         FillTool.fill(action.data, false);
         break;
       }
-      case "clear": {
+      case PastAction.CLEAR: {
         Canvas.clear(false);
         break;
       }
-      case "clear-blank": {
+      case PastAction.CLEAR_BLANK: {
         Canvas.clearBlank(false);
         break;
       }
-      case "resize-canvas": {
+      case PastAction.RESIZE_CANVAS: {
         Canvas.resize(action.data, false);
         break;
       }
-      case "selection-clear": {
+      case PastAction.SELECTION_CLEAR: {
         SelectTool.clear(action.data, action.data.colour, false);
         break;
       }
-      case "selection-paste": {
+      case PastAction.SELECTION_PASTE: {
         SelectTool.paste(action.data, false);
         break;
       }
-      case "line": {
+      case PastAction.LINE: {
         LineTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
@@ -186,7 +197,7 @@ const ActionHistory = {
         });
         break;
       }
-      case "rect": {
+      case PastAction.RECT: {
         RectTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
@@ -196,7 +207,7 @@ const ActionHistory = {
         });
         break;
       }
-      case "ellipse": {
+      case PastAction.ELLIPSE: {
         EllipseTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
@@ -241,7 +252,7 @@ const ActionHistory = {
   // Action history table
   _table: document.getElementById("historyTabBox"),
   
-  addActionToTable(name, enabled = true, updateLast = true) {
+  addActionToTable(type, enabled = true, updateLast = true) {
     var num = this._table.children[0].children.length - 1;
     
     // Add button to previous action to move down
@@ -261,45 +272,51 @@ const ActionHistory = {
     }
     
     var editable = true;
-    // Make names more user-friendly
-    switch (name) {
-      case "stroke": {
+    // Show a user-friendly action name
+    var name;
+    switch (type) {
+      case PastAction.BASE: {
+        name = "[ Base Image ]";
+        editable = false;
+        break;
+      }
+      case PastAction.STROKE: {
         name = "Pen";
         break;
       }
-      case "fill": {
+      case PastAction.FILL: {
         name = "Flood fill";
         break;
       }
-      case "line": {
+      case PastAction.LINE: {
         name = "Line";
         break;
       }
-      case "rect": {
+      case PastAction.RECT: {
         name = "Rectangle";
         break;
       }
-      case "ellipse": {
+      case PastAction.ELLIPSE: {
         name = "Ellipse";
         break;
       }
-      case "selection-paste": {
-        name = "Paste";
+      case PastAction.SELECTION_PASTE: {
+        name = "Paste selection";
         break;
       }
-      case "selection-clear": {
+      case PastAction.SELECTION_CLEAR: {
         name = "Clear selection";
         break;
       }
-      case "clear-blank": {
+      case PastAction.CLEAR_BLANK: {
         name = "Clear canvas";
         break;
       }
-      case "clear": {
+      case PastAction.CLEAR: {
         name = "Clear canvas to transparent";
         break;
       }
-      case "resize-canvas": {
+      case PastAction.RESIZE_CANVAS: {
         name = "Resize canvas";
         break;
       }
