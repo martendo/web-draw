@@ -500,7 +500,7 @@ const SelectTool = {
       selection.data.x += selection.data.width;
       selection.data.width = Math.abs(selection.data.width);
       if (selection.data.data) selection.data.flipped.x = !selection.data.flipped.x;
-      if (selection.type === "selection-resize") {
+      if (selection.type === Action.SELECTION_RESIZE) {
         switch (selection.data.resize.handle) {
           case 0: {
             selection.data.resize.handle = 2;
@@ -533,7 +533,7 @@ const SelectTool = {
       selection.data.y += selection.data.height;
       selection.data.height = Math.abs(selection.data.height);
       if (selection.data.data) selection.data.flipped.y = !selection.data.flipped.y;
-      if (selection.type === "selection-resize") {
+      if (selection.type === Action.SELECTION_RESIZE) {
         switch (selection.data.resize.handle) {
           case 0: {
             selection.data.resize.handle = 5;

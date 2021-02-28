@@ -231,7 +231,7 @@ const Canvas = {
     for (const clientId of Session.actionOrder) {
       const client = clients[clientId];
       const type = client.action.type;
-      if (type !== null && type !== "selecting" && type !== "selection-move" && type !== "selection-resize") {
+      if (type !== null && type !== Action.SELECTING && type !== Action.SELECTION_MOVE && type !== Action.SELECTION_RESIZE) {
         continue;
       }
       SelectTool.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);

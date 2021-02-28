@@ -221,7 +221,7 @@ function mouseHold(event) {
         width: currentAction.data.width,
         height: currentAction.data.height
       };
-      currentAction.type = "selection-resize";
+      currentAction.type = Action.SELECTION_RESIZE;
       Session.startClientAction(Client.id, currentAction);
       return;
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
@@ -229,7 +229,7 @@ function mouseHold(event) {
         x: point.x,
         y: point.y
       };
-      currentAction.type = "selection-move";
+      currentAction.type = Action.SELECTION_MOVE;
       Session.startClientAction(Client.id, currentAction);
       return;
     }
@@ -254,7 +254,7 @@ function startTool(point) {
   switch (tool) {
     case "pen": {
       Session.startClientAction(Client.id, new Action({
-        type: "stroke",
+        type: Action.STROKE,
         data: new Stroke({
           points: [],
           colour: penColours[currentPen],
@@ -341,14 +341,14 @@ function startTool(point) {
         selection: selection
       });
       Session.startClientAction(Client.id, new Action({
-        type: "selecting",
+        type: Action.SELECTING,
         data: selection
       }));
       break;
     }
     case "line": {
       Session.startClientAction(Client.id, new Action({
-        type: "line",
+        type: Action.LINE,
         data: new Line({
           x0: point.x,
           y0: point.y,
@@ -366,7 +366,7 @@ function startTool(point) {
     case "rect": {
       if (!shapeOutline && !shapeFill) break;
       Session.startClientAction(Client.id, new Action({
-        type: "rect",
+        type: Action.RECT,
         data: new Shape({
           x: point.x,
           y: point.y,
@@ -388,7 +388,7 @@ function startTool(point) {
     case "ellipse": {
       if (!shapeOutline && !shapeFill) break;
       Session.startClientAction(Client.id, new Action({
-        type: "ellipse",
+        type: Action.ELLIPSE,
         data: new Shape({
           x: point.x,
           y: point.y,
@@ -439,12 +439,12 @@ function mouseMove(event) {
   const currentAction = clients[Client.id].action;
   const roundedPoint = Canvas.getPixelPos(event, { round: true });
   switch (currentAction.type) {
-    case "stroke": {
+    case Action.STROKE: {
       event.preventDefault();
       PenTool.draw(point.x, point.y);
       break;
     }
-    case "line": {
+    case Action.LINE: {
       event.preventDefault();
       currentAction.data.x1 = point.x, currentAction.data.y1 = point.y;
       Client.sendMessage({
@@ -456,7 +456,7 @@ function mouseMove(event) {
       LineTool.draw(currentAction.data, Client.ctx);
       break;
     }
-    case "rect": {
+    case Action.RECT: {
       event.preventDefault();
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
@@ -469,7 +469,7 @@ function mouseMove(event) {
       RectTool.draw(currentAction.data, Client.ctx);
       break;
     }
-    case "ellipse": {
+    case Action.ELLIPSE: {
       event.preventDefault();
       currentAction.data.width = point.x - currentAction.data.x;
       currentAction.data.height = point.y - currentAction.data.y;
@@ -482,7 +482,7 @@ function mouseMove(event) {
       EllipseTool.draw(currentAction.data, Client.ctx);
       break;
     }
-    case "selecting": {
+    case Action.SELECTING: {
       event.preventDefault();
       currentAction.data.width = roundedPoint.x - currentAction.data.x;
       currentAction.data.height = roundedPoint.y - currentAction.data.y;
@@ -490,7 +490,7 @@ function mouseMove(event) {
       SelectTool.update(false);
       break;
     }
-    case "selection-move": {
+    case Action.SELECTION_MOVE: {
       event.preventDefault();
       currentAction.data.x += roundedPoint.x - currentAction.data.move.x;
       currentAction.data.y += roundedPoint.y - currentAction.data.move.y;
@@ -500,7 +500,7 @@ function mouseMove(event) {
       SelectTool.update(true);
       break;
     }
-    case "selection-resize": {
+    case Action.SELECTION_RESIZE: {
       event.preventDefault();
       // 0-1-2
       // 3   4
@@ -558,10 +558,10 @@ function mouseMove(event) {
   }
   var cursor = "auto";
   if (currentAction.data && currentAction.data.selected) {
-    if (currentAction.type === "selection-resize") {
+    if (currentAction.type === Action.SELECTION_RESIZE) {
       // Always use resizing cursors
       cursor = SelectTool.RESIZE_CURSORS[currentAction.data.resize.handle];
-    } else if (currentAction.type === "selection-move") {
+    } else if (currentAction.type === Action.SELECTION_MOVE) {
       // Always use move cursor
       cursor = "move";
     } else {
@@ -594,7 +594,7 @@ function clearMouseHold(event) {
   const currentAction = clients[Client.id].action;
   var keepAction = false;
   switch (currentAction.type) {
-    case "stroke": {
+    case Action.STROKE: {
       event.preventDefault();
       const point = Canvas.getPixelPos(event);
       PenTool.draw(point.x, point.y);
@@ -605,7 +605,7 @@ function clearMouseHold(event) {
       PenTool.commitStroke(Client.canvas, currentAction.data);
       break;
     }
-    case "line": {
+    case Action.LINE: {
       event.preventDefault();
       Client.sendMessage({
         type: Message.COMMIT_LINE,
@@ -617,7 +617,7 @@ function clearMouseHold(event) {
       ActionHistory.addToUndo("line", currentAction.data);
       break;
     }
-    case "rect": {
+    case Action.RECT: {
       event.preventDefault();
       Client.sendMessage({
         type: Message.COMMIT_RECT,
@@ -629,7 +629,7 @@ function clearMouseHold(event) {
       ActionHistory.addToUndo("rect", currentAction.data);
       break;
     }
-    case "ellipse": {
+    case Action.ELLIPSE: {
       event.preventDefault();
       Client.sendMessage({
         type: Message.COMMIT_ELLIPSE,
@@ -641,7 +641,7 @@ function clearMouseHold(event) {
       ActionHistory.addToUndo("ellipse", currentAction.data);
       break;
     }
-    case "selecting": {
+    case Action.SELECTING: {
       event.preventDefault();
       if (currentAction.data.width && currentAction.data.height) {
         currentAction.data.selected = true;
@@ -654,8 +654,8 @@ function clearMouseHold(event) {
       }
       break;
     }
-    case "selection-move":
-    case "selection-resize": {
+    case Action.SELECTION_MOVE:
+    case Action.SELECTION_RESIZE: {
       event.preventDefault();
       if (!(currentAction.data.width && currentAction.data.height)) {
         currentAction.data.x = currentAction.data.old.x;

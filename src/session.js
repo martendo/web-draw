@@ -38,6 +38,13 @@ class Action {
     });
   }
 }
+Action.STROKE = 0;
+Action.SELECTING = 1;
+Action.SELECTION_MOVE = 2;
+Action.SELECTION_RESIZE = 3;
+Action.LINE = 4;
+Action.RECT = 5;
+Action.ELLIPSE = 6;
 
 const Session = {
   id: null,
@@ -134,28 +141,28 @@ const Session = {
       const isThisClient = clientId === Client.id;
       const action = client.action;
       switch (action.type) {
-        case "stroke": {
+        case Action.STROKE: {
           PenTool.drawStroke(client.ctx, action.data);
           break;
         }
-        case "line": {
+        case Action.LINE: {
           LineTool.draw(action.data, client.ctx);
           break;
         }
-        case "rect": {
+        case Action.RECT: {
           RectTool.draw(action.data, client.ctx);
           break;
         }
-        case "ellipse": {
+        case Action.ELLIPSE: {
           EllipseTool.draw(action.data, client.ctx);
           break;
         }
-        case "selecting": {
+        case Action.SELECTING: {
           SelectTool.draw(client.ctx, action.data, false, isThisClient);
           break;
         }
-        case "selection-move":
-        case "selection-resize": {
+        case Action.SELECTION_MOVE:
+        case Action.SELECTION_RESIZE: {
           SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           break;
         }

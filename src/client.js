@@ -301,7 +301,7 @@ const Client = {
       }
       case Message.SELECTION_CREATE: {
         Session.startClientAction(data.clientId, new Action({
-          type: "selecting",
+          type: Action.SELECTING,
           data: data.selection
         }));
         break;
@@ -342,7 +342,7 @@ const Client = {
       }
       case Message.LINE: {
         Session.startClientAction(data.clientId, new Action({
-          type: "line",
+          type: Action.LINE,
           data: data.line
         }));
         LineTool.draw(data.line, clients[data.clientId].ctx);
@@ -356,7 +356,7 @@ const Client = {
       }
       case Message.RECT: {
         Session.startClientAction(data.clientId, new Action({
-          type: "rect",
+          type: Action.RECT,
           data: data.rect
         }));
         RectTool.draw(data.rect, clients[data.clientId].ctx);
@@ -370,7 +370,7 @@ const Client = {
       }
       case Message.ELLIPSE: {
         Session.startClientAction(data.clientId, new Action({
-          type: "ellipse",
+          type: Action.ELLIPSE,
           data: data.ellipse
         }));
         EllipseTool.draw(data.ellipse, clients[data.clientId].ctx);

@@ -58,7 +58,7 @@ const PenTool = {
   // Add a point to the current stroke and draw it
   draw(x, y) {
     const currentAction = clients[Client.id].action;
-    if (currentAction.type !== "stroke") return false;
+    if (currentAction.type !== Action.STROKE) return false;
     const lastPoint = currentAction.data.points[currentAction.data.points.length - 1];
     if (currentAction.data.points.length > 0 && x === lastPoint[0] && y === lastPoint[1]) return;
     Client.sendMessage({
@@ -73,7 +73,7 @@ const PenTool = {
   // Add a point to another client's current stroke and draw it
   drawClientStroke(clientId) {
     const action = clients[clientId].action;
-    if (action.type !== "stroke") return false;
+    if (action.type !== Action.STROKE) return false;
     this.drawStroke(clients[clientId].ctx, action.data);
   },
   // Commit a stroke to the session canvas (copy it then erase it)
