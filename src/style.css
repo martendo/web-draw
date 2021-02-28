@@ -1017,8 +1017,12 @@ select {
   float: right;
 }
 
-#connectionInfo, #connectionInfo * {
+#connectionInfo, #connectionInfoText {
   font-size: 24px;
+}
+#connectionInfo button {
+  font-size: 24px;
+  margin: 0 8px;
 }
 #connectionInfoWait {
   font-size: 128px;

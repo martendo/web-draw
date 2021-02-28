@@ -176,6 +176,10 @@ const Client = {
       reloadBtn.textContent = "Reload";
       reloadBtn.addEventListener("click", () => location.reload());
       connectionInfo.appendChild(reloadBtn);
+      const downloadBtn = document.createElement("button");
+      downloadBtn.textContent = "Download Canvas";
+      downloadBtn.addEventListener("click", () => Canvas.save());
+      connectionInfo.appendChild(downloadBtn);
       document.getElementById("menuOptionsContainer").style.display = "none";
       
       const waitReconnect = () => {
