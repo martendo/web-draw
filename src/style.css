@@ -841,11 +841,6 @@ label {
   margin: 0;
 }
 
-#displayCanvas {
-  background: var(--transparent-pattern);
-  background-size: 16px;
-}
-
 table {
   border-collapse: collapse;
 }

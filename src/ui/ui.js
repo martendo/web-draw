@@ -49,11 +49,3 @@ function setTheme(theme) {
   // Background and scrollbar colours have changed
   Canvas.drawCanvas();
 }
-
-const Images = Object.freeze({
-  CURSOR: "{{ BASE64:src/img/cursor.png }}",
-  VISIBLE: "{{ BASE64:src/img/visible.png }}",
-  NO_VISIBLE: "{{ BASE64:src/img/no-visible.png }}",
-  UP: "{{ BASE64:src/img/up.png }}",
-  DOWN: "{{ BASE64:src/img/down.png }}"
-});

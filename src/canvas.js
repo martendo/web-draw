@@ -54,6 +54,8 @@ const Canvas = {
   mixingCanvas: document.createElement("canvas"),
   mixingCtx: null,
   
+  _transparentPattern: null,
+  
   init() {
     // Set canvas size
     Session.canvas.width = this.CANVAS_WIDTH;
@@ -222,7 +224,10 @@ const Canvas = {
     
     const imageRect = [-this.pan.x, -this.pan.y, width, height].map((x) => Math.round(x));
     // Show transparency pattern under image
-    this.displayCtx.clearRect(...imageRect);
+    this.displayCtx.fillStyle = this._transparentPattern;
+    this.displayCtx.translate(imageRect[0], imageRect[1]);
+    this.displayCtx.fillRect(0, 0, imageRect[2], imageRect[3]);
+    this.displayCtx.setTransform(1, 0, 0, 1, 0, 0);
     // Actual image
     this.displayCtx.drawImage(this.mixingCanvas, ...imageRect);
     
@@ -469,3 +474,9 @@ const Canvas = {
   }
 };
 Canvas.mixingCtx = Canvas.mixingCanvas.getContext("2d");
+
+const transparentImg = new Image();
+transparentImg.addEventListener("load", () => {
+  Canvas._transparentPattern = Canvas.displayCtx.createPattern(transparentImg, "repeat");
+});
+transparentImg.src = Images.TRANSPARENT;
