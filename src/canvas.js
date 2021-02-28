@@ -68,7 +68,6 @@ const Canvas = {
     }
     // Start with the canvas cleared
     this.clearBlank(false);
-    this.drawCanvas();
   },
   
   // Zoom the canvas with the mouse wheel
@@ -327,8 +326,6 @@ const Canvas = {
     this.init();
     // Zoom canvas to fit in canvas area if it doesn't already
     this.zoomToWindow("fit", false);
-    Session.ctx.fillStyle = Colour.BLANK;
-    Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
     ActionHistory.actions = history;
     ActionHistory.pos = pos;
     if (clientActions) {
@@ -423,7 +420,7 @@ const Canvas = {
         client.ctx.drawImage(clientCanvasCopies[clientId], options.x, options.y);
       }
     }
-    Canvas.update();
+    this.update();
     if (user) {
       ActionHistory.addToUndo(PastAction.RESIZE_CANVAS, options);
     }
