@@ -118,9 +118,6 @@ const Client = {
       if (wait) wait.style.display = "none";
       document.getElementById("menuOptionsContainer").style.display = "block";
       clearInterval(connectionWait);
-      clearTimeout(wakingUp);
-      const info = document.getElementById("wakingUpInfo");
-      if (info) info.remove();
       
       // If reconnected, try to restore
       if (this.tryReconnect != null) {
@@ -172,9 +169,6 @@ const Client = {
       
       const connectionInfo = document.getElementById("connectionInfo");
       clearInterval(connectionWait);
-      clearTimeout(wakingUp);
-      const info = document.getElementById("wakingUpInfo");
-      if (info) info.remove();
       connectionInfo.innerHTML = "Disconnected from server. :(<br><br>";
       connectionInfo.className = "connectionInfoDisconnected";
       connectionInfo.style.display = "block";

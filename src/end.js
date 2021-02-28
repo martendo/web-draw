@@ -100,13 +100,6 @@ const waitConnect = () => {
 const connectionWait = setInterval(() => waitConnect(), 500);
 waitConnect();
 
-const wakingUp = setTimeout(() => {
-  const info = document.createElement("div");
-  info.id = "wakingUpInfo";
-  info.textContent = "You may be waking up the server. It goes to sleep after a bit of inactivity. Hang on tight!"
-  document.getElementById("connectionInfo").appendChild(info);
-}, 3000);
-
 Client.init();
 
 Tools.loadToolSettings(tool);
