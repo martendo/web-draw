@@ -527,7 +527,7 @@ div.separator {
   grid-column: 1;
 }
 .tab {
-  padding: 5px;
+  padding: 5px 20px;
   border-left: 1px solid var(--toolbar-2-border-colour);
   border-right: 1px solid var(--toolbar-2-border-colour);
 }
