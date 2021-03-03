@@ -136,7 +136,7 @@ const Canvas = {
         // Selections are not part of the actual image
         // Type is only null when a selection is present but not currently being modified
         const type = client.action.type;
-        if (type === null || type === "selecting" || type === "selection-move" || type === "selection-resize") {
+        if (type === null || type === Action.SELECTING || type === Action.SELECTION_MOVE || type === Action.SELECTION_RESIZE) {
           continue;
         }
         
