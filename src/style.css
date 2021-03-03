@@ -80,6 +80,7 @@
   --sub-toolbar-2-colour: #f8f8f8; /* "Status" bar */
   --tab-colour: #f6f6f6;
   --tab-hover-colour: #f0f0f0;
+  --tab-active-colour: #e8e8e8;
   
   --chat-box-colour: #fafafa;
   --chat-message-colour: #fefefe;
@@ -169,6 +170,7 @@
   --sub-toolbar-2-colour: #404040; /* "Status" bar */
   --tab-colour: #404040;
   --tab-hover-colour: #484848;
+  --tab-active-colour: #444444;
   
   --chat-box-colour: #585858;
   --chat-message-colour: #707070;
@@ -539,6 +541,9 @@ div.separator {
 }
 .tab:not(.tabSelected):hover {
   background-color: var(--tab-hover-colour);
+}
+.tab:not(.tabSelected):active {
+  background-color: var(--tab-active-colour);
 }
 .tabBar td:not(.tabSelected) {
   border-bottom: 1px solid var(--toolbar-2-border-colour);
