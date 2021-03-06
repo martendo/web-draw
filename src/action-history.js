@@ -260,9 +260,9 @@ const ActionHistory = {
     // Add button to previous action to move down
     const prevRow = this._table.children[0].children[num];
     if (prevRow) {
-      if (!prevRow.getElementsByClassName("actionMoveDown").length) {
+      if (prevRow.getElementsByClassName("actionMoveDown").length < 1) {
         const cells = prevRow.getElementsByClassName("actionButtons");
-        if (cells.length) {
+        if (cells.length > 0) {
           const btn = document.createElement("img");
           btn.classList.add("actionMoveDown");
           btn.title = "Move this action down";
