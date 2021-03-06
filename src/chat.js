@@ -78,7 +78,7 @@ const Chat = {
   },
   
   getFullDate(date) {
-    var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()],
+    var month = MONTH_NAMES[date.getMonth()],
         day = date.getDate(),
         year = date.getFullYear(),
         hours = date.getHours(),

@@ -87,6 +87,17 @@ const NO_ACTION = Object.freeze({
   data: null
 });
 
+const Images = Object.freeze({
+  CURSOR: "{{ BASE64:src/img/cursor.png }}",
+  VISIBLE: "{{ BASE64:src/img/visible.png }}",
+  NO_VISIBLE: "{{ BASE64:src/img/no-visible.png }}",
+  UP: "{{ BASE64:src/img/up.png }}",
+  DOWN: "{{ BASE64:src/img/down.png }}",
+  TRANSPARENT: "{{ BASE64:src/img/transparent.png }}"
+});
+
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
 class Pos2D {
   constructor({ x, y }) {
     this.x = x;
@@ -185,12 +196,3 @@ function isPointInside(x, y, rect) {
 function minmax(num, min, max) {
   return Math.min(Math.max(num, min), max);
 }
-
-const Images = Object.freeze({
-  CURSOR: "{{ BASE64:src/img/cursor.png }}",
-  VISIBLE: "{{ BASE64:src/img/visible.png }}",
-  NO_VISIBLE: "{{ BASE64:src/img/no-visible.png }}",
-  UP: "{{ BASE64:src/img/up.png }}",
-  DOWN: "{{ BASE64:src/img/down.png }}",
-  TRANSPARENT: "{{ BASE64:src/img/transparent.png }}"
-});
