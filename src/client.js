@@ -33,13 +33,17 @@ const Client = {
   
   // Send a message to the server
   sendMessage(data) {
-    if (!this.socket) return;
+    if (!this.socket) {
+      return;
+    }
     const msg = msgpack.encode(data);
     this.socket.send(msg);
   },
   
   sendMouseMove() {
-    if (!mouseMoved.moved) return;
+    if (!mouseMoved.moved) {
+      return;
+    }
     
     const outside = mouseMoved.x < 0 || mouseMoved.x > Session.canvas.width || mouseMoved.y < 0 || mouseMoved.y > Session.canvas.height;
     if (outside && !mouseMoved.outside) {
@@ -88,7 +92,9 @@ const Client = {
       value: value
     });
     for (const clientId in clients) {
-      if (clientId === this.id) continue;
+      if (clientId === this.id) {
+        continue;
+      }
       document.getElementById("cursorIcon-" + clientId).style.display = value ? "block" : "none";
     }
   },
@@ -96,7 +102,9 @@ const Client = {
   disconnect() {
     // Signal gave up
     this.socket = 0;
-    if (this.tryReconnect != null) clearTimeout(this.tryReconnect);
+    if (this.tryReconnect != null) {
+      clearTimeout(this.tryReconnect);
+    }
     Session.leave();
     Modal.close("disconnectModal");
   },
@@ -115,7 +123,9 @@ const Client = {
       Modal.close("errorModal");
       document.getElementById("connectionInfo").style.display = "none";
       const wait = document.getElementById("connectionInfoWait");
-      if (wait) wait.style.display = "none";
+      if (wait) {
+        wait.style.display = "none";
+      }
       document.getElementById("menuOptionsContainer").style.display = "block";
       clearInterval(connectionWait);
       
@@ -159,8 +169,12 @@ const Client = {
     
     // Tell the user when the this.socket has closed
     this.socket.onclose = (event) => {
-      if (this.reconnectionWait) clearInterval(this.reconnectionWait);
-      if (this.socket === 0) return;
+      if (this.reconnectionWait) {
+        clearInterval(this.reconnectionWait);
+      }
+      if (this.socket === 0) {
+        return;
+      }
       this.socket = null;
       
       const text = document.getElementById("disconnectText");
@@ -184,7 +198,9 @@ const Client = {
       
       const waitReconnect = () => {
         const wait = document.getElementById("reconnectWait");
-        if (wait.textContent.length === 3) wait.textContent = "";
+        if (wait.textContent.length === 3) {
+          wait.textContent = "";
+        }
         wait.innerHTML += ".";
       };
       this.reconnectionWait = setInterval(() => waitReconnect(), 500);
@@ -233,8 +249,8 @@ const Client = {
         
         const pingTable = document.getElementById("pingTableBody");
         const row = pingTable.insertRow(-1);
-        const numCell = row.insertCell(-1),
-              latencyCell = row.insertCell(-1);
+        const numCell = row.insertCell(-1);
+        const latencyCell = row.insertCell(-1);
         numCell.textContent = prevPings.length;
         latencyCell.textContent = data.latency + " ms";
         
@@ -382,7 +398,9 @@ const Client = {
       }
       case Message.USER_NAME: {
         clients[data.clientId].name = data.name;
-        if (data.clientId === Client.id) document.getElementById("userName").textContent = data.name || Client.id;
+        if (data.clientId === Client.id) {
+          document.getElementById("userName").textContent = data.name || Client.id;
+        }
         [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name || data.clientId);
         [...document.getElementsByClassName("chatPrivateText-" + data.clientId)].forEach((text) => {
           Chat.writePrivateTextTitle(text, [...text.className.matchAll(/chatPrivateText-([a-z\d]{4})/g)].map((name) => name[1]));
@@ -454,7 +472,9 @@ const Client = {
         break;
       }
       case Message.PASSWORD_SET: {
-        if (data.clientId === this.id) Modal.close("setSessionPasswordModal");
+        if (data.clientId === this.id) {
+          Modal.close("setSessionPasswordModal");
+        }
         Session.updatePassword(data.password);
         break;
       }
@@ -475,7 +495,9 @@ const Client = {
         
         document.getElementById("drawScreen").style.display = "grid";
         document.getElementById("menuScreen").style.display = "none";
-        if (data.total !== 1) Modal.open("retrieveModal");
+        if (data.total !== 1) {
+          Modal.open("retrieveModal");
+        }
         Session.updateId(data.id);
         Session.updatePassword(data.password);
         
@@ -484,7 +506,9 @@ const Client = {
         this.canvas = clients[this.id].canvas;
         this.ctx = clients[this.id].ctx;
         
-        if (data.restore) break;
+        if (data.restore) {
+          break;
+        }
         
         ActionHistory.reset();
         

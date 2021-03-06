@@ -20,7 +20,9 @@
 
 const RectTool = {
   draw(rect, ctx, options) {
-    if (!rect.outline && !rect.fill) return;
+    if (!rect.outline && !rect.fill) {
+      return;
+    }
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     const x = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;

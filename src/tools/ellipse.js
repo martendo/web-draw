@@ -20,7 +20,9 @@
 
 const EllipseTool = {
   draw(ellipse, ctx, options) {
-    if (!ellipse.outline && !ellipse.fill) return;
+    if (!ellipse.outline && !ellipse.fill) {
+      return;
+    }
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     const x = (ellipse.x + (ellipse.x + ellipse.width)) / 2;

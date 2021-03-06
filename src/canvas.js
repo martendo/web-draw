@@ -20,11 +20,11 @@
 
 const Canvas = {
   // Starting canvas dimensions
-  CANVAS_WIDTH:  800,
+  CANVAS_WIDTH: 800,
   CANVAS_HEIGHT: 600,
   
   DEFAULT_ZOOM: 1,
-  MIN_ZOOM:     0,
+  MIN_ZOOM: 0,
   
   SCROLLBAR_WIDTH: 15,
   

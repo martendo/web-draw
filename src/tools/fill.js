@@ -61,35 +61,47 @@ const FillTool = {
       // RGBA
       case 0: {
         for (var i = 0; i < 4; i++) {
-          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) return false;
+          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) {
+            return false;
+          }
         }
         break;
       }
       // RGB
       case 1: {
         for (var i = 0; i < 3; i++) {
-          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) return false;
+          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) {
+            return false;
+          }
         }
         break;
       }
       // Red
       case 2: {
-        if (Math.abs(pixels[offset] - colour[0]) > threshold) return false;
+        if (Math.abs(pixels[offset] - colour[0]) > threshold) {
+          return false;
+        }
         break;
       }
       // Green
       case 3: {
-        if (Math.abs(pixels[offset + 1] - colour[1]) > threshold) return false;
+        if (Math.abs(pixels[offset + 1] - colour[1]) > threshold) {
+          return false;
+        }
         break;
       }
       // Blue
       case 4: {
-        if (Math.abs(pixels[offset + 2] - colour[2]) > threshold) return false;
+        if (Math.abs(pixels[offset + 2] - colour[2]) > threshold) {
+          return false;
+        }
         break;
       }
       // Alpha
       case 5: {
-        if (Math.abs(pixels[offset + 3] - colour[3]) > threshold) return false;
+        if (Math.abs(pixels[offset + 3] - colour[3]) > threshold) {
+          return false;
+        }
         break;
       }
     }
@@ -98,10 +110,11 @@ const FillTool = {
   // Fill an area of the same colour
   fill(fill, user = true) {
     const fillColour = Colour.hexToRgb(fill.colour, 255 * fill.opacity);
-    const canvasWidth = Session.canvas.width, canvasHeight = Session.canvas.height;
-    var pixelStack = [[fill.x, fill.y]],
-        pixels = Session.ctx.getImageData(0, 0, canvasWidth, canvasHeight).data,
-        pixelPos = ((fill.y * canvasWidth) + fill.x) * 4;
+    const canvasWidth = Session.canvas.width;
+    const canvasHeight = Session.canvas.height;
+    const pixels = Session.ctx.getImageData(0, 0, canvasWidth, canvasHeight).data;
+    var pixelStack = [[fill.x, fill.y]];
+    var pixelPos = ((fill.y * canvasWidth) + fill.x) * 4;
     const fillCtx = document.createElement("canvas").getContext("2d");
     fillCtx.canvas.width = canvasWidth;
     fillCtx.canvas.height = canvasHeight;
@@ -114,17 +127,15 @@ const FillTool = {
     ];
     const seen = new Array(pixels.length).fill(false);
     while(pixelStack.length > 0) {
-      var newPos, x, y, reachLeft, reachRight;
-      newPos = pixelStack.pop();
-      x = newPos[0];
-      y = newPos[1];
+      const newPos = pixelStack.pop();
+      const x = newPos[0], y = newPos[1];
       pixelPos = ((y * canvasWidth) + x) * 4;
       while(y-- >= 0 && this.checkPixel(pixels, pixelPos, originalColour, fill.threshold, fill.fillBy)) {
         pixelPos -= canvasWidth * 4;
       }
       pixelPos += canvasWidth * 4;
       y++;
-      var reachLeft = reachRight = false;
+      var reachLeft = false, reachRight = false;
       while(y++ < canvasHeight - 1 && this.checkPixel(pixels, pixelPos, originalColour, fill.threshold, fill.fillBy)) {
         for (var i = 0; i < 4; i++) {
           fillPixels[pixelPos + i] = fillColour[i];

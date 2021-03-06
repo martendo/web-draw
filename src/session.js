@@ -85,7 +85,9 @@ const Session = {
       delete clients[client.id];
       this.endClientAction(client.id);
       const img = document.getElementById("cursorIcon-" + client.id);
-      if (img) img.remove();
+      if (img) {
+        img.remove();
+      }
       Canvas.update();
     });
     this.updateUserInfo(total);
@@ -110,13 +112,15 @@ const Session = {
       table.removeChild(table.children[i]);
     }
     for (const [clientId, client] of Object.entries(clients)) {
-      const row = table.insertRow(-1),
-            idCell = row.insertCell(0),
-            nameCell = row.insertCell(1);
+      const row = table.insertRow(-1);
+      const idCell = row.insertCell(0);
+      const nameCell = row.insertCell(1);
       idCell.textContent = clientId;
       nameCell.textContent = client.name;
       row.classList.add("sessionInfoClient");
-      if (clientId === Client.id) row.classList.add("sessionInfoThisClient");
+      if (clientId === Client.id) {
+        row.classList.add("sessionInfoThisClient");
+      }
       row.title = "Click to send private message";
       row.addEventListener("click", () => {
         Chat.open();
@@ -128,12 +132,16 @@ const Session = {
   
   startClientAction(clientId, action) {
     clients[clientId].action = action;
-    if (!this.actionOrder.includes(clientId)) this.actionOrder.push(clientId);
+    if (!this.actionOrder.includes(clientId)) {
+      this.actionOrder.push(clientId);
+    }
   },
   
   endClientAction(clientId) {
     const index = this.actionOrder.indexOf(clientId);
-    if (index !== -1) this.actionOrder.splice(index, 1);
+    if (index !== -1) {
+      this.actionOrder.splice(index, 1);
+    }
   },
   
   drawCurrentActions() {
@@ -274,7 +282,9 @@ const Session = {
   
   saveUserSettings() {
     var name = document.getElementById("userNameInput").value;
-    if (name.length < 1) name = null;
+    if (name.length < 1) {
+      name = null;
+    }
     if (name !== clients[Client.id].name) {
       Client.sendMessage({
         type: Message.USER_NAME,

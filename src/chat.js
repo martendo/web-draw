@@ -53,13 +53,23 @@ const Chat = {
     const formatted = this.format(msg).replace(/<\w+?>([\s\S]*?)<\/\w+?>/mg, "$1");
     const indexSpace = formatted.indexOf(" ");
     // If message appears empty, don't allow sending it
-    if (formatted.trim() === "" || (formatted.slice(0, 3) === "to:" && (indexSpace === -1 || formatted.slice(indexSpace).trim() === ""))) return;
+    if (
+      formatted.trim() === "" || (
+        formatted.slice(0, 3) === "to:" && (
+          indexSpace === -1 || formatted.slice(indexSpace).trim() === ""
+        )
+      )
+    ) {
+      return;
+    }
     
     this.input.value = "";
     const box = document.getElementById("chatMessages");
     const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
     elementFitHeight(this.input);
-    if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
+    if (isAtBottom) {
+      box.scrollTop = box.scrollHeight - box.clientHeight;
+    }
     Client.sendMessage({
       type: Message.CHAT_MESSAGE,
       message: msg,
@@ -85,7 +95,9 @@ const Chat = {
       // "to:" at beginning of message, already has list
       const split = this.input.value.split(" ");
       // List of IDs already contains ID
-      if (split[0].slice(3).split(",").includes(id)) return;
+      if (split[0].slice(3).split(",").includes(id)) {
+        return;
+      }
       const toLen = split[0].length;
       // Add to the existing list: A comma if there is already an ID in it, the new ID, space and the rest of the message
       this.input.value = this.input.value.slice(0, toLen) + (toLen === 3 ? "" : ",") + id + " " + (this.input.value.slice(toLen + 1) || "");
@@ -105,9 +117,19 @@ const Chat = {
     // 14 = 8px padding, 1px border, 5px margin
     const isAtBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + (last ? last.children[last.children.length - 1].getBoundingClientRect().height : 0) + 14;
     // Create new message bubble if last message was not from the same person or is not of the same type or it was 3 or more minutes ago
-    if (!last || parseInt(last.children[last.children.length - 1].dataset.timestamp, 10) + 1000*60*3 <= msg.timestamp ||
-      (msg.priv ? (!last.classList.contains("chatMessage-" + msg.clientId) || !last.classList.contains("chatMessagePrivate-" + msg.priv))
-                : (!last.classList.contains("chatMessage-" + msg.clientId) || last.classList.contains("chatMessagePrivate")))) {
+    if (
+      !last
+      || parseInt(last.children[last.children.length - 1].dataset.timestamp, 10) + 1000*60*3 < msg.timestamp
+      || (
+        msg.priv ? (
+          !last.classList.contains("chatMessage-" + msg.clientId)
+          || !last.classList.contains("chatMessagePrivate-" + msg.priv)
+        ) : (
+          !last.classList.contains("chatMessage-" + msg.clientId)
+          || last.classList.contains("chatMessagePrivate")
+        )
+      )
+    ) {
       bubble = document.createElement("div");
       bubble.classList.add("chatMessageBubble", "chatMessage-" + msg.clientId);
       const nameRow = document.createElement("div");
