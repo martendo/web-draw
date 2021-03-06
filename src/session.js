@@ -112,9 +112,9 @@ const Session = {
       table.removeChild(table.children[i]);
     }
     for (const [clientId, client] of Object.entries(clients)) {
-      const row = table.insertRow(-1),
-            idCell = row.insertCell(0),
-            nameCell = row.insertCell(1);
+      const row = table.insertRow(-1);
+      const idCell = row.insertCell(0);
+      const nameCell = row.insertCell(1);
       idCell.textContent = clientId;
       nameCell.textContent = client.name;
       row.classList.add("sessionInfoClient");

@@ -249,8 +249,8 @@ const Client = {
         
         const pingTable = document.getElementById("pingTableBody");
         const row = pingTable.insertRow(-1);
-        const numCell = row.insertCell(-1),
-              latencyCell = row.insertCell(-1);
+        const numCell = row.insertCell(-1);
+        const latencyCell = row.insertCell(-1);
         numCell.textContent = prevPings.length;
         latencyCell.textContent = data.latency + " ms";
         
