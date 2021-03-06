@@ -61,35 +61,47 @@ const FillTool = {
       // RGBA
       case 0: {
         for (var i = 0; i < 4; i++) {
-          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) return false;
+          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) {
+            return false;
+          }
         }
         break;
       }
       // RGB
       case 1: {
         for (var i = 0; i < 3; i++) {
-          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) return false;
+          if (Math.abs(pixels[offset + i] - colour[i]) > threshold) {
+            return false;
+          }
         }
         break;
       }
       // Red
       case 2: {
-        if (Math.abs(pixels[offset] - colour[0]) > threshold) return false;
+        if (Math.abs(pixels[offset] - colour[0]) > threshold) {
+          return false;
+        }
         break;
       }
       // Green
       case 3: {
-        if (Math.abs(pixels[offset + 1] - colour[1]) > threshold) return false;
+        if (Math.abs(pixels[offset + 1] - colour[1]) > threshold) {
+          return false;
+        }
         break;
       }
       // Blue
       case 4: {
-        if (Math.abs(pixels[offset + 2] - colour[2]) > threshold) return false;
+        if (Math.abs(pixels[offset + 2] - colour[2]) > threshold) {
+          return false;
+        }
         break;
       }
       // Alpha
       case 5: {
-        if (Math.abs(pixels[offset + 3] - colour[3]) > threshold) return false;
+        if (Math.abs(pixels[offset + 3] - colour[3]) > threshold) {
+          return false;
+        }
         break;
       }
     }

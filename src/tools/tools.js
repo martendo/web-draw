@@ -109,7 +109,9 @@ const Tools = {
   
   // Save current tool's settings
   saveToolSettings(tool) {
-    if (!this.settings[tool]) return;
+    if (!this.settings[tool]) {
+      return;
+    }
     
     for (const [type, inputs] of Object.entries(this.settings[tool])) {
       for (const input of Object.keys(inputs)) {
@@ -133,7 +135,9 @@ const Tools = {
   },
   // Set new tool's settings
   loadToolSettings(tool) {
-    if (!this.settings[tool]) return;
+    if (!this.settings[tool]) {
+      return;
+    }
     
     for (const [type, inputs] of Object.entries(this.settings[tool])) {
       for (const input of Object.keys(inputs)) {
@@ -159,7 +163,9 @@ const Tools = {
 
 // Handle mousedown on canvas
 function mouseHold(event) {
-  if (event.target.tagName !== "CANVAS") return;
+  if (event.target.tagName !== "CANVAS") {
+    return;
+  }
   
   // Scrollbars
   const mouse = Canvas.getCursorPos(event);
@@ -236,7 +242,9 @@ function mouseHold(event) {
   }
   if (tool !== "select" &&
       (point.x < 0 || point.x > Session.canvas.width ||
-       point.y < 0 || point.y > Session.canvas.height)) return;
+       point.y < 0 || point.y > Session.canvas.height)) {
+    return;
+  }
   startTool(point);
 }
 function startTool(point) {
@@ -249,7 +257,9 @@ function startTool(point) {
   const shapeFill    = document.getElementById("shapeFill").checked;
   const caps         = parseInt(document.getElementById("lineCapSelect").value);
   
-  if (tool !== "select") SelectTool.remove();
+  if (tool !== "select") {
+    SelectTool.remove();
+  }
   
   switch (tool) {
     case "pen": {
@@ -364,7 +374,9 @@ function startTool(point) {
       break;
     }
     case "rect": {
-      if (!shapeOutline && !shapeFill) break;
+      if (!shapeOutline && !shapeFill) {
+        break;
+      }
       Session.startClientAction(Client.id, new Action({
         type: Action.RECT,
         data: new Shape({
@@ -386,7 +398,9 @@ function startTool(point) {
       break;
     }
     case "ellipse": {
-      if (!shapeOutline && !shapeFill) break;
+      if (!shapeOutline && !shapeFill) {
+        break;
+      }
       Session.startClientAction(Client.id, new Action({
         type: Action.ELLIPSE,
         data: new Shape({
@@ -412,7 +426,9 @@ function startTool(point) {
 // Handle mousemove (prepare update and add point to stroke if drawing)
 function mouseMove(event) {
   // If not on the drawing "page", ignore
-  if (!document.getElementById("drawScreen").contains(event.target)) return;
+  if (!document.getElementById("drawScreen").contains(event.target)) {
+    return;
+  }
   
   const point = Canvas.getPixelPos(event);
   const posInfo = document.getElementById("cursorPos");
@@ -586,7 +602,9 @@ function mouseMove(event) {
 }
 // Handle mouseup
 function clearMouseHold(event) {
-  if (!clients.hasOwnProperty(Client.id)) return;
+  if (!clients.hasOwnProperty(Client.id)) {
+    return;
+  }
   
   Canvas.scrollbarX.drag = null;
   Canvas.scrollbarY.drag = null;
@@ -675,7 +693,9 @@ function clearMouseHold(event) {
     }
   }
   clients[Client.id].action.type = null;
-  if (!keepAction) Session.endClientAction(Client.id);
+  if (!keepAction) {
+    Session.endClientAction(Client.id);
+  }
 }
 
 // Switch the current tool

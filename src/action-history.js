@@ -150,7 +150,9 @@ const ActionHistory = {
   
   // Handle different types of actions
   doAction(action) {
-    if (!action.enabled) return;
+    if (!action.enabled) {
+      return;
+    }
     
     switch (action.type) {
       case PastAction.STROKE: {
@@ -329,7 +331,9 @@ const ActionHistory = {
     const row = this._table.insertRow(-1);
     num++;
     row.addEventListener("click", (event) => {
-      if (event.target.tagName === "IMG") return;
+      if (event.target.tagName === "IMG") {
+        return;
+      }
       Client.sendMessage({
         type: Message.MOVE_HISTORY,
         num: num
@@ -385,7 +389,9 @@ const ActionHistory = {
       }
     }
     
-    if (updateLast) this.updateLastAction();
+    if (updateLast) {
+      this.updateLastAction();
+    }
   },
   updateLastAction() {
     [...document.getElementsByClassName("lastAction")].forEach((el) => {

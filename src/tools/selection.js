@@ -161,7 +161,9 @@ const SelectTool = {
     selection.width *= Canvas.zoom;
     selection.height *= Canvas.zoom;
     
-    if (!selection.selected) return false;
+    if (!selection.selected) {
+      return false;
+    }
     var handle = null;
     if (isPointInside(point.x, point.y, {
       x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
@@ -254,7 +256,9 @@ const SelectTool = {
     }
     
     // Selected image data
-    if (sel.data) this.drawData(ctx, sel, adjust);
+    if (sel.data) {
+      this.drawData(ctx, sel, adjust);
+    }
     
     // Selection box
     ctx.strokeStyle = "#000000";
@@ -327,7 +331,9 @@ const SelectTool = {
                        this.HANDLE_SIZE, this.HANDLE_SIZE);
     }
     
-    if (!adjust) Canvas.update();
+    if (!adjust) {
+      Canvas.update();
+    }
   },
   update(handles) {
     const selection = clients[Client.id].action.data;
@@ -382,7 +388,9 @@ const SelectTool = {
     this.draw(ctx, sel, true);
   },
   paste(sel, user = true) {
-    if (sel.data) this.drawData(Session.ctx, sel);
+    if (sel.data) {
+      this.drawData(Session.ctx, sel);
+    }
     if (user) {
       ActionHistory.addToUndo(PastAction.SELECTION_PASTE, {
         x: sel.x,
@@ -409,7 +417,9 @@ const SelectTool = {
     }
   },
   doCopy() {
-    if (!clients[Client.id].action.data.selected) return;
+    if (!clients[Client.id].action.data.selected) {
+      return;
+    }
     Client.sendMessage({
       type: Message.SELECTION_COPY,
       clientId: Client.id
@@ -417,7 +427,9 @@ const SelectTool = {
     this.copy(Client.ctx, clients[Client.id].action.data);
   },
   doCut() {
-    if (!clients[Client.id].action.data.selected) return;
+    if (!clients[Client.id].action.data.selected) {
+      return;
+    }
     Client.sendMessage({
       type: Message.SELECTION_CUT,
       colour: penColours[1],
@@ -426,7 +438,9 @@ const SelectTool = {
     this.cut(Client.ctx, clients[Client.id].action.data, penColours[1]);
   },
   doPaste() {
-    if (!clients[Client.id].action.data.selected || !clients[Client.id].action.data.data) return;
+    if (!clients[Client.id].action.data.selected || !clients[Client.id].action.data.data) {
+      return;
+    }
     Client.sendMessage({
       type: Message.SELECTION_PASTE,
       clientId: Client.id
@@ -488,7 +502,9 @@ const SelectTool = {
         data: selection
       }));
       this.draw(clients[clientId].ctx, selection, clientId === Client.id, false);
-      if (clientId === Client.id) this.updateSizeAndPos();
+      if (clientId === Client.id) {
+        this.updateSizeAndPos();
+      }
     });
     img.src = src;
   },
@@ -499,7 +515,9 @@ const SelectTool = {
     if (selection.data.width < 0) {
       selection.data.x += selection.data.width;
       selection.data.width = Math.abs(selection.data.width);
-      if (selection.data.data) selection.data.flipped.x = !selection.data.flipped.x;
+      if (selection.data.data) {
+        selection.data.flipped.x = !selection.data.flipped.x;
+      }
       if (selection.type === Action.SELECTION_RESIZE) {
         switch (selection.data.resize.handle) {
           case 0: {
@@ -532,7 +550,9 @@ const SelectTool = {
     if (selection.data.height < 0) {
       selection.data.y += selection.data.height;
       selection.data.height = Math.abs(selection.data.height);
-      if (selection.data.data) selection.data.flipped.y = !selection.data.flipped.y;
+      if (selection.data.data) {
+        selection.data.flipped.y = !selection.data.flipped.y;
+      }
       if (selection.type === Action.SELECTION_RESIZE) {
         switch (selection.data.resize.handle) {
           case 0: {

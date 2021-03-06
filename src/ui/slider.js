@@ -49,7 +49,9 @@ const Slider = {
   },
   
   update(event) {
-    if (!this.current) return;
+    if (!this.current) {
+      return;
+    }
     const input = document.getElementById(this.current + "Input");
     const rect = input.getBoundingClientRect();
     const dx = event.clientX - rect.left;
@@ -65,10 +67,14 @@ const Slider = {
     document.getElementById(id + "Value").textContent = value;
     
     const min = parseFloat(input.dataset.min);
-    if (!fraction) fraction = (value - min) / (parseFloat(input.dataset.width) - min);
+    if (!fraction) {
+      fraction = (value - min) / (parseFloat(input.dataset.width) - min);
+    }
     document.getElementById(id + "Bar").style.width = minmax(fraction * 100, 0, 100) + "%";
     
-    if (input.dataset.callback && callback) this.CALLBACKS[input.dataset.callback](value);
+    if (input.dataset.callback && callback) {
+      this.CALLBACKS[input.dataset.callback](value);
+    }
   },
   arrow(id, dir) {
     const slider = document.getElementById(id + "Input");
@@ -82,11 +88,15 @@ for (var i = 0; i < sliders.length; i++) {
   const slider = sliders[i];
   const id = slider.id.slice(0, -("Input".length));
   document.getElementById(id + "Value").addEventListener("keydown", (event) => {
-    if (event.key !== "Enter") return;
+    if (event.key !== "Enter") {
+      return;
+    }
     event.preventDefault();
     // Manually enter a value
     var value = parseFloat(event.target.textContent);
-    if (typeof value !== "number" || isNaN(value)) return;
+    if (typeof value !== "number" || isNaN(value)) {
+      return;
+    }
     if (value > slider.dataset.max) {
       value = parseFloat(slider.dataset.max);
     } else if (value < slider.dataset.min) {

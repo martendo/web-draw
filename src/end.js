@@ -90,11 +90,15 @@ var cachedMouseEvent = null;
 var customColours = [];
 
 // Tell the user if their browser does not support WebSockets
-if (!("WebSocket" in window)) Modal.open("noWsModal");
+if (!("WebSocket" in window)) {
+  Modal.open("noWsModal");
+}
 
 const waitConnect = () => {
   const wait = document.getElementById("connectionInfoWait");
-  if (wait.textContent.length === 3) wait.textContent = "";
+  if (wait.textContent.length === 3) {
+    wait.textContent = "";
+  }
   wait.innerHTML += "&#183;";
 };
 const connectionWait = setInterval(() => waitConnect(), 500);
@@ -111,12 +115,16 @@ document.addEventListener("pointercancel", (event) => clearMouseHold(event), { p
 document.addEventListener("pointerleave", (event) => clearMouseHold(event), { passive: false });
 document.addEventListener("contextmenu", (event) => {
   const tagName = event.target.tagName;
-  if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA") return;
+  if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA") {
+    return;
+  }
   event.preventDefault();
   event.stopPropagation();
 });
 document.addEventListener("click", (event) => {
-  if (event.target.tagName === "LI") return;
+  if (event.target.tagName === "LI") {
+    return;
+  }
   const selected = document.getElementsByClassName("menuSelected");
   for (var i = 0; i < selected.length; i++) {
     selected[i].classList.remove("menuSelected");
@@ -132,7 +140,9 @@ Canvas.displayCanvas.addEventListener("pointermove", (event) => {
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
-  notTyping: if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
+  
+  notTyping:
+  if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
     if (!event.ctrlKey) {
       switch (event.key) {
         case "1": {
@@ -179,17 +189,23 @@ document.addEventListener("keydown", (event) => {
           break;
         }
         case "c": {
-          if (tool !== "select") return;
+          if (tool !== "select") {
+            break notTyping;
+          }
           SelectTool.doCopy();
           break;
         }
         case "x": {
-          if (tool !== "select") return;
+          if (tool !== "select") {
+            break notTyping;
+          };
           SelectTool.doCut();
           break;
         }
         case "v": {
-          if (tool !== "select") return;
+          if (tool !== "select") {
+            break notTyping;
+          };
           SelectTool.doPaste();
           break;
         }
@@ -270,7 +286,9 @@ for (let i = 0; i < penColourBoxes.length; i++) {
 const penColourValues = document.getElementsByClassName("penColourValue");
 for (let i = 0; i < penColourValues.length; i++) {
   penColourValues[i].addEventListener("keydown", (event) => {
-    if (event.key === "Enter") Colour.changeWithValue(i, event);
+    if (event.key === "Enter") {
+      Colour.changeWithValue(i, event);
+    }
   });
 }
 for (const toolName of Tools.NAMES) {
@@ -284,7 +302,9 @@ for (let i = 0; i < menuLabels.length; i++) {
     menuLabel.addEventListener("click", () => {
       const selected = document.getElementsByClassName("menuSelected");
       for (var i = 0; i < selected.length; i++) {
-        if (selected[i] !== menuLabel.parentElement) selected[i].classList.remove("menuSelected");
+        if (selected[i] !== menuLabel.parentElement) {
+          selected[i].classList.remove("menuSelected");
+        }
       }
       menuLabel.parentElement.classList.toggle("menuSelected");
       event.stopPropagation();
@@ -352,7 +372,9 @@ Chat.input.addEventListener("input", () => {
   const box = document.getElementById("chatMessages");
   const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
   elementFitHeight(Chat.input);
-  if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
+  if (isAtBottom) {
+    box.scrollTop = box.scrollHeight - box.clientHeight;
+  }
 });
 document.getElementById("chatSendBtn").addEventListener("click", () => Chat.send());
 
