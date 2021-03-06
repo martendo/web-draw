@@ -128,7 +128,7 @@ const FillTool = {
     const seen = new Array(pixels.length).fill(false);
     while(pixelStack.length > 0) {
       const newPos = pixelStack.pop();
-      const x = newPos[0], y = newPos[1];
+      var x = newPos[0], y = newPos[1];
       pixelPos = ((y * canvasWidth) + x) * 4;
       while(y-- >= 0 && this.checkPixel(pixels, pixelPos, originalColour, fill.threshold, fill.fillBy)) {
         pixelPos -= canvasWidth * 4;
