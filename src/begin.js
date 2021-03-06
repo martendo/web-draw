@@ -98,6 +98,8 @@ const Images = Object.freeze({
 
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
+const DOCUMENT_STYLE = window.getComputedStyle(document.documentElement);
+
 class Pos2D {
   constructor({ x, y }) {
     this.x = x;

@@ -170,7 +170,7 @@ const Canvas = {
   drawCanvas() {
     this.displayCtx.imageSmoothingEnabled = false;
     // "Background" - extra space not filled with canvas
-    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--background-1-colour");
+    this.displayCtx.fillStyle = DOCUMENT_STYLE.getPropertyValue("--background-1-colour");
     this.displayCtx.fillRect(0, 0, this.displayCanvas.width, this.displayCanvas.height);
     
     const width = Session.canvas.width * this.zoom;
@@ -254,15 +254,15 @@ const Canvas = {
     this.displayCtx.setLineDash([]);
     
     // Draw scroll bars
-    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-trough-colour");
+    this.displayCtx.fillStyle = DOCUMENT_STYLE.getPropertyValue("--scrollbar-trough-colour");
     this.displayCtx.fillRect(...Object.values(this.scrollbarX.trough));
     this.displayCtx.fillRect(...Object.values(this.scrollbarY.trough));
     
-    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-thumb-colour");
+    this.displayCtx.fillStyle = DOCUMENT_STYLE.getPropertyValue("--scrollbar-thumb-colour");
     this.displayCtx.fillRect(...Object.values(this.scrollbarX.thumb));
     this.displayCtx.fillRect(...Object.values(this.scrollbarY.thumb));
     
-    this.displayCtx.fillStyle = window.getComputedStyle(document.documentElement).getPropertyValue("--scrollbar-corner-colour");
+    this.displayCtx.fillStyle = DOCUMENT_STYLE.getPropertyValue("--scrollbar-corner-colour");
     this.displayCtx.fillRect(this.scrollbarX.trough.width, this.scrollbarY.trough.height, this.SCROLLBAR_WIDTH, this.SCROLLBAR_WIDTH);
   },
   updateCanvasAreaSize() {
