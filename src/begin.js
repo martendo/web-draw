@@ -175,8 +175,10 @@ class ShapeColours {
 
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
-  return (rect.x <= x && x < rect.x + rect.width &&
-          rect.y <= y && y < rect.y + rect.height);
+  return (
+    rect.x <= x && x < rect.x + rect.width
+    && rect.y <= y && y < rect.y + rect.height
+  );
 }
 
 // Use an upper and lower bound on a number
