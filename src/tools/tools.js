@@ -253,12 +253,12 @@ function mouseHold(event) {
 function startTool(point) {
   clients[Client.id].action.type = null;
   
-  const size         = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
-  const opacity      = parseFloat(document.getElementById("opacityInput").dataset.value) / 100;
-  const compOp       = parseInt(document.getElementById("compositeSelect").value, 10);
+  const size = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
+  const opacity = parseFloat(document.getElementById("opacityInput").dataset.value) / 100;
+  const compOp = parseInt(document.getElementById("compositeSelect").value, 10);
   const shapeOutline = document.getElementById("shapeOutline").checked;
-  const shapeFill    = document.getElementById("shapeFill").checked;
-  const caps         = parseInt(document.getElementById("lineCapSelect").value);
+  const shapeFill = document.getElementById("shapeFill").checked;
+  const caps = parseInt(document.getElementById("lineCapSelect").value);
   
   if (tool !== "select") {
     SelectTool.remove();
