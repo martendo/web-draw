@@ -510,78 +510,79 @@ const SelectTool = {
   },
   
   adjustSizeAbsolute() {
-    const selection = clients[Client.id].action;
+    const action = clients[Client.id].action;
+    const selection = action.data;
     
-    if (selection.data.width < 0) {
-      selection.data.x += selection.data.width;
-      selection.data.width = Math.abs(selection.data.width);
-      if (selection.data.data) {
-        selection.data.flipped.x = !selection.data.flipped.x;
+    if (selection.width < 0) {
+      selection.x += selection.width;
+      selection.width = Math.abs(selection.width);
+      if (selection.data) {
+        selection.flipped.x = !selection.flipped.x;
       }
-      if (selection.type === Action.SELECTION_RESIZE) {
-        switch (selection.data.resize.handle) {
+      if (action.type === Action.SELECTION_RESIZE) {
+        switch (selection.resize.handle) {
           case 0: {
-            selection.data.resize.handle = 2;
+            selection.resize.handle = 2;
             break;
           }
           case 2: {
-            selection.data.resize.handle = 0;
+            selection.resize.handle = 0;
             break;
           }
           case 3: {
-            selection.data.resize.handle = 4;
+            selection.resize.handle = 4;
             break;
           }
           case 4: {
-            selection.data.resize.handle = 3;
+            selection.resize.handle = 3;
             break;
           }
           case 5: {
-            selection.data.resize.handle = 7;
+            selection.resize.handle = 7;
             break;
           }
           case 7: {
-            selection.data.resize.handle = 5;
+            selection.resize.handle = 5;
             break;
           }
         }
       }
     }
-    if (selection.data.height < 0) {
-      selection.data.y += selection.data.height;
-      selection.data.height = Math.abs(selection.data.height);
-      if (selection.data.data) {
-        selection.data.flipped.y = !selection.data.flipped.y;
+    if (selection.height < 0) {
+      selection.y += selection.height;
+      selection.height = Math.abs(selection.height);
+      if (selection.data) {
+        selection.flipped.y = !selection.flipped.y;
       }
-      if (selection.type === Action.SELECTION_RESIZE) {
-        switch (selection.data.resize.handle) {
+      if (action.type === Action.SELECTION_RESIZE) {
+        switch (selection.resize.handle) {
           case 0: {
-            selection.data.resize.handle = 5;
+            selection.resize.handle = 5;
             break;
           }
           case 5: {
-            selection.data.resize.handle = 0;
+            selection.resize.handle = 0;
             break;
           }
           case 1: {
-            selection.data.resize.handle = 6;
+            selection.resize.handle = 6;
             break;
           }
           case 6: {
-            selection.data.resize.handle = 1;
+            selection.resize.handle = 1;
             break;
           }
           case 2: {
-            selection.data.resize.handle = 7;
+            selection.resize.handle = 7;
             break;
           }
           case 7: {
-            selection.data.resize.handle = 2;
+            selection.resize.handle = 2;
             break;
           }
         }
       }
     }
-    clients[Client.id].action = selection;
+    clients[Client.id].action = action;
   }
 };
