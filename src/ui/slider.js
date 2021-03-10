@@ -34,7 +34,7 @@ const Slider = {
   
   // All the slider inputs to set up
   DEFAULT_VALUES: {
-    "penWidth": 10,
+    "size": 10,
     "opacity": 100,
     "fillThreshold": 15
   },

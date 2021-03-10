@@ -40,7 +40,7 @@ const Tools = {
       },
       "slider": {
         "opacity": 100,
-        "penWidth": 10,
+        "size": 10,
       },
       "checked": {
         "smoothenStrokes": true
@@ -74,7 +74,7 @@ const Tools = {
       },
       "slider": {
         "opacity": 100,
-        "penWidth": 10,
+        "size": 10,
       }
     },
     
@@ -84,7 +84,7 @@ const Tools = {
       },
       "slider": {
         "opacity": 100,
-        "penWidth": 10,
+        "size": 10,
       },
       "checked": {
         "shapeOutline": true,
@@ -98,7 +98,7 @@ const Tools = {
       },
       "slider": {
         "opacity": 100,
-        "penWidth": 10,
+        "size": 10,
       },
       "checked": {
         "shapeOutline": true,
@@ -253,7 +253,7 @@ function mouseHold(event) {
 function startTool(point) {
   clients[Client.id].action.type = null;
   
-  const size = parseInt(document.getElementById("penWidthInput").dataset.value, 10);
+  const size = parseInt(document.getElementById("sizeInput").dataset.value, 10);
   const opacity = parseFloat(document.getElementById("opacityInput").dataset.value) / 100;
   const compOp = parseInt(document.getElementById("compositeSelect").value, 10);
   const shapeOutline = document.getElementById("shapeOutline").checked;
