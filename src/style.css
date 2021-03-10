@@ -574,17 +574,17 @@ div.separator {
   border-right: none;
   padding-right: 0;
 }
-.actionToggle, .actionMoveUp, .actionMoveDown {
+.actionButtons > img {
   padding: 3px;
   border-radius: 5px;
 }
-.actionToggle {
+.actionButtons > img.actionToggle {
   padding: 7px 3px;
 }
-.actionToggle:hover, .actionMoveUp:hover, .actionMoveDown:hover {
+.actionButtons > img:hover {
   background-color: var(--highlight-background-colour);
 }
-.actionToggle:active, .actionMoveUp:active, .actionMoveDown:active {
+.actionButtons > img:active {
   background-color: var(--highlight-active-background-colour);
 }
 #historyTabBox .lastAction {
