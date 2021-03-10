@@ -263,12 +263,12 @@ const ActionHistory = {
       if (prevRow.getElementsByClassName("actionMoveDown").length < 1) {
         const cells = prevRow.getElementsByClassName("actionButtons");
         if (cells.length > 0) {
-          const btn = document.createElement("img");
-          btn.classList.add("actionMoveDown");
-          btn.title = "Move this action down";
-          btn.src = Images.DOWN;
-          btn.addEventListener("click", () => this.moveAction(num, +1));
-          cells[1].appendChild(btn);
+          cells[1].appendChild(this._makeButton(
+            Images.DOWN,
+            "actionMoveDown",
+            () => this.moveAction(num, +1),
+            "Move this action down"
+          ));
         }
       }
     }
@@ -361,37 +361,45 @@ const ActionHistory = {
     } else {
       const toggleCell = row.insertCell(-1);
       toggleCell.classList.add("actionButtons");
-      const toggleBtn = document.createElement("img");
-      toggleBtn.classList.add("actionToggle");
-      toggleBtn.title = "Toggle this action";
-      toggleBtn.src = enabled ? Images.VISIBLE : Images.NO_VISIBLE;
-      toggleBtn.addEventListener("click", () => this.toggleAction(num));
-      toggleCell.appendChild(toggleBtn);
+      toggleCell.appendChild(this._makeButton(
+        enabled ? Images.VISIBLE : Images.NO_VISIBLE,
+        "actionToggle",
+        () => this.toggleAction(num),
+        "Toggle this action"
+      ));
       
       const moveCell = row.insertCell(-1);
       moveCell.classList.add("actionButtons");
       if (num > 1) {
-        const upBtn = document.createElement("img");
-        upBtn.classList.add("actionMoveUp");
-        upBtn.title = "Move this action up";
-        upBtn.src = Images.UP;
-        upBtn.addEventListener("click", () => this.moveAction(num, -1));
-        moveCell.appendChild(upBtn);
+        moveCell.appendChild(this._makeButton(
+          Images.UP,
+          "actionMoveUp",
+          () => this.moveAction(num, -1),
+          "Move this action up"
+        ));
       }
       
       if (num < this.actions.length - 1) {
-        const downBtn = document.createElement("img");
-        downBtn.classList.add("actionMoveDown");
-        downBtn.title = "Move this action down";
-        downBtn.src = Images.DOWN;
-        downBtn.addEventListener("click", () => this.moveAction(num, +1));
-        moveCell.appendChild(downBtn);
+        moveCell.appendChild(this._makeButton(
+          Images.DOWN,
+          "actionMoveDown",
+          () => this.moveAction(num, +1),
+          "Move this action down"
+        ));
       }
     }
     
     if (updateLast) {
       this.updateLastAction();
     }
+  },
+  _makeButton(img, btnClass, clickHandler, title) {
+    const btn = document.createElement("img");
+    btn.title = title;
+    btn.src = img;
+    btn.addEventListener("click", clickHandler);
+    btn.classList.add(btnClass);
+    return btn;
   },
   updateLastAction() {
     [...document.getElementsByClassName("lastAction")].forEach((el) => {
