@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -49,13 +49,15 @@ const Slider = {
   },
   
   update(event) {
-    if (!this.current) return;
+    if (!this.current) {
+      return;
+    }
     const input = document.getElementById(this.current + "Input");
     const rect = input.getBoundingClientRect();
     const dx = event.clientX - rect.left;
     const fraction = dx / rect.width;
     const min = parseFloat(input.dataset.min);
-    const value = Math.min(Math.max((fraction * (parseFloat(input.dataset.width) - min)) + min, min), parseFloat(input.dataset.max));
+    const value = minmax((fraction * (parseFloat(input.dataset.width) - min)) + min, min, parseFloat(input.dataset.max));
     this.setValue(this.current, value, { fraction });
   },
   setValue(id, value, { fraction = null, callback = true } = {}) {
@@ -65,14 +67,18 @@ const Slider = {
     document.getElementById(id + "Value").textContent = value;
     
     const min = parseFloat(input.dataset.min);
-    if (!fraction) fraction = (value - min) / (parseFloat(input.dataset.width) - min);
-    document.getElementById(id + "Bar").style.width = Math.max(Math.min(fraction * 100, 100), 0) + "%";
+    if (!fraction) {
+      fraction = (value - min) / (parseFloat(input.dataset.width) - min);
+    }
+    document.getElementById(id + "Bar").style.width = minmax(fraction * 100, 0, 100) + "%";
     
-    if (input.dataset.callback && callback) this.CALLBACKS[input.dataset.callback](value);
+    if (input.dataset.callback && callback) {
+      this.CALLBACKS[input.dataset.callback](value);
+    }
   },
   arrow(id, dir) {
     const slider = document.getElementById(id + "Input");
-    const newVal = Math.min(Math.max(parseFloat(slider.dataset.value) + (dir === "up" ? 1 : -1), parseFloat(slider.dataset.min)), parseFloat(slider.dataset.max));
+    const newVal = minmax(parseFloat(slider.dataset.value) + (dir === "up" ? 1 : -1), parseFloat(slider.dataset.min), parseFloat(slider.dataset.max));
     this.setValue(id, newVal);
   }
 };
@@ -82,11 +88,15 @@ for (var i = 0; i < sliders.length; i++) {
   const slider = sliders[i];
   const id = slider.id.slice(0, -("Input".length));
   document.getElementById(id + "Value").addEventListener("keydown", (event) => {
-    if (event.key !== "Enter") return;
+    if (event.key !== "Enter") {
+      return;
+    }
     event.preventDefault();
     // Manually enter a value
     var value = parseFloat(event.target.textContent);
-    if (typeof value !== "number" || isNaN(value)) return;
+    if (typeof value !== "number" || isNaN(value)) {
+      return;
+    }
     if (value > slider.dataset.max) {
       value = parseFloat(slider.dataset.max);
     } else if (value < slider.dataset.min) {

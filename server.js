@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -22,6 +22,7 @@
 
 const WebSocket = require("ws");
 const msgpack   = require("msgpack-lite");
+const Message   = require("./message.js");
 
 const wss = new WebSocket.Server({ port: process.env.PORT || 3000 });
 
@@ -55,7 +56,7 @@ class Session {
     this.clients.set(client.id, client);
     client.session = this;
     client.send({
-      type: "session-joined",
+      type: Message.SESSION_JOINED,
       id: this.id,
       total: this.clients.size,
       clients: [...this.clients.values()].map((c) => {
@@ -68,7 +69,7 @@ class Session {
       restore: restore
     });
     client.broadcast({
-      type: "user-joined",
+      type: Message.USER_JOINED,
       total: this.clients.size,
       client: {
         id: client.id,
@@ -78,7 +79,7 @@ class Session {
     console.log(`Client ${client.id} joined session ${this.id} - ${this.clients.size} clients in session`);
     if (this.clients.size !== 1) {
       [...this.clients.values()][0].send({
-        type: "request-canvas",
+        type: Message.REQUEST_CANVAS,
         clientId: client.id
       });
     }
@@ -90,7 +91,7 @@ class Session {
     }
     this.clients.delete(client.id);
     client.broadcast({
-      type: "user-left",
+      type: Message.USER_LEFT,
       total: this.clients.size,
       client: {
         id: client.id,
@@ -116,7 +117,7 @@ class Session {
   setPassword(client, password) {
     this.password = password;
     this.broadcast({
-      type: "password-set",
+      type: Message.PASSWORD_SET,
       password: this.password,
       clientId: client.id
     });
@@ -173,7 +174,7 @@ function joinSession(client, id, pass = null, restore) {
       checkSessionPassword(client, id, pass);
     } else {
       client.send({
-        type: "enter-password",
+        type: Message.ENTER_PASSWORD,
         id: id
       });
     }
@@ -191,14 +192,14 @@ function checkSessionPassword(client, id, password) {
   const session = sessions.get(id);
   if (!session) {
     client.send({
-      type: "session-no-exist",
+      type: Message.SESSION_NO_EXIST,
       id: id
     });
   } else if (password === session.password) {
     session.join(client);
   } else {
     client.send({
-      type: "wrong-password",
+      type: Message.WRONG_PASSWORD,
       password: password,
       id: id
     });
@@ -208,14 +209,14 @@ function checkSessionPassword(client, id, password) {
 wss.on("connection", (socket) => {
   const client = new Client(socket, createUniqueId(clients));
   client.send({
-    type: "connection-established",
+    type: Message.CONNECTED,
     id: client.id
   });
   console.log(`Client connect ${client.id} - ${clients.size} clients connected`);
   socket.on("pong", () => {
     const latency = Date.now() - client.pingTime;
     client.send({
-      type: "latency",
+      type: Message.LATENCY,
       latency: latency
     });
     client.isAlive = true;
@@ -236,39 +237,39 @@ wss.on("connection", (socket) => {
   socket.on("message", (msg) => {
     const data = msgpack.decode(msg);
     switch (data.type) {
-      case "fill":
-      case "clear":
-      case "clear-blank":
-      case "import-picture":
-      case "open-canvas":
-      case "resize-canvas":
-      case "move-history":
-      case "toggle-action":
-      case "move-action":
-      case "start-stroke":
-      case "add-stroke":
-      case "end-stroke":
-      case "create-selection":
-      case "remove-selection":
-      case "selection-update":
-      case "selection-copy":
-      case "selection-cut":
-      case "selection-paste":
-      case "selection-clear":
-      case "line":
-      case "commit-line":
-      case "rect":
-      case "commit-rect":
-      case "ellipse":
-      case "commit-ellipse": {
+      case Message.FILL:
+      case Message.CLEAR:
+      case Message.CLEAR_BLANK:
+      case Message.IMPORT_PICTURE:
+      case Message.OPEN_CANVAS:
+      case Message.RESIZE_CANVAS:
+      case Message.MOVE_HISTORY:
+      case Message.TOGGLE_ACTION:
+      case Message.MOVE_ACTION:
+      case Message.START_STROKE:
+      case Message.ADD_STROKE:
+      case Message.END_STROKE:
+      case Message.SELECTION_CREATE:
+      case Message.SELECTION_REMOVE:
+      case Message.SELECTION_UPDATE:
+      case Message.SELECTION_COPY:
+      case Message.SELECTION_CUT:
+      case Message.SELECTION_PASTE:
+      case Message.SELECTION_CLEAR:
+      case Message.LINE:
+      case Message.COMMIT_LINE:
+      case Message.RECT:
+      case Message.COMMIT_RECT:
+      case Message.ELLIPSE:
+      case Message.COMMIT_ELLIPSE: {
         client.broadcast(data);
         break;
       }
-      case "mouse-move": {
+      case Message.MOUSE_MOVE: {
         client.broadcast(data, (c) => c.receiveMouse);
         break;
       }
-      case "chat-message": {
+      case Message.CHAT_MESSAGE: {
         const timestamp = Date.now();
         if (data.message.slice(0, 3) === "to:") {
           const idList = data.message.split(" ")[0].slice(3);
@@ -284,7 +285,7 @@ wss.on("connection", (socket) => {
           ids = [...new Set(ids)];
           ids.forEach((id) => {
             client.session.clients.get(id).send({
-              type: "chat-message",
+              type: Message.CHAT_MESSAGE,
               message: data.message.slice(3 + idList.length + 1),
               clientId: client.id,
               priv: ids,
@@ -297,23 +298,23 @@ wss.on("connection", (socket) => {
         }
         break;
       }
-      case "user-name": {
+      case Message.USER_NAME: {
         client.name = data.name;
         client.session.broadcast(data);
         break;
       }
-      case "response-canvas": {
+      case Message.RESPONSE_CANVAS: {
         client.session.clients.get(data.clientId).send(data);
         break;
       }
-      case "create-session": {
+      case Message.CREATE_SESSION: {
         var id = data.id;
         if (id === "") {
           id = createUniqueId(sessions);
         }
         if (sessions.has(id)) {
           client.send({
-            type: "session-already-exist",
+            type: Message.SESSION_ALREADY_EXIST,
             id: id
           });
         } else {
@@ -321,27 +322,27 @@ wss.on("connection", (socket) => {
         }
         break;
       }
-      case "join-session": {
+      case Message.JOIN_SESSION: {
         if (sessions.has(data.id)) {
           joinSession(client, data.id);
         } else {
           client.send({
-            type: "session-no-exist",
+            type: Message.SESSION_NO_EXIST,
             id: data.id
           });
         }
         break;
       }
-      case "enter-password": {
+      case Message.ENTER_PASSWORD: {
         checkSessionPassword(client, data.id, data.password);
         break;
       }
-      case "leave-session": {
+      case Message.LEAVE_SESSION: {
         const session = client.session;
         if (session) session.leave(client);
         break;
       }
-      case "url-session": {
+      case Message.URL_SESSION: {
         if (sessions.has(data.id)) {
           joinSession(client, data.id, data.password);
         } else {
@@ -349,19 +350,19 @@ wss.on("connection", (socket) => {
         }
         break;
       }
-      case "reconnect": {
-        if (!clients.has(data.client.id)) {
+      case Message.RECONNECT: {
+        if (data.client.id && !clients.has(data.client.id)) {
           clients.delete(client.id);
           client.id = data.client.id;
           clients.set(client.id, client);
         }
         client.name = data.client.name;
         client.send({
-          type: "connection-established",
+          type: Message.CONNECTED,
           id: client.id
         });
         
-        if (!sessions.has(data.session.id)) {
+        if (data.session.id && !sessions.has(data.session.id)) {
           if (client.session) sessions.delete(client.session.id);
           client.session = createSession(client, data.session.id, data.session.password, true);
           sessions.set(client.session.id, client.session);
@@ -369,17 +370,17 @@ wss.on("connection", (socket) => {
           joinSession(client, data.session.id, data.session.password);
         }
         client.session.broadcast({
-          type: "user-name",
+          type: Message.USER_NAME,
           name: client.name,
           clientId: client.id
         });
         
         break;
       }
-      case "session-id": {
+      case Message.SESSION_ID: {
         if (sessions.has(data.id)) {
           client.send({
-            type: "session-has-id",
+            type: Message.SESSION_HAS_ID,
             id: data.id
           });
         } else {
@@ -388,26 +389,26 @@ wss.on("connection", (socket) => {
           client.session.id = data.id;
           sessions.set(client.session.id, client.session);
           client.session.broadcast({
-            type: "session-id-changed",
+            type: Message.SESSION_ID_CHANGED,
             id: data.id,
             clientId: client.id
           });
         }
         break;
       }
-      case "session-password": {
+      case Message.SESSION_PASSWORD: {
         client.session.setPassword(client, data.password);
         break;
       }
-      case "send-mouse": {
+      case Message.SEND_MOUSE: {
         client.broadcast({
-          type: "display-cursor",
+          type: Message.DISPLAY_CURSOR,
           clientId: client.id,
           value: data.value
         });
         break;
       }
-      case "receive-mouse": {
+      case Message.RECEIVE_MOUSE: {
         client.receiveMouse = data.value;
         break;
       }

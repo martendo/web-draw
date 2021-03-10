@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -17,6 +17,34 @@
  * You should have received a copy of the GNU General Public License
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+class Action {
+  constructor({ type, data }) {
+    this.type = type;
+    this.data = data;
+  }
+  
+  static packer(action) {
+    return msgpack.encode([
+      action.type,
+      action.data
+    ]);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new Action({
+      type: properties[0],
+      data: properties[1]
+    });
+  }
+}
+Action.STROKE = 0;
+Action.SELECTING = 1;
+Action.SELECTION_MOVE = 2;
+Action.SELECTION_RESIZE = 3;
+Action.LINE = 4;
+Action.RECT = 5;
+Action.ELLIPSE = 6;
 
 const Session = {
   id: null,
@@ -34,7 +62,7 @@ const Session = {
     c.forEach((client) => {
       if (client.id !== Client.id) {
         const img = document.createElement("img");
-        img.src = "/img/cursor.png";
+        img.src = Images.CURSOR;
         img.classList.add("cursorIcon");
         img.id = "cursorIcon-" + client.id;
         document.body.appendChild(img);
@@ -55,8 +83,12 @@ const Session = {
   removeUsers(c, total) {
     c.forEach((client) => {
       delete clients[client.id];
+      this.endClientAction(client.id);
       const img = document.getElementById("cursorIcon-" + client.id);
-      if (img) img.remove();
+      if (img) {
+        img.remove();
+      }
+      Canvas.update();
     });
     this.updateUserInfo(total);
   },
@@ -80,16 +112,17 @@ const Session = {
       table.removeChild(table.children[i]);
     }
     for (const [clientId, client] of Object.entries(clients)) {
-      const row = table.insertRow(-1),
-            idCell = row.insertCell(0),
-            nameCell = row.insertCell(1);
+      const row = table.insertRow(-1);
+      const idCell = row.insertCell(0);
+      const nameCell = row.insertCell(1);
       idCell.textContent = clientId;
       nameCell.textContent = client.name;
       row.classList.add("sessionInfoClient");
-      if (clientId === Client.id) row.classList.add("sessionInfoThisClient");
+      if (clientId === Client.id) {
+        row.classList.add("sessionInfoThisClient");
+      }
       row.title = "Click to send private message";
       row.addEventListener("click", () => {
-        Chat.box.classList.remove("displayNone");
         Chat.open();
         Chat.addMessageTo(clientId);
         Modal.close("sessionInfoModal");
@@ -99,12 +132,16 @@ const Session = {
   
   startClientAction(clientId, action) {
     clients[clientId].action = action;
-    if (!this.actionOrder.includes(clientId)) this.actionOrder.push(clientId);
+    if (!this.actionOrder.includes(clientId)) {
+      this.actionOrder.push(clientId);
+    }
   },
   
   endClientAction(clientId) {
     const index = this.actionOrder.indexOf(clientId);
-    if (index !== -1) this.actionOrder.splice(index, 1);
+    if (index !== -1) {
+      this.actionOrder.splice(index, 1);
+    }
   },
   
   drawCurrentActions() {
@@ -112,35 +149,35 @@ const Session = {
       const isThisClient = clientId === Client.id;
       const action = client.action;
       switch (action.type) {
-        case "stroke": {
-          Pen.drawStroke(client.ctx, action.data);
+        case Action.STROKE: {
+          PenTool.drawStroke(client.ctx, action.data);
           break;
         }
-        case "line": {
-          Line.draw(action.data, client.ctx);
+        case Action.LINE: {
+          LineTool.draw(action.data, client.ctx);
           break;
         }
-        case "rect": {
-          Rect.draw(action.data, client.ctx);
+        case Action.RECT: {
+          RectTool.draw(action.data, client.ctx);
           break;
         }
-        case "ellipse": {
-          Ellipse.draw(action.data, client.ctx);
+        case Action.ELLIPSE: {
+          EllipseTool.draw(action.data, client.ctx);
           break;
         }
-        case "selecting": {
-          Selection.draw(client.ctx, action.data, false, isThisClient);
+        case Action.SELECTING: {
+          SelectTool.draw(client.ctx, action.data, false, isThisClient);
           break;
         }
-        case "selection-move":
-        case "selection-resize": {
-          Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
+        case Action.SELECTION_MOVE:
+        case Action.SELECTION_RESIZE: {
+          SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           break;
         }
         case null: {
           // Area is selected but currently not being modified
           if (action.data && action.data.hasOwnProperty("selected")) {
-            Selection.draw(client.ctx, action.data, isThisClient, isThisClient);
+            SelectTool.draw(client.ctx, action.data, isThisClient, isThisClient);
           }
           break;
         }
@@ -152,21 +189,21 @@ const Session = {
   // Request to create a new session
   create() {
     Client.sendMessage({
-      type: "create-session",
+      type: Message.CREATE_SESSION,
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Request to join a session
   join() {
     Client.sendMessage({
-      type: "join-session",
+      type: Message.JOIN_SESSION,
       id: document.getElementById("sessionIdInput").value
     });
   },
   // Leave a session
   leave() {
     Client.sendMessage({
-      type: "leave-session"
+      type: Message.LEAVE_SESSION
     });
     
     document.getElementById("menuScreen").style.display = "grid";
@@ -175,7 +212,9 @@ const Session = {
     for (var i = 0; i < cursors.length; i++) {
       cursors[i].remove();
     }
-    window.history.replaceState({}, "Web Draw", "/");
+    const title = "Web Draw";
+    document.title = title;
+    window.history.replaceState({}, title, "/");
     document.getElementById("sessionIdInfo").textContent = "N/A";
     
     this.id = null;
@@ -183,14 +222,16 @@ const Session = {
   
   changeId() {
     Client.sendMessage({
-      type: "session-id",
+      type: Message.SESSION_ID,
       id: document.getElementById("sessionIdNew").value
     });
   },
   
   updateId(id) {
     this.id = id;
-    window.history.replaceState({}, `${this.id} - Web Draw`, `/s/${encodeURIComponent(this.id)}`);
+    const title = `Web Draw - ${this.id}`;
+    document.title = title;
+    window.history.replaceState({}, title, `/s/${encodeURIComponent(this.id)}`);
     document.getElementById("sessionId").textContent = this.id;
     document.getElementById("sessionIdInfo").textContent = this.id;
     document.getElementById("sessionIdCurrent").textContent = this.id;
@@ -226,14 +267,14 @@ const Session = {
   
   setPassword() {
     Client.sendMessage({
-      type: "session-password",
+      type: Message.SESSION_PASSWORD,
       password: document.getElementById("sessionPasswordNew").value
     });
   },
   
   enterPassword() {
     Client.sendMessage({
-      type: "enter-password",
+      type: Message.ENTER_PASSWORD,
       password: document.getElementById("enterSessionPassword").value,
       id: document.getElementById("enterSessionPasswordId").textContent
     });
@@ -241,10 +282,12 @@ const Session = {
   
   saveUserSettings() {
     var name = document.getElementById("userNameInput").value;
-    if (name.length < 1) name = null;
+    if (name.length < 1) {
+      name = null;
+    }
     if (name !== clients[Client.id].name) {
       Client.sendMessage({
-        type: "user-name",
+        type: Message.USER_NAME,
         name: name,
         clientId: Client.id
       });

@@ -6,66 +6,46 @@ const UglifyJS = require("uglify-es");
 
 // Missing in uglify-es/tools/domprops.json
 const otherDomprops = [
+  "imageSmoothingEnabled",
   "clipboard",
-  "writeText",
-  "fromEntries"
+  "fromEntries",
+  "writeText"
 ];
 
 const reserved = [
   // Sent over WebSockets
   "actions",
-  "caps",
-  "changeAlpha",
   "client",
   "clientId",
   "clients",
-  "colour",
-  "compOp",
   "data",
   "ellipse",
   "file",
   "fill",
-  "fillBy",
-  "flipped",
-  "handle",
   "height",
   "id",
   "image",
   "latency",
   "line",
-  "lineWidth",
   "message",
-  "move",
   "name",
-  "old",
-  "opacity",
+  "num",
+  "offset",
   "options",
   "order",
-  "outline",
   "outside",
   "password",
-  "points",
   "pos",
   "priv",
   "rect",
-  "redoActions",
-  "resize",
-  "selected",
   "selection",
-  "size",
-  "smoothen",
-  "threshold",
+  "session",
   "total",
   "type",
-  "undoActions",
   "value",
   "width",
   "x",
-  "x0",
-  "x1",
   "y",
-  "y0",
-  "y1",
   
   // HTML data-*
   "callback",
@@ -73,7 +53,13 @@ const reserved = [
   "lastValue",
   "max",
   "min",
-  "timestamp"
+  "timestamp",
+  
+  // msgpack-lite
+  "codec",
+  "preset",
+  "addExtPacker",
+  "addExtUnpacker"
 ];
 
 module.exports = function(grunt) {
@@ -113,23 +99,25 @@ module.exports = function(grunt) {
       build: {
         options: {
           separator: "\n",
-          main: "src/script.js",
+          begin: "src/begin.js",
+          end: "src/end.js",
           // Immediately Invoked Function Expression
-          start: "\"use strict\";(() => {",
-          end: "})();"
+          prepend: "\"use strict\";(() => {",
+          append: "})();"
         },
         files: {
-          "public/script.js": ["src/**/*.js"]
+          "public/script.js": ["message.js", "src/**/*.js"]
         }
       },
       debug: {
         options: {
           separator: "\n",
-          main: "src/script.js",
-          start: "\"use strict\";"
+          begin: "src/begin.js",
+          end: "src/end.js",
+          prepend: "\"use strict\";"
         },
         files: {
-          "public/script.js": ["src/**/*.js"]
+          "public/script.js": ["message.js", "src/**/*.js"]
         }
       }
     },
@@ -179,6 +167,14 @@ module.exports = function(grunt) {
     },
     
     replace: {
+      module: {
+        files: {
+          "public/script.js": [{
+            from: "module.exports",
+            to: "const Message"
+          }]
+        }
+      },
       build: {
         files: {
           "public/index.html": [{
@@ -189,6 +185,19 @@ module.exports = function(grunt) {
             to: "v<%= pkg.version %>"
           }]
         }
+      }
+    },
+    
+    base64Replace: {
+      build: {
+        options: {
+          type: "image/png"
+        },
+        src: [
+          "public/index.html",
+          "public/style.css",
+          "public/script.js"
+        ]
       }
     },
     
@@ -272,22 +281,34 @@ module.exports = function(grunt) {
     });
   });
   
+  // base64Replace
+  grunt.registerMultiTask("base64Replace", function () {
+    this.files.forEach((file) => {
+      file.src.forEach((src) => {
+        grunt.file.write(src, grunt.file.read(src).replace(/{{ BASE64:(.+?) }}/g, (match, $1) => {
+          return `data:${this.options().type};base64,${grunt.file.read($1, { encoding: null }).toString("base64")}`;
+        }));
+      });
+    });
+  });
+  
   // concat
   grunt.registerMultiTask("concat", function () {
     const options = this.options();
     this.files.forEach((file) => {
       var result = "";
+      result += grunt.file.read(options.begin);
       file.src.forEach((filename) => {
-        if (filename === options.main) return;
+        if (filename === options.begin || filename === options.end) return;
         result += grunt.file.read(filename); + options.separator
       });
-      result += grunt.file.read(options.main);
+      result += grunt.file.read(options.end);
       
-      if (options.start) {
-        result = options.start + result;
+      if (options.prepend) {
+        result = options.prepend + result;
       }
-      if (options.end) {
-        result += options.end;
+      if (options.append) {
+        result += options.append;
       }
       
       grunt.file.write(file.dest, result);
@@ -297,7 +318,7 @@ module.exports = function(grunt) {
   // copy
   grunt.registerMultiTask("copy", function () {
     this.files.forEach((file) => {
-      grunt.file.write(file.dest, grunt.file.read(file.src));
+      grunt.file.copy(file.src[0], file.dest);
     });
   });
   
@@ -318,6 +339,6 @@ module.exports = function(grunt) {
     });
   });
   
-  grunt.registerTask("build", ["copy", "concat:build", "htmlmin", "cssmin", "uglify", "replace", "banner"]);
-  grunt.registerTask("debug", ["copy", "concat:debug", "replace"]);
+  grunt.registerTask("build", ["copy", "concat:build", "replace:module", "htmlmin", "cssmin", "uglify", "replace:build", "base64Replace", "banner"]);
+  grunt.registerTask("debug", ["copy", "concat:debug", "replace:module", "replace:build", "base64Replace"]);
 };

@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -33,7 +33,9 @@ const Modal = {
     const modals = document.getElementsByClassName("modal");
     for (var i = 0; i < modals.length; i++) {
       const modal = modals[i];
-      if (modal.style.display !== "none" && modal.style.display !== "") return;
+      if (modal.style.display !== "none" && modal.style.display !== "") {
+        return;
+      }
     }
     this.index = 100;
   }

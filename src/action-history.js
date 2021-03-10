@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -18,95 +18,118 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const ActionHistory = {
-  // All past actions (for undo) and undone actions (for redo)
-  undoActions: [],
-  redoActions: [],
+class PastAction {
+  constructor({ enabled, type, data = null }) {
+    this.enabled = enabled;
+    this.type = type;
+    if (data != null) {
+      this.data = data;
+    }
+  }
   
-  // Push an action onto this.undoActions, enable the undo button, clear this.redoActions
-  addToUndo(data) {
-    this.undoActions.push({
-      enabled: true,
-      data: data
+  static packer(action) {
+    const properties = [
+      action.enabled,
+      action.type
+    ];
+    if (action.data != null) {
+      properties.push(action.data);
+    }
+    return msgpack.encode(properties);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode(buffer);
+    return new PastAction({
+      enabled: properties[0],
+      type: properties[1],
+      data: properties[2]
     });
-    this.enableUndo();
+  }
+}
+PastAction.BASE = 0;
+PastAction.STROKE = 1;
+PastAction.FILL = 2;
+PastAction.SELECTION_CLEAR = 3;
+PastAction.SELECTION_PASTE = 4;
+PastAction.LINE = 5;
+PastAction.RECT = 6;
+PastAction.ELLIPSE = 7;
+PastAction.CLEAR = 8;
+PastAction.CLEAR_BLANK = 9;
+PastAction.RESIZE_CANVAS = 10;
+
+const ActionHistory = {
+  // All actions made to the session canvas
+  actions: [],
+  // The current position in history
+  pos: -1,
+  
+  // Clear redoable actions, push an action onto action history, enable the undo button
+  addToUndo(type, data = null) {
     this.clearRedo();
-    this.removeRedoActionsFromTable();
-    this.addActionToTable(data.type);
+    this.actions.push(new PastAction({
+      enabled: true,
+      type: type,
+      data: data
+    }));
+    this.pos++;
+    this.enableAvailableButtons();
+    this.addActionToTable(type);
   },
   // Undo an action, and send a message to undo (from the user)
   moveWithOffset(offset) {
-    const num = this.undoActions.length + offset;
+    var num = this.pos + offset;
+    while (num >= 0 && num < this.actions.length && !this.actions[num].enabled) {
+      num += offset;
+    }
+    if (num < 0 || num >= this.actions.length) {
+      return;
+    }
     Client.sendMessage({
-      type: "move-history",
+      type: Message.MOVE_HISTORY,
       num: num
     });
     this.moveTo(num);
   },
   // Undo/Redo an action
   moveTo(num) {
-    const offset = num - this.undoActions.length;
-    if (offset < 0) {
+    if (num === this.pos) {
+      return;
+    } else if (num < this.pos) {
       // Undo
-      for (var i = 0; i < -offset; i++) {
-        const previousAction = this.undoActions.pop();
-        if (previousAction) {
-          this.redoActions.push(previousAction);
-          Canvas.init();
-          for (const action of this.undoActions) {
-            this.doAction(action);
-          }
-          this.enableRedo();
-          Session.drawCurrentActions();
-          this.updateLastAction();
-        } else {
-          this.clearUndo();
-          return;
+      while (this.pos > num) {
+        this.pos--;
+        if (this.pos <= 0) {
+          break;
         }
-        if (!this.undoActions.length) {
-          this.clearUndo();
-          return;
-        }
+      }
+      Canvas.init();
+      for (var i = 0; i <= this.pos; i++) {
+        this.doAction(this.actions[i]);
       }
     } else {
       // Redo
-      for (var i = 0; i < offset; i++) {
-        const previousAction = this.redoActions.pop();
-        if (previousAction) {
-          this.undoActions.push(previousAction);
-          this.doAction(previousAction);
-          this.enableUndo();
-          Session.drawCurrentActions();
-          this.updateLastAction();
-        } else {
-          this.clearRedo();
-          return;
+      while (num > this.pos) {
+        this.pos++;
+        if (this.pos >= this.actions.length) {
+          break;
         }
-        if (!this.redoActions.length) {
-          this.clearRedo();
-          return;
-        }
+        this.doAction(this.actions[this.pos]);
       }
     }
+    Session.drawCurrentActions();
+    this.updateLastAction();
+    this.enableAvailableButtons();
   },
   
-  _getRedoPos(num) {
-    return this.redoActions.length - 1 - (num - this.undoActions.length);
-  },
   toggleAction(num, user = true) {
     if (user) {
       Client.sendMessage({
-        type: "toggle-action",
+        type: Message.TOGGLE_ACTION,
         num: num
       });
     }
-    num--;
-    var action;
-    if (num < this.undoActions.length) {
-      action = this.undoActions[num];
-    } else {
-      action = this.redoActions[this._getRedoPos(num)];
-    }
+    const action = this.actions[num];
     action.enabled = !action.enabled;
     this.doAllActions();
     return action.enabled;
@@ -114,99 +137,84 @@ const ActionHistory = {
   moveAction(num, offset, user = true) {
     if (user) {
       Client.sendMessage({
-        type: "move-action",
+        type: Message.MOVE_ACTION,
         num: num,
         offset: offset
       });
     }
-    num--;
-    var action;
-    if (num < this.undoActions.length) {
-      action = this.undoActions.splice(num, 1)[0];
-    } else {
-      action = this.redoActions.splice(this._getRedoPos(num), 1)[0];
-    }
+    const action = this.actions.splice(num, 1)[0];
     num += offset;
-    if (num < this.undoActions.length) {
-      this.undoActions.splice(num, 0, action);
-    } else {
-      this.redoActions.splice(this._getRedoPos(num) + 1, 0, action);
-    }
+    this.actions.splice(num, 0, action);
     this.doAllActions();
   },
   
   // Handle different types of actions
   doAction(action) {
-    if (!action.enabled) return;
+    if (!action.enabled) {
+      return;
+    }
     
-    action = action.data;
     switch (action.type) {
-      case "stroke": {
-        Pen.drawStroke(Client.ctx, action.stroke, {
+      case PastAction.STROKE: {
+        PenTool.drawStroke(Client.ctx, action.data, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.stroke.compOp
+            compOp: action.data.compOp
           }
         });
         break;
       }
-      case "fill": {
-        Fill.fill(action.x, action.y, action.colour, action.threshold, action.opacity, action.compOp, action.fillBy, action.changeAlpha, false);
+      case PastAction.FILL: {
+        FillTool.fill(action.data, false);
         break;
       }
-      case "clear": {
+      case PastAction.CLEAR: {
         Canvas.clear(false);
         break;
       }
-      case "clear-blank": {
+      case PastAction.CLEAR_BLANK: {
         Canvas.clearBlank(false);
         break;
       }
-      case "resize-canvas": {
-        Canvas.resize(action.options, false);
+      case PastAction.RESIZE_CANVAS: {
+        Canvas.resize(action.data, false);
         break;
       }
-      case "selection-clear": {
-        Selection.clear(action.selection, action.colour, false);
+      case PastAction.SELECTION_CLEAR: {
+        SelectTool.clear(action.data, action.data.colour, false);
         break;
       }
-      case "selection-paste": {
-        const sel = {...action.selection};
-        sel.data = new ImageData(
-          action.selection.data.data,
-          action.selection.data.width,
-          action.selection.data.height
-        );
-        Selection.paste(sel, false);
+      case PastAction.SELECTION_PASTE: {
+        SelectTool.paste(action.data, false);
         break;
       }
-      case "line": {
-        Line.draw(action.line, Client.ctx, {
+      case PastAction.LINE: {
+        LineTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.line.compOp
+            compOp: action.data.compOp
           }
         });
         break;
       }
-      case "rect": {
-        Rect.draw(action.rect, Client.ctx, {
+      case PastAction.RECT: {
+        RectTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.rect.compOp
+            compOp: action.data.compOp
           }
         });
         break;
       }
-      case "ellipse": {
-        Ellipse.draw(action.ellipse, Client.ctx, {
+      case PastAction.ELLIPSE: {
+        EllipseTool.draw(action.data, Client.ctx, {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.ellipse.compOp
+            compOp: action.data.compOp
           }
         });
         break;
@@ -215,52 +223,50 @@ const ActionHistory = {
   },
   
   doAllActions() {
-    [...this._table.children[0].children].slice(1).forEach((el) => {
+    // Save scroll amount because the table will be deleted
+    const rightBoxContent = document.getElementById("rightBoxContent");
+    const tempScrollTop = rightBoxContent.scrollTop;
+    
+    [...this._table.children[0].children].forEach((el) => {
       el.remove();
     });
     
     Canvas.init();
     // Add all actions to the action history table
-    for (const action of this.undoActions.concat(this.redoActions.slice().reverse())) {
+    for (const action of this.actions) {
       this.doAction(action);
-      this.addActionToTable(action.data.type, action.enabled, false);
+      this.addActionToTable(action.type, action.enabled, false);
     }
+    
+    // Restore scroll
+    rightBoxContent.scrollTop = tempScrollTop;
+    
     // Undo the redone actions (only done to get canvas images for history)
     Canvas.init();
-    for (const action of this.undoActions) {
-      this.doAction(action);
+    for (var i = 0; i <= this.pos; i++) {
+      this.doAction(this.actions[i]);
     }
     this.updateLastAction();
-    
-    if (this.undoActions.length) {
-      this.enableUndo();
-    } else {
-      this.clearUndo();
-    }
-    if (this.redoActions.length) {
-      this.enableRedo();
-    } else {
-      this.clearRedo();
-    }
+    this.enableAvailableButtons();
     Session.drawCurrentActions();
   },
   
   // Action history table
   _table: document.getElementById("historyTabBox"),
   
-  addActionToTable(name, enabled = true, updateLast = true) {
+  addActionToTable(type, enabled = true, updateLast = true) {
     var num = this._table.children[0].children.length - 1;
     
     // Add button to previous action to move down
     const prevRow = this._table.children[0].children[num];
     if (prevRow) {
-      if (!prevRow.getElementsByClassName("actionMoveDown").length) {
+      if (prevRow.getElementsByClassName("actionMoveDown").length < 1) {
         const cells = prevRow.getElementsByClassName("actionButtons");
-        if (cells.length) {
+        if (cells.length > 0) {
           const btn = document.createElement("img");
           btn.classList.add("actionMoveDown");
           btn.title = "Move this action down";
-          btn.src = "/img/down.png";
+          btn.src = Images.DOWN;
           btn.addEventListener("click", () => this.moveAction(num, +1));
           cells[1].appendChild(btn);
         }
@@ -268,45 +274,51 @@ const ActionHistory = {
     }
     
     var editable = true;
-    // Make names more user-friendly
-    switch (name) {
-      case "stroke": {
+    // Show a user-friendly action name
+    var name;
+    switch (type) {
+      case PastAction.BASE: {
+        name = "[ Base Image ]";
+        editable = false;
+        break;
+      }
+      case PastAction.STROKE: {
         name = "Pen";
         break;
       }
-      case "fill": {
+      case PastAction.FILL: {
         name = "Flood fill";
         break;
       }
-      case "line": {
+      case PastAction.LINE: {
         name = "Line";
         break;
       }
-      case "rect": {
+      case PastAction.RECT: {
         name = "Rectangle";
         break;
       }
-      case "ellipse": {
+      case PastAction.ELLIPSE: {
         name = "Ellipse";
         break;
       }
-      case "selection-paste": {
-        name = "Paste";
+      case PastAction.SELECTION_PASTE: {
+        name = "Paste selection";
         break;
       }
-      case "selection-clear": {
+      case PastAction.SELECTION_CLEAR: {
         name = "Clear selection";
         break;
       }
-      case "clear-blank": {
+      case PastAction.CLEAR_BLANK: {
         name = "Clear canvas";
         break;
       }
-      case "clear": {
+      case PastAction.CLEAR: {
         name = "Clear canvas to transparent";
         break;
       }
-      case "resize-canvas": {
+      case PastAction.RESIZE_CANVAS: {
         name = "Resize canvas";
         break;
       }
@@ -318,10 +330,12 @@ const ActionHistory = {
     
     const row = this._table.insertRow(-1);
     num++;
-    row.addEventListener("pointerdown", (event) => {
-      if (event.target.tagName === "IMG") return;
+    row.addEventListener("click", (event) => {
+      if (event.target.tagName === "IMG") {
+        return;
+      }
       Client.sendMessage({
-        type: "move-history",
+        type: Message.MOVE_HISTORY,
         num: num
       });
       this.moveTo(num);
@@ -348,8 +362,9 @@ const ActionHistory = {
       const toggleCell = row.insertCell(-1);
       toggleCell.classList.add("actionButtons");
       const toggleBtn = document.createElement("img");
+      toggleBtn.classList.add("actionToggle");
       toggleBtn.title = "Toggle this action";
-      toggleBtn.src = enabled ? "/img/visible.png" : "/img/no-visible.png";
+      toggleBtn.src = enabled ? Images.VISIBLE : Images.NO_VISIBLE;
       toggleBtn.addEventListener("click", () => this.toggleAction(num));
       toggleCell.appendChild(toggleBtn);
       
@@ -357,35 +372,40 @@ const ActionHistory = {
       moveCell.classList.add("actionButtons");
       if (num > 1) {
         const upBtn = document.createElement("img");
+        upBtn.classList.add("actionMoveUp");
         upBtn.title = "Move this action up";
-        upBtn.src = "/img/up.png";
+        upBtn.src = Images.UP;
         upBtn.addEventListener("click", () => this.moveAction(num, -1));
         moveCell.appendChild(upBtn);
       }
       
-      if (num < this.undoActions.length + this.redoActions.length) {
+      if (num < this.actions.length - 1) {
         const downBtn = document.createElement("img");
         downBtn.classList.add("actionMoveDown");
         downBtn.title = "Move this action down";
-        downBtn.src = "/img/down.png";
+        downBtn.src = Images.DOWN;
         downBtn.addEventListener("click", () => this.moveAction(num, +1));
         moveCell.appendChild(downBtn);
       }
     }
     
-    if (updateLast) this.updateLastAction();
+    if (updateLast) {
+      this.updateLastAction();
+    }
   },
   updateLastAction() {
     [...document.getElementsByClassName("lastAction")].forEach((el) => {
       el.classList.remove("lastAction");
     });
     // children[0] = <tbody>
-    this._table.children[0].children[this.undoActions.length].classList.add("lastAction");
+    this._table.children[0].children[this.pos].classList.add("lastAction");
   },
-  removeRedoActionsFromTable() {
-    [...this._table.children[0].children].slice(this.undoActions.length).forEach((el) => {
-      el.remove();
-    });
+  
+  reset() {
+    this.actions = [];
+    this.pos = -1;
+    this.disableUndo();
+    this.disableRedo();
   },
   
   _undoBtn: document.getElementById("undoBtn"),
@@ -398,17 +418,40 @@ const ActionHistory = {
   enableRedo() {
     this._redoBtn.disabled = false;
   },
-  // Disable undo/redo buttons and clear the actions just in case
-  clearUndo() {
-    this.undoActions = [];
+  disableUndo() {
     this._undoBtn.disabled = true;
     // KeyboardEvents do not fire when a disabled button is focused
     this._undoBtn.blur();
   },
-  clearRedo() {
-    this.redoActions = [];
+  disableRedo() {
     this._redoBtn.disabled = true;
     // KeyboardEvents do not fire when a disabled button is focused
     this._redoBtn.blur();
+  },
+  // Disable undo/redo buttons and clear the actions just in case
+  clearUndo() {
+    this.pos -= this.actions.splice(0, this.pos).length;
+    this.disableUndo();
+  },
+  clearRedo() {
+    this.actions.splice(this.pos + 1, this.actions.length - (this.pos + 1));
+    this.disableRedo();
+    
+    // Remove redo actions from action history table - they've been erased
+    [...this._table.children[0].children].slice(this.pos + 1).forEach((el) => {
+      el.remove();
+    });
+  },
+  enableAvailableButtons() {
+    if (this.actions.slice(0, this.pos).some((action) => action.enabled)) {
+      this.enableUndo();
+    } else {
+      this.disableUndo();
+    }
+    if (this.actions.slice(this.pos + 1).some((action) => action.enabled)) {
+      this.enableRedo();
+    } else {
+      this.disableRedo();
+    }
   }
 };

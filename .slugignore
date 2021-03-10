@@ -1,0 +1,11 @@
+# Web app files
+public
+src
+
+# Other unnecessary files
+.github
+*.md
+LICENSE
+Gruntfile.js
+.firebaserc
+firebase.json

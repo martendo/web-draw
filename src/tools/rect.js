@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -18,9 +18,11 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Rect = {
+const RectTool = {
   draw(rect, ctx, options) {
-    if (!rect.outline && !rect.fill) return;
+    if (!rect.outline && !rect.fill) {
+      return;
+    }
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
     
     const x = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;

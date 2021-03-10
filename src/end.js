@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -18,79 +18,58 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// The URL of the WebSockets server
-const WSS_URL = "wss://web-draw.herokuapp.com";
-
-// Send mouse movement update to server (if mouse has moved since last update) every X ms.
-const MOUSEMOVE_UPDATE_INTERVAL = 50;
-
-// WebSocket closure code descriptions
-const CLOSE_CODES = Object.freeze({
-  1000: "Normal Closure",
-  1001: "Going Away",
-  1002: "Protocol Error",
-  1003: "Unsupported Data",
-  1004: "No current meaning",
-  1005: "No Status Received",
-  1006: "Abnormal Closure",
-  1007: "Invalid frame payload data",
-  1008: "Policy Violation",
-  1009: "Message too big",
-  1010: "Missing Extension",
-  1011: "Internal Error",
-  1012: "Service Restart",
-  1013: "Try Again Later",
-  1014: "Bad Gateway",
-  1015: "TLS Handshake"
+// Add various objects to msgpack codec
+// ImageData
+msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
+  return msgpack.encode([
+    imageData.data,
+    imageData.width,
+    imageData.height
+  ]);
 });
-
-var ctrlKey = false;
-
-// Values of tool setting <select>s
-// Pen stroke and line cap options
-const CAPS = Object.freeze([
-  "round",
-  "butt",
-  "square"
-]);
-// Canvas globalCompositeOperation options
-const COMP_OPS = Object.freeze([
-  "source-over",
-  "destination-over",
-  "destination-out",
-  "lighten",
-  "screen",
-  "color-dodge",
-  "lighter",
-  "darken",
-  "color-burn",
-  "multiply",
-  "overlay",
-  "hard-light",
-  "soft-light",
-  "difference",
-  "exclusion",
-  "source-in",
-  "source-out",
-  "source-atop",
-  "destination-in",
-  "destination-atop",
-  "xor",
-  "copy",
-  "hue",
-  "saturation",
-  "color",
-  "luminosity"
-]);
-const DEFAULT_COMP_OP = COMP_OPS[0];
+msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
+  const properties = msgpack.decode(buffer);
+  return new ImageData(properties[0], properties[1], properties[2]);
+});
+// Pos2D
+msgpack.codec.preset.addExtPacker(0x20, Pos2D, (pos) => Pos2D.packer(pos));
+msgpack.codec.preset.addExtUnpacker(0x20, (buffer) => Pos2D.unpacker(buffer));
+// PastAction
+msgpack.codec.preset.addExtPacker(0x21, PastAction, (action) => PastAction.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x21, (buffer) => PastAction.unpacker(buffer));
+// Action
+msgpack.codec.preset.addExtPacker(0x22, Action, (action) => Action.packer(action));
+msgpack.codec.preset.addExtUnpacker(0x22, (buffer) => Action.unpacker(buffer));
+// Stroke
+msgpack.codec.preset.addExtPacker(0x23, Stroke, (stroke) => Stroke.packer(stroke));
+msgpack.codec.preset.addExtUnpacker(0x23, (buffer) => Stroke.unpacker(buffer));
+// Fill
+msgpack.codec.preset.addExtPacker(0x24, Fill, (fill) => Fill.packer(fill));
+msgpack.codec.preset.addExtUnpacker(0x24, (buffer) => Fill.unpacker(buffer));
+// Selection
+msgpack.codec.preset.addExtPacker(0x25, Selection, (selection) => Selection.packer(selection));
+msgpack.codec.preset.addExtUnpacker(0x25, (buffer) => Selection.unpacker(buffer));
+// SelectionResize
+msgpack.codec.preset.addExtPacker(0x26, SelectionResize, (selectionResize) => SelectionResize.packer(selectionResize));
+msgpack.codec.preset.addExtUnpacker(0x26, (buffer) => SelectionResize.unpacker(buffer));
+// OldSelection
+msgpack.codec.preset.addExtPacker(0x27, OldSelection, (old) => OldSelection.packer(old));
+msgpack.codec.preset.addExtUnpacker(0x27, (buffer) => OldSelection.unpacker(buffer));
+// ShortSelection
+msgpack.codec.preset.addExtPacker(0x28, ShortSelection, (shortSel) => ShortSelection.packer(shortSel));
+msgpack.codec.preset.addExtUnpacker(0x28, (buffer) => ShortSelection.unpacker(buffer));
+// Line
+msgpack.codec.preset.addExtPacker(0x29, Line, (line) => Line.packer(line));
+msgpack.codec.preset.addExtUnpacker(0x29, (buffer) => Line.unpacker(buffer));
+// Shape
+msgpack.codec.preset.addExtPacker(0x2A, Shape, (shape) => Shape.packer(shape));
+msgpack.codec.preset.addExtUnpacker(0x2A, (buffer) => Shape.unpacker(buffer));
+// ShapeColours
+msgpack.codec.preset.addExtPacker(0x2B, ShapeColours, (colours) => ShapeColours.packer(colours));
+msgpack.codec.preset.addExtUnpacker(0x2B, (buffer) => ShapeColours.unpacker(buffer));
 
 // List of ping latency measurements to calculate average
 var prevPings = [];
-
-const NO_ACTION = Object.freeze({
-  type: null,
-  data: null
-});
 
 // Drawing and tool variables
 var penColours = Colour.DEFAULTS.slice();
@@ -104,32 +83,26 @@ var mouseMoved = {
   moved: false,
   outside: false
 };
+// Cache mousemove event so it may be used outside of a MouseEvent listener
+var cachedMouseEvent = null;
+
 // Most recent custom colours
 var customColours = [];
 
-// Check if a point is within an area
-function isPointInside(x, y, rect) {
-  return (rect.x < x && x < rect.x + rect.width &&
-          rect.y < y && y < rect.y + rect.height);
-}
-
 // Tell the user if their browser does not support WebSockets
-if (!("WebSocket" in window)) Modal.open("noWsModal");
+if (!("WebSocket" in window)) {
+  Modal.open("noWsModal");
+}
 
 const waitConnect = () => {
   const wait = document.getElementById("connectionInfoWait");
-  if (wait.textContent.length === 3) wait.textContent = "";
+  if (wait.textContent.length === 3) {
+    wait.textContent = "";
+  }
   wait.innerHTML += "&#183;";
 };
 const connectionWait = setInterval(() => waitConnect(), 500);
 waitConnect();
-
-const wakingUp = setTimeout(() => {
-  const info = document.createElement("div");
-  info.id = "wakingUpInfo";
-  info.textContent = "You may be waking up the server. It goes to sleep after a bit of inactivity. Hang on tight!"
-  document.getElementById("connectionInfo").appendChild(info);
-}, 3000);
 
 Client.init();
 
@@ -142,42 +115,54 @@ document.addEventListener("pointercancel", (event) => clearMouseHold(event), { p
 document.addEventListener("pointerleave", (event) => clearMouseHold(event), { passive: false });
 document.addEventListener("contextmenu", (event) => {
   const tagName = event.target.tagName;
-  if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA") return;
+  if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA") {
+    return;
+  }
   event.preventDefault();
   event.stopPropagation();
 });
 document.addEventListener("click", (event) => {
-  if (event.target.tagName === "LI") return;
+  if (event.target.tagName === "LI") {
+    return;
+  }
   const selected = document.getElementsByClassName("menuSelected");
   for (var i = 0; i < selected.length; i++) {
     selected[i].classList.remove("menuSelected");
   }
 });
 
+window.addEventListener("resize", () => Canvas.updateCanvasAreaSize());
+
+Canvas.displayCanvas.addEventListener("pointermove", (event) => {
+  cachedMouseEvent = event;
+});
+
 document.addEventListener("keydown", (event) => {
   // Keyboard shortcuts that can only be used when not currently typing or on the canvas
   const tagName = event.target.tagName;
-  notTyping: if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
+  
+  notTyping:
+  if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
     if (!event.ctrlKey) {
       switch (event.key) {
         case "1": {
-          Canvas.setZoom(1);
+          Canvas.setZoom(1, true);
           break;
         }
         case "2": {
-          Canvas.setZoom(2);
+          Canvas.setZoom(2, true);
           break;
         }
         case "3": {
-          Canvas.setZoom(4);
+          Canvas.setZoom(4, true);
           break;
         }
         case "4": {
-          Canvas.setZoom(8);
+          Canvas.setZoom(8, true);
           break;
         }
         case "5": {
-          Canvas.setZoom(16);
+          Canvas.setZoom(16, true);
           break;
         }
         case "=": {
@@ -204,18 +189,24 @@ document.addEventListener("keydown", (event) => {
           break;
         }
         case "c": {
-          if (tool !== "select") return;
-          Selection.doCopy();
+          if (tool !== "select") {
+            break notTyping;
+          }
+          SelectTool.doCopy();
           break;
         }
         case "x": {
-          if (tool !== "select") return;
-          Selection.doCut();
+          if (tool !== "select") {
+            break notTyping;
+          };
+          SelectTool.doCut();
           break;
         }
         case "v": {
-          if (tool !== "select") return;
-          Selection.doPaste();
+          if (tool !== "select") {
+            break notTyping;
+          };
+          SelectTool.doPaste();
           break;
         }
         default: break notTyping;
@@ -241,20 +232,24 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Control") ctrlKey = true;
-});
-document.addEventListener("keyup", (event) => {
-  if (event.key === "Control") ctrlKey = false;
-});
-
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
-Canvas.container.addEventListener("pointerdown", (event) => mouseHold(event));
-Canvas.container.addEventListener("wheel", (event) => {
-  if (!ctrlKey) return;
+Canvas.displayCanvas.addEventListener("pointerdown", (event) => mouseHold(event));
+Canvas.displayCanvas.addEventListener("wheel", (event) => {
   event.preventDefault();
-  const delta = Math.sign(event.deltaY) * -0.25;
-  Canvas.changeZoom(delta);
+  if (!event.ctrlKey) {
+    // Scroll
+    const delta = Math.sign(event.deltaY) * 75;
+    if (event.shiftKey) {
+      Canvas.pan.x += delta;
+    } else {
+      Canvas.pan.y += delta;
+    }
+    Canvas.drawCanvas();
+  } else {
+    // Zoom
+    const delta = Math.sign(event.deltaY) * -0.25;
+    Canvas.changeZoom(delta);
+  }
 });
 
 // Set up inputs
@@ -291,7 +286,9 @@ for (let i = 0; i < penColourBoxes.length; i++) {
 const penColourValues = document.getElementsByClassName("penColourValue");
 for (let i = 0; i < penColourValues.length; i++) {
   penColourValues[i].addEventListener("keydown", (event) => {
-    if (event.key === "Enter") Colour.changeWithValue(i, event);
+    if (event.key === "Enter") {
+      Colour.changeWithValue(i, event);
+    }
   });
 }
 for (const toolName of Tools.NAMES) {
@@ -305,7 +302,9 @@ for (let i = 0; i < menuLabels.length; i++) {
     menuLabel.addEventListener("click", () => {
       const selected = document.getElementsByClassName("menuSelected");
       for (var i = 0; i < selected.length; i++) {
-        if (selected[i] !== menuLabel.parentElement) selected[i].classList.remove("menuSelected");
+        if (selected[i] !== menuLabel.parentElement) {
+          selected[i].classList.remove("menuSelected");
+        }
       }
       menuLabel.parentElement.classList.toggle("menuSelected");
       event.stopPropagation();
@@ -330,6 +329,7 @@ document.getElementById("editSettingsBtn").addEventListener("click", () => Modal
 document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
 document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
 document.getElementById("viewFillZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fill"));
+document.getElementById("viewChangeThemeBtn").addEventListener("click", () => Modal.open("changeThemeModal"));
 document.getElementById("sessionInfoBtn").addEventListener("click", () => Modal.open("sessionInfoModal"));
 document.getElementById("sessionChangeIdBtn").addEventListener("click", () => {
   document.getElementById("sessionIdNew").value = Session.id;
@@ -347,9 +347,7 @@ document.getElementById("userBtn").addEventListener("click", () => {
   Modal.open("userModal");
 });
 document.getElementById("chatBtn").addEventListener("click", () => Chat.toggle());
-document.getElementById("chatXBtn").addEventListener("click", () => {
-  Chat.box.classList.add("displayNone");
-});
+document.getElementById("chatXBtn").addEventListener("click", () => Chat.close());
 
 const tabs = [...document.getElementsByClassName("tab")];
 tabs.forEach((tab) => {
@@ -374,7 +372,9 @@ Chat.input.addEventListener("input", () => {
   const box = document.getElementById("chatMessages");
   const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
   elementFitHeight(Chat.input);
-  if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
+  if (isAtBottom) {
+    box.scrollTop = box.scrollHeight - box.clientHeight;
+  }
 });
 document.getElementById("chatSendBtn").addEventListener("click", () => Chat.send());
 
@@ -404,13 +404,13 @@ resizeWidth.addEventListener("input", () => {
   const delta = resizeWidth.value - Session.canvas.width;
   offsetX.min = Math.min(delta, 0);
   offsetX.max = Math.max(delta, 0);
-  offsetX.value = Math.max(Math.min(offsetX.value, offsetX.max), offsetX.min);
+  offsetX.value = minmax(offsetX.value, offsetX.min, offsetX.max);
 });
 resizeHeight.addEventListener("input", () => {
   const delta = resizeHeight.value - Session.canvas.height;
   offsetY.min = Math.min(delta, 0);
   offsetY.max = Math.max(delta, 0);
-  offsetY.value = Math.max(Math.min(offsetY.value, offsetY.max), offsetY.min);
+  offsetY.value = minmax(offsetY.value, offsetY.min, offsetY.max);
 });
 document.getElementById("editResizeBtn").addEventListener("click", () => {
   resizeWidth.value = Session.canvas.width;
@@ -447,7 +447,6 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
     }
     // 3: Transparency = null
   }
-  console.log(bgColour);
   const options = {
     width: document.getElementById("canvasResizeWidth").value,
     height: document.getElementById("canvasResizeHeight").value,
@@ -456,7 +455,7 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
     colour: bgColour
   };
   Client.sendMessage({
-    type: "resize-canvas",
+    type: Message.RESIZE_CANVAS,
     options: options
   });
   Canvas.resize(options);
@@ -466,6 +465,15 @@ document.getElementById("resizeModalCancelBtn").addEventListener("click", () => 
 document.getElementById("settingsModalDoneBtn").addEventListener("click", () => Modal.close("settingsModal"));
 document.getElementById("sendMouseMovements").addEventListener("input", (event) => Client.setSendMouse(event.target.checked));
 document.getElementById("receiveMouseMovements").addEventListener("input", (event) => Client.setReceiveMouse(event.target.checked));
+
+document.getElementById("changeThemeModalDoneBtn").addEventListener("click", () => Modal.close("changeThemeModal"));
+document.getElementById("lightTheme").addEventListener("change", () => setTheme("light"));
+document.getElementById("darkTheme").addEventListener("change", () => setTheme("dark"));
+const theme = localStorage.getItem("theme");
+if (theme) {
+  document.documentElement.className = theme;
+  document.getElementById(theme + "Theme").checked = true;
+}
 
 document.getElementById("helpModalDoneBtn").addEventListener("click", () => {
   Modal.close("helpModal");
@@ -482,7 +490,7 @@ document.getElementById("sessionHasIdModalOkBtn").addEventListener("click", () =
 
 document.getElementById("setSessionPasswordModalRemoveBtn").addEventListener("click", () => {
   Client.sendMessage({
-    type: "session-password",
+    type: Message.SESSION_PASSWORD,
     password: null
   });
 });
@@ -511,19 +519,19 @@ document.getElementById("userModalCancelBtn").addEventListener("click", () => Mo
 
 document.getElementById("canvasZoom").addEventListener("input", (event) => Canvas.setZoomValue(event));
 
-document.getElementById("selectCopyBtn").addEventListener("click", () => Selection.doCopy());
-document.getElementById("selectCutBtn").addEventListener("click", () => Selection.doCut());
-document.getElementById("selectPasteBtn").addEventListener("click", () => Selection.doPaste());
+document.getElementById("selectCopyBtn").addEventListener("click", () => SelectTool.doCopy());
+document.getElementById("selectCutBtn").addEventListener("click", () => SelectTool.doCut());
+document.getElementById("selectPasteBtn").addEventListener("click", () => SelectTool.doPaste());
 document.getElementById("selectClearBtn").addEventListener("click", () => {
   Client.sendMessage({
-    type: "selection-clear",
+    type: Message.SELECTION_CLEAR,
     colour: penColours[1],
     clientId: Client.id
   });
-  Selection.clear(clients[Client.id].action.data, penColours[1]);
+  SelectTool.clear(clients[Client.id].action.data, penColours[1]);
 });
 
 window.addEventListener("beforeunload", () => {
-  Client.socket.onclose = () => Session.leave();
+  Session.leave();
   Client.socket.close(1000);
 });

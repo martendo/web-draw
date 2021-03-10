@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -80,14 +80,20 @@ const Colour = {
     if (addCustom) {
       // Check if colour is one of the basic colours, if it is, don't add it to the custom colours
       for (var i = 0; i < Colour.BASICS.values.length; i++) {
-        if (Colour.BASICS.values[i].includes(value)) return;
+        if (Colour.BASICS.values[i].includes(value)) {
+          return;
+        }
       }
       // Check if colour is already in custom colours, if it is, move to last (remove then push)
       const sameColourIndex = customColours.indexOf(value);
-      if (sameColourIndex !== -1) customColours.splice(sameColourIndex, 1);
+      if (sameColourIndex !== -1) {
+        customColours.splice(sameColourIndex, 1);
+      }
       customColours.push(value);
       const customColourBoxes = document.getElementById("customColourRow").children;
-      if (customColours.length > customColourBoxes.length) customColours.shift();
+      if (customColours.length > customColourBoxes.length) {
+        customColours.shift();
+      }
       for (var i = 0; i < customColours.length; i++) {
         const colourBox = customColourBoxes[i];
         const col = customColours[i];
@@ -114,7 +120,9 @@ const Colour = {
           alpha = parseInt(a+a, 16);
         }
       }
-      if (value.slice(0, 1) !== "#") value = "#" + value;
+      if (value.slice(0, 1) !== "#") {
+        value = "#" + value;
+      }
       if (value.length > 6+1) {
         alpha = parseInt(value.slice(-2), 16);
         value = value.slice(0, -2);

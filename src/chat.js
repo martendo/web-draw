@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -22,24 +22,63 @@ const Chat = {
   box: document.getElementById("chatBox"),
   input: document.getElementById("chatInput"),
   
+  format(message) {
+    // Replace characters that can interfere with HTML, and do markdown-ish styling
+    const noStyle = [];
+    return message
+      .replace(/&/g, "&#38;")
+      .replace(/</g, "&#60;")
+      .replace(/>/g, "&#62;")
+      .replace(/"/g, "&#34;")
+      .replace(/'/g, "&#39;")
+      .replace(/\b(https?:\/\/[a-z0-9\-+&@#\/%?=~_|!:,.;]*[a-z0-9\-+&@#\/%=~_|])\b/ig, (match, p1) => {
+        // Save the URL to prevent styling
+        noStyle.push(`<a href="${p1}" target="_blank" title="${p1}">${p1}</a>`);
+        return `&!${noStyle.length - 1};`;
+      })
+      .replace(/(^|[^\\])((?:\\{2})*)\*\*([\s\S]*?[^\\](?:\\{2})*)\*\*/mg, "$1$2<strong>$3</strong>") // **bold**
+      .replace(/(^|[^\\])((?:\\{2})*)__([\s\S]*?[^\\](?:\\{2})*)__/mg, "$1$2<u>$3</u>") // __underlined__
+      .replace(/(^|[^\\])((?:\\{2})*)~~([\s\S]*?[^\\](?:\\{2})*)~~/mg, "$1$2<s>$3</s>") // ~~strikethrough~~
+      .replace(/(^|[^\\*_])((?:\\{2})*)[*_]([\s\S]*?[^\\*_](?:\\{2})*)[*_]/mg, "$1$2<em>$3</em>") // *italicized* OR _italicized_
+      .replace(/\\([^\sa-z0-9])/img, "$1")
+      .replace(/\\/g, "&#92;")
+      .replace(/&!(\d+);/g, (match, p1) => {
+        return noStyle[parseInt(p1)];
+      });
+  },
+  
   send() {
     const msg = this.input.value;
-    const indexSpace = msg.indexOf(" ");
-    if (msg.trim() === "" || (msg.slice(0, 3) === "to:" && (msg.slice(indexSpace).trim() === "" || indexSpace === -1))) return;
+    // Check whether or not the message would *appear* empty
+    const formatted = this.format(msg).replace(/<\w+?>([\s\S]*?)<\/\w+?>/mg, "$1");
+    const indexSpace = formatted.indexOf(" ");
+    // If message appears empty, don't allow sending it
+    if (
+      formatted.trim() === "" || (
+        formatted.slice(0, 3) === "to:" && (
+          indexSpace === -1 || formatted.slice(indexSpace).trim() === ""
+        )
+      )
+    ) {
+      return;
+    }
+    
     this.input.value = "";
     const box = document.getElementById("chatMessages");
     const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
     elementFitHeight(this.input);
-    if (isAtBottom) box.scrollTop = box.scrollHeight - box.clientHeight;
+    if (isAtBottom) {
+      box.scrollTop = box.scrollHeight - box.clientHeight;
+    }
     Client.sendMessage({
-      type: "chat-message",
+      type: Message.CHAT_MESSAGE,
       message: msg,
       clientId: Client.id
     });
   },
   
   getFullDate(date) {
-    var month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][date.getMonth()],
+    var month = MONTH_NAMES[date.getMonth()],
         day = date.getDate(),
         year = date.getFullYear(),
         hours = date.getHours(),
@@ -56,7 +95,9 @@ const Chat = {
       // "to:" at beginning of message, already has list
       const split = this.input.value.split(" ");
       // List of IDs already contains ID
-      if (split[0].slice(3).split(",").includes(id)) return;
+      if (split[0].slice(3).split(",").includes(id)) {
+        return;
+      }
       const toLen = split[0].length;
       // Add to the existing list: A comma if there is already an ID in it, the new ID, space and the rest of the message
       this.input.value = this.input.value.slice(0, toLen) + (toLen === 3 ? "" : ",") + id + " " + (this.input.value.slice(toLen + 1) || "");
@@ -69,18 +110,6 @@ const Chat = {
   },
   
   addMessage(msg) {
-    // Replace characters that can interfere with HTML, and do markdown styling
-    msg.message = msg.message
-      .replace(/&/g, "&#38;")
-      .replace(/</g, "&#60;")
-      .replace(/>/g, "&#62;")
-      .replace(/(^|[^\\])((?:\\{2})*)\*\*([\s\S]*?[^\\](?:\\{2})*)\*\*/mg, "$1$2<strong>$3</strong>") // **bold**
-      .replace(/(^|[^\\])((?:\\{2})*)__([\s\S]*?[^\\](?:\\{2})*)__/mg, "$1$2<u>$3</u>")               // __underlined__
-      .replace(/(^|[^\\])((?:\\{2})*)~~([\s\S]*?[^\\](?:\\{2})*)~~/mg, "$1$2<s>$3</s>")               // ~~strikethrough~~
-      .replace(/(^|[^\\*])((?:\\{2})*)\*([\s\S]*?[^\\*](?:\\{2})*)\*/mg, "$1$2<em>$3</em>")           // *italicized*
-      .replace(/(^|[^\\_])((?:\\{2})*)_([\s\S]*?[^\\_](?:\\{2})*)_/mg, "$1$2<em>$3</em>")             // _italicized_
-      .replace(/\\([\s\S])/mg, "$1")
-      .replace(/\\/g, "&#92;");
     const box = document.getElementById("chatMessages");
     var bubble;
     const last = box.children[box.children.length - 1];
@@ -88,9 +117,19 @@ const Chat = {
     // 14 = 8px padding, 1px border, 5px margin
     const isAtBottom = box.scrollHeight - box.clientHeight <= box.scrollTop + (last ? last.children[last.children.length - 1].getBoundingClientRect().height : 0) + 14;
     // Create new message bubble if last message was not from the same person or is not of the same type or it was 3 or more minutes ago
-    if (!last || parseInt(last.children[last.children.length - 1].dataset.timestamp, 10) + 1000*60*3 <= msg.timestamp ||
-      (msg.priv ? (!last.classList.contains("chatMessage-" + msg.clientId) || !last.classList.contains("chatMessagePrivate-" + msg.priv))
-                : (!last.classList.contains("chatMessage-" + msg.clientId) || last.classList.contains("chatMessagePrivate")))) {
+    if (
+      !last
+      || parseInt(last.children[last.children.length - 1].dataset.timestamp, 10) + 1000*60*3 < msg.timestamp
+      || (
+        msg.priv ? (
+          !last.classList.contains("chatMessage-" + msg.clientId)
+          || !last.classList.contains("chatMessagePrivate-" + msg.priv)
+        ) : (
+          !last.classList.contains("chatMessage-" + msg.clientId)
+          || last.classList.contains("chatMessagePrivate")
+        )
+      )
+    ) {
       bubble = document.createElement("div");
       bubble.classList.add("chatMessageBubble", "chatMessage-" + msg.clientId);
       const nameRow = document.createElement("div");
@@ -130,7 +169,7 @@ const Chat = {
     msgText.classList.add("chatMessageText");
     msgText.dataset.timestamp = msg.timestamp;
     msgText.title = this.getFullDate(new Date(msg.timestamp));
-    msgText.innerHTML = msg.message;
+    msgText.innerHTML = this.format(msg.message);
     bubble.appendChild(msgText);
     box.appendChild(bubble);
     
@@ -177,15 +216,25 @@ const Chat = {
   },
   
   toggle() {
-    if (!this.box.classList.toggle("displayNone")) this.open();
+    if (!this.box.classList.toggle("displayNone")) {
+      this.open();
+    } else {
+      this.close();
+    }
   },
   open() {
+    this.box.classList.remove("displayNone");
     const chatNew = document.getElementById("chatNew");
     chatNew.style.width = 0;
     chatNew.style.height = 0;
     chatNew.style.top = "4px";
     chatNew.style.right = "4px";
     this.input.focus();
+    Canvas.updateCanvasAreaSize();
+  },
+  close() {
+    this.box.classList.add("displayNone");
+    Canvas.updateCanvasAreaSize();
   }
 };
 

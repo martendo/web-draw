@@ -1,7 +1,7 @@
 <!--
   This file is part of Web Draw.
 
-  Web Draw - A little real-time online drawing program.
+  Web Draw - A little real-time online collaborative drawing program.
   Copyright (C) 2020-2021 martendo7
 
   Web Draw is free software: you can redistribute it and/or modify
@@ -19,7 +19,7 @@
 -->
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="light">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -29,24 +29,30 @@
     
     <meta name="title" content="Web Draw">
     <meta name="application-name" content="Web Draw">
+    <meta name="apple-mobile-web-app-title" content="Web Draw">
     <meta name="author" content="martendo7">
-    <meta name="description" content="A little real-time online drawing program.">
+    <meta name="description" content="A little real-time online collaborative drawing program.">
+    <link rel="manifest" href="/app.webmanifest">
     
     <meta property="og:title" content="Web Draw">
-    <meta property="og:description" content="A little real-time online drawing program.">
+    <meta property="og:description" content="A little real-time online collaborative drawing program.">
     <meta property="og:type" content="website">
     
-    <meta property="og:image" content="https://w-draw.web.app/img/pen-icon-og.png">
-    <meta property="og:image:secure_url" content="https://w-draw.web.app/img/pen-icon-og.png">
+    <meta property="og:image" content="https://w-draw.web.app/pen-icon-og.png">
+    <meta property="og:image:secure_url" content="https://w-draw.web.app/pen-icon-og.png">
     <meta property="og:image:type" content="image/png">
     <meta property="og:image:width" content="300">
     <meta property="og:image:height" content="157">
     <meta property="og:image:alt" content="Pen Logo for Web Draw">
     
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00a2e8">
+    <meta name="msapplication-TileColor" content="#f8f8f8">
+    
     <meta name="theme-color" content="#00a2e8">
     
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="/style.css">
   </head>
   
@@ -56,12 +62,12 @@
     <input type="file" id="chooseCanvasFile" class="hidden" accept=".bin">
     <span id="tooltip" class="hidden"></span>
     <div id="menuScreen">
+      <div id="infoBtnContainer">
+        <button class="infoBtn" id="infoBtn">Info
+        </button><button class="infoBtn" id="helpBtn">Help</button>
+      </div>
       <div id="menuMainContainer">
-        <div id="infoBtnContainer">
-          <button class="infoBtn" id="infoBtn">Info
-          </button><button class="infoBtn" id="helpBtn">Help</button>
-        </div>
-        <h1><img class="penIcon" src="/img/pen-icon.png" alt="Pen Logo">Web Draw</h1>
+        <h1><img class="penIcon" src="{{ BASE64:src/img/pen-icon.png }}" alt="Pen Logo">Web Draw</h1>
         <div id="connectionInfo">
           <div id="connectionInfoText">Connecting to server...</div>
           <div id="connectionInfoWait">&#183;&#183;&#183;</div>
@@ -117,6 +123,8 @@
             <li id="viewResetZoomBtn" title="Set the zoom to 100%">Reset Zoom</li>
             <li id="viewFitZoomBtn" title="Set the canvas zoom to fit the window">Fit to Window</li>
             <li id="viewFillZoomBtn" title="Set the canvas zoom to fill the entire window">Fill Window</li>
+            <li class="separator"></li>
+            <li id="viewChangeThemeBtn" title="Change the colour theme of Web Draw">Change Theme</li>
           </ul>
         </li><li id="sessionMenu" class="menuItem">
           <div class="menuLabel">Session</div>
@@ -158,49 +166,49 @@
         <tr>
           <td>
             <button id="penBtn" title="Pen Tool&#10;Draw a free-form line">
-              <img id="penBtnIcon" src="/img/pen.png" alt="P">
+              <img id="penBtnIcon" src="{{ BASE64:src/img/pen.png }}" alt="P">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="fillBtn" title="Flood Fill Tool&#10;Fill an area of the same colour">
-              <img id="fillBtnIcon" src="/img/flood-fill.png" alt="F">
+              <img id="fillBtnIcon" src="{{ BASE64:src/img/flood-fill.png }}" alt="F">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="colourPickerBtn" title="Colour Picker Tool&#10;Get a colour from the canvas">
-              <img id="colourPickerIcon" src="/img/colour-picker.png" alt="C">
+              <img id="colourPickerIcon" src="{{ BASE64:src/img/colour-picker.png }}" alt="C">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="selectBtn" title="Rectangular Select Tool&#10;Select a rectangular area from the canvas to manipulate">
-              <img id="selectIcon" src="/img/select.png" alt="S">
+              <img id="selectIcon" src="{{ BASE64:src/img/select.png }}" alt="S">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="lineBtn" title="Line Tool&#10;Draw a straight line from one point to another">
-              <img id="lineIcon" src="/img/line.png" alt="L">
+              <img id="lineIcon" src="{{ BASE64:src/img/line.png }}" alt="L">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="rectBtn" title="Rectangle Tool&#10;Draw a rectangle">
-              <img id="rectIcon" src="/img/rect.png" alt="R">
+              <img id="rectIcon" src="{{ BASE64:src/img/rect.png }}" alt="R">
             </button>
           </td>
         </tr>
         <tr>
           <td>
             <button id="ellipseBtn" title="Ellipse Tool&#10;Draw an ellipse">
-              <img id="ellipseIcon" src="/img/ellipse.png" alt="R">
+              <img id="ellipseIcon" src="{{ BASE64:src/img/ellipse.png }}" alt="E">
             </button>
           </td>
         </tr>
@@ -208,8 +216,8 @@
       <div id="rightBox">
         <table id="rightTabBar" class="tabBar">
           <tr>
-            <td class="tab" id="toolTab" title="Tool settings"><img src="/img/tool-settings.png"></td>
-            <td class="tab" id="historyTab" title="Action history"><img src="/img/action-history.png"></td>
+            <td class="tab" id="toolTab" title="Tool settings"><img src="{{ BASE64:src/img/tool-settings.png }}"></td>
+            <td class="tab" id="historyTab" title="Action history"><img src="{{ BASE64:src/img/action-history.png }}"></td>
             <td class="tableExcess"></td>
           </tr>
         </table>
@@ -217,7 +225,7 @@
           <table id="toolTabBox" class="tabBox">
             <tr>
               <td>
-                <table id="colourTable">
+                <table class="colourTable">
                   <tr>
                     <td><label for="penColour0Value">Colour 1</label></td>
                     <td><label for="penColour1Value">Colour 2</label></td>
@@ -242,7 +250,7 @@
               </td>
             </tr>
             <tr>
-              <td>
+              <td class="colourTable">
                 <table id="quickColourSelect"></table>
               </td>
             </tr>
@@ -392,12 +400,6 @@
                 </div>
               </td>
             </tr>
-            <tr class="toolSettings fillSettings">
-              <td>
-                <input id="fillChangeAlpha" type="checkbox">
-                <label for="fillChangeAlpha">Change alpha value</label>
-              </td>
-            </tr>
             <tr class="toolSettings colourPickerSettings">
               <td>
                 <input id="colourPickerMerge" type="checkbox">
@@ -427,21 +429,21 @@
             <tbody></tbody>
           </table>
         </div>
-        <table id="posInfo">
-          <tr>
-            <td><span id="cursorPos" class="lightBox"></span></td>
-          </tr>
-          <tr>
-            <td>
-              <span id="selectPos" class="lightBox"></span>
-              <span id="selectSize" class="lightBox"></span>
-            </td>
-          </tr>
-        </table>
       </div>
       <div id="canvasContainer">
         <canvas id="displayCanvas">The HTML canvas element isn't supported in your browser... :(</canvas>
       </div>
+      <table id="statusBox">
+        <tr>
+          <td>
+            <span id="cursorPos" class="lightBox"></span>
+          </td>
+          <td class="tableExcess"></td>
+          <td id="selectionInfo">
+            <span id="selectPos" class="lightBox"></span> <span id="selectSize" class="lightBox"></span>
+          </td>
+        </tr>
+      </table>
       <table id="bottomBox">
         <tr>
           <td>
@@ -501,7 +503,6 @@
                   <li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
                     <li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
                     <li><a href="#help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
-                    <li><a href="#help-right_toolbar-flood_fill-alpha">Change alpha value</a></li>
                   </ul></li>
                   <li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
                     <li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
@@ -523,7 +524,11 @@
                   <li><a href="#help-right_toolbar-action_history-moving">Moving Actions</a></li>
                 </ul></li>
               </ul></li>
-              <li><a href="#help-chat">Chat</a></li>
+              <li><a href="#help-chat">Chat</a><ul>
+                <li><a href="#help-chat-private_messages">Private Messages</a></li>
+                <li><a href="#help-chat-formatting">Formatting</a></li>
+                <li><a href="#help-chat-links">Links</a></li>
+              </ul></li>
               <li><a href="#help-bottom_toolbar">Bottom Toolbar</a></li>
               <li><a href="#help-keyboard_shortcuts">Keyboard Shortcuts</a><ul>
                 <li><a href="#help-keyboard_shortcuts-edit">Edit</a></li>
@@ -628,8 +633,6 @@
           The maximum colour difference of a pixel from the original clicked colour to be recoloured. This is the maximum difference for each of the channels selected with the "Fill by" setting, not the total of all the colour differences. If all values are within the threshold, the pixel will be recoloured.
           <h6 id="help-right_toolbar-flood_fill-fill_by">Fill by</h6>
           This setting determines which channels to check for colour difference to decide whether or not to recolour the pixel. Available options are: RGBA (default), RGB, Red, Green, Blue, and Alpha.
-          <h6 id="help-right_toolbar-flood_fill-alpha">Change alpha value</h6>
-          If this box is unchecked, the alpha values of the recoloured pixels will be taken from the image before the flood fill.
           <h5 id="help-right_toolbar-colour_picker">Colour Picker Settings</h5>
           You can merge the sampled colour with the current and/or sample the opacity in addition to colour.
           <h6 id="help-right_toolbar-colour_picker-merge">Merge with current</h6>
@@ -661,13 +664,15 @@
           <h5 id="help-right_toolbar-action_history-moving">Moving Actions</h5>
           Moving actions up and down in history can be done with the up and down arrows next to action entries. An action that is moved up will happen before the previous action, and an action that is moved down will happen after the next action. This may be useful if your buddies accidentally mess up the order of things, since you're all drawing at the same time.
           <h3 id="help-chat">Chat</h3>
-          Use the chat to send messages to other people in the session, including private messages to people you choose.<br>
-          <br>
+          Use the chat to send messages to other people in the session, including private messages to people you choose.
+          <h4 id="help-chat-private_messages">Private Messages</h4>
           Normally, a message is sent to everyone in the session. However, if the message begins with "to:", it will be a private message sent only to the people with the client IDs that follow. For example, if your message is "to:x7sm PRIVATE MESSAGE!!!", only you and the person with the client ID of <code>x7sm</code> will be able to see the message, and no one else. You can also use a comma-separated list of IDs, like this: "to:x7sm,18hp Hello!"<br>
           <br>
-          Clicking the name of a user in the chat (above a message they have sent) will add their client ID to the "to" list in the message box.<br>
+          There MUST be a space between the "to" list and the message.<br>
           <br>
-          You can also use some markdown formatting in your messages. Available formatting:
+          Clicking the name of a user in the chat (above a message they have sent) will add their client ID to the "to" list in the message box.
+          <h4 id="help-chat-formatting">Formatting</h4>
+          You can also use some formatting similar to markdown in your messages. Available formatting:
           <table class="table border">
             <tr>
               <th>Typed</th>
@@ -691,7 +696,9 @@
             </tr>
           </table>
           <br>
-          You can escape the special characters with a backslash if you want to, for example, use asterisks around a word without italicizing it. You can do that by putting a backslash before a special character. "\*cough*" will suffice and will be shown as "*cough*". If either one of the opening or closing or both formatting characters are escaped (e.g. "\*"), the text will not be formatted. And as you should expect, you can escape the backslash as well: "\\**cool**" will result in "\<strong>cool</strong>". You can escape the backslash and the formatting, too, and the backslash before the backslash, and so on.
+          You can escape the special characters if, for example, you want to use asterisks around something without italicizing it. You can do that by putting a backslash before a special character. "\*text*" will suffice and will be shown as "*text*". If the opening or closing or both formatting characters are escaped (e.g. "\*"), the text will not be formatted. And as you should expect, you can escape the backslash as well: "\\**text**" will result in "\<strong>text</strong>".
+          <h4 id="help-chat-links">Links</h4>
+          Valid URLs sent in messages using the HTTP or HTTPS protocols will be automatically converted into hyperlinks. For example, sending "https://google.com" will turn out like "<a href="https://google.com" target="_blank" title="https://google.com">https://google.com</a>".
           <h3 id="help-bottom_toolbar">Bottom Toolbar</h3>
           At the bottom of your screen is some session info.<br>
           You will see the ID of the session you are currently in and the number of users connected to it.<br>
@@ -707,7 +714,7 @@
           <ul>
             <li><kbd>+</kbd> - Zoom canvas in</li>
             <li><kbd>-</kbd> - Zoom canvas out</li>
-            <li><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> <kbd>4</kbd> <kbd>5</kbd> - Set zoom:
+            <li>Set zoom:
               <ul>
                 <li><kbd>1</kbd> - 100%</li>
                 <li><kbd>2</kbd> - 200%</li>
@@ -998,7 +1005,7 @@
           <table id="infoModalTable">
             <tr>
               <td>
-                <h3>Web Draw<img class="penIcon" src="/img/pen.png" alt="Pen Logo"></h3>
+                <h3>Web Draw<img class="penIcon" src="{{ BASE64:src/img/pen.png }}" alt="Pen Logo"></h3>
                 <small><code>{{ VERSION }}</code></small><br>
                 By <a href="https://github.com/martendo7" target="_blank">martendo7</a><br>
                 <table class="table">
@@ -1122,6 +1129,27 @@
         </div>
         <div class="modalFooter">
           <button id="settingsModalDoneBtn">Done</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="changeThemeModal" class="modal">
+      <div class="modalContent">
+        <div class="modalHeader"><h2>Change Theme</h2></div>
+        <div class="modalBody">
+          <table class="table">
+            <tr>
+              <td><input type="radio" name="theme" id="lightTheme" checked></td>
+              <td><label for="lightTheme">Light</label></td>
+            </tr>
+            <tr>
+              <td><input type="radio" name="theme" id="darkTheme"></td>
+              <td><label for="darkTheme">Dark</label></td>
+            </tr>
+          </table>
+        </div>
+        <div class="modalFooter">
+          <button id="changeThemeModalDoneBtn">Done</button>
         </div>
       </div>
     </div>

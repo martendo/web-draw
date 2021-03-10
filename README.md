@@ -1,8 +1,8 @@
-# [Web Draw](https://w-draw.web.app) ![Pen Logo](/public/img/pen.png)
+# [Web Draw](https://w-draw.web.app) ![Pen Logo](/src/img/pen.png)
 [![Version](https://img.shields.io/github/v/tag/martendo7/web-draw?label=version)](https://github.com/martendo7/web-draw/tags)
 [![Website](https://img.shields.io/website?down_color=inactive&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fw-draw.web.app)](https://w-draw.web.app)
 
-A little real-time online drawing program. https://w-draw.web.app
+A little real-time online collaborative drawing program. https://w-draw.web.app
 
 ## What is it?
 Web Draw is a web app that lets you draw on a shared canvas with other people in real time!
@@ -24,13 +24,13 @@ A session's password can be set or removed at any time.
 Well, pretty much anything.
 
 These are the tools that are currently available:
-- ![pen](/public/img/pen.png) Pen Tool
-- ![flood-fill](/public/img/flood-fill.png) Flood Fill Tool
-- ![colour-picker](/public/img/colour-picker.png) Colour Picker Tool
-- ![select](/public/img/select.png) Rectangular Select Tool
-- ![line](/public/img/line.png) Line Tool
-- ![rect](/public/img/rect.png) Rectangle Tool
-- ![ellipse](/public/img/ellipse.png) Ellipse Tool
+- ![pen](/src/img/pen.png) Pen Tool
+- ![flood-fill](/src/img/flood-fill.png) Flood Fill Tool
+- ![colour-picker](/src/img/colour-picker.png) Colour Picker Tool
+- ![select](/src/img/select.png) Rectangular Select Tool
+- ![line](/src/img/line.png) Line Tool
+- ![rect](/src/img/rect.png) Rectangle Tool
+- ![ellipse](/src/img/ellipse.png) Ellipse Tool
 
 ## How do you use it?
 Web Draw is fairly similar to most drawing programs in terms of how they are used.
@@ -56,10 +56,12 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 ├── .github/workflows/
 │   └── build-deploy.yaml
 ├── public/
+│   ├── app.webmanifest
+│   ├── favicon.ico
+│   └── ...
+├── src/
 │   ├── img/
 │   │   └── ...
-│   └── favicon.ico
-├── src/
 │   ├── tools/
 │   │   └── ...
 │   ├── ui/
@@ -69,13 +71,15 @@ The client-side code and interface is plain HTML, CSS, and JavaScript. Nothing f
 │   ├── script.js
 │   ├── style.css
 │   └── ...
+├── Gruntfile.js
 ├── README.md
 ├── server.js
 └── ...
 ```
-- `.github/workflows/build-deploy.yaml` - GitHub Actions workflow to minify code and deploy to Firebase Hosting
+- `.github/workflows/build-deploy.yaml` - GitHub Actions workflow to "build" code and deploy to Firebase Hosting
 - `public` - All the files the client needs; the root directory of the site
   - Code in `src` is minified and placed in this directory
-  - `img` - All the images (except favicon.ico, if that counts)
 - `src` - Source code of the web app
+  - `img` - All icons used in the app, inserted in source code as Base64 strings at build
+- `Gruntfile.js` - Script to minify code, insert build date and version, Base64 images, and copyright notices, and copy over to `public`
 - `server.js` - The WebSockets server

@@ -1,7 +1,7 @@
 /*
  * This file is part of Web Draw.
  *
- * Web Draw - A little real-time online drawing program.
+ * Web Draw - A little real-time online collaborative drawing program.
  * Copyright (C) 2020-2021 martendo7
  *
  * Web Draw is free software: you can redistribute it and/or modify
@@ -33,19 +33,23 @@ const Client = {
   
   // Send a message to the server
   sendMessage(data) {
-    if (!this.socket) return;
+    if (!this.socket) {
+      return;
+    }
     const msg = msgpack.encode(data);
     this.socket.send(msg);
   },
   
   sendMouseMove() {
-    if (!mouseMoved.moved) return;
+    if (!mouseMoved.moved) {
+      return;
+    }
     
     const outside = mouseMoved.x < 0 || mouseMoved.x > Session.canvas.width || mouseMoved.y < 0 || mouseMoved.y > Session.canvas.height;
     if (outside && !mouseMoved.outside) {
       // Just went outside
       this.sendMessage({
-        type: "mouse-move",
+        type: Message.MOUSE_MOVE,
         outside: true,
         clientId: this.id
       });
@@ -53,7 +57,7 @@ const Client = {
     } else if (!outside) {
       // Inside
       this.sendMessage({
-        type: "mouse-move",
+        type: Message.MOUSE_MOVE,
         pos: [
           mouseMoved.x,
           mouseMoved.y
@@ -69,7 +73,7 @@ const Client = {
   
   setSendMouse(value) {
     this.sendMessage({
-      type: "send-mouse",
+      type: Message.SEND_MOUSE,
       value: value
     });
     this.sendMouse = value;
@@ -84,17 +88,23 @@ const Client = {
   },
   setReceiveMouse(value) {
     this.sendMessage({
-      type: "receive-mouse",
+      type: Message.RECEIVE_MOUSE,
       value: value
     });
     for (const clientId in clients) {
-      if (clientId === this.id) continue;
+      if (clientId === this.id) {
+        continue;
+      }
       document.getElementById("cursorIcon-" + clientId).style.display = value ? "block" : "none";
     }
   },
   
   disconnect() {
-    if (this.tryReconnect != null) clearTimeout(this.tryReconnect);
+    // Signal gave up
+    this.socket = 0;
+    if (this.tryReconnect != null) {
+      clearTimeout(this.tryReconnect);
+    }
     Session.leave();
     Modal.close("disconnectModal");
   },
@@ -113,17 +123,16 @@ const Client = {
       Modal.close("errorModal");
       document.getElementById("connectionInfo").style.display = "none";
       const wait = document.getElementById("connectionInfoWait");
-      if (wait) wait.style.display = "none";
+      if (wait) {
+        wait.style.display = "none";
+      }
       document.getElementById("menuOptionsContainer").style.display = "block";
       clearInterval(connectionWait);
-      clearTimeout(wakingUp);
-      const info = document.getElementById("wakingUpInfo");
-      if (info) info.remove();
       
       // If reconnected, try to restore
       if (this.tryReconnect != null) {
         this.sendMessage({
-          type: "reconnect",
+          type: Message.RECONNECT,
           client: {
             id: this.id,
             name: clients[this.id].name
@@ -141,7 +150,7 @@ const Client = {
       if (result) {
         const pass = /[?&]pass=(.+?)(?:&|$)/.exec(location.search);
         this.sendMessage({
-          type: "url-session",
+          type: Message.URL_SESSION,
           id: decodeURIComponent(result[1]),
           password: (pass ? decodeURIComponent(pass[1]) : null)
         });
@@ -160,8 +169,13 @@ const Client = {
     
     // Tell the user when the this.socket has closed
     this.socket.onclose = (event) => {
+      if (this.reconnectionWait) {
+        clearInterval(this.reconnectionWait);
+      }
+      if (this.socket === 0) {
+        return;
+      }
       this.socket = null;
-      if (this.reconnectionWait) clearInterval(this.reconnectionWait);
       
       const text = document.getElementById("disconnectText");
       text.innerHTML = `You were disconnected from the server.<br>Code: ${event.code} (${CLOSE_CODES[event.code]})`;
@@ -169,9 +183,6 @@ const Client = {
       
       const connectionInfo = document.getElementById("connectionInfo");
       clearInterval(connectionWait);
-      clearTimeout(wakingUp);
-      const info = document.getElementById("wakingUpInfo");
-      if (info) info.remove();
       connectionInfo.innerHTML = "Disconnected from server. :(<br><br>";
       connectionInfo.className = "connectionInfoDisconnected";
       connectionInfo.style.display = "block";
@@ -179,11 +190,17 @@ const Client = {
       reloadBtn.textContent = "Reload";
       reloadBtn.addEventListener("click", () => location.reload());
       connectionInfo.appendChild(reloadBtn);
+      const downloadBtn = document.createElement("button");
+      downloadBtn.textContent = "Download Canvas";
+      downloadBtn.addEventListener("click", () => Canvas.save());
+      connectionInfo.appendChild(downloadBtn);
       document.getElementById("menuOptionsContainer").style.display = "none";
       
       const waitReconnect = () => {
         const wait = document.getElementById("reconnectWait");
-        if (wait.textContent.length === 3) wait.textContent = "";
+        if (wait.textContent.length === 3) {
+          wait.textContent = "";
+        }
         wait.innerHTML += ".";
       };
       this.reconnectionWait = setInterval(() => waitReconnect(), 500);
@@ -210,13 +227,13 @@ const Client = {
     const data = msgpack.decode(msg);
     switch (data.type) {
       // Connection to server established (and acknowledged) - set up client ID
-      case "connection-established": {
+      case Message.CONNECTED: {
         this.id = data.id;
         document.getElementById("clientIdInfo").textContent = this.id;
         document.getElementById("userName").textContent = this.id;
         break;
       }
-      case "latency": {
+      case Message.LATENCY: {
         document.getElementById("pingInfo").textContent = data.latency + " ms";
         prevPings.push(data.latency);
         var average = 0;
@@ -232,27 +249,27 @@ const Client = {
         
         const pingTable = document.getElementById("pingTableBody");
         const row = pingTable.insertRow(-1);
-        const numCell = row.insertCell(-1),
-              latencyCell = row.insertCell(-1);
+        const numCell = row.insertCell(-1);
+        const latencyCell = row.insertCell(-1);
         numCell.textContent = prevPings.length;
         latencyCell.textContent = data.latency + " ms";
         
         break;
       }
       // Another user has started a stroke
-      case "start-stroke": {
+      case Message.START_STROKE: {
         Session.startClientAction(data.clientId, data.action);
         break;
       }
       // Another user has added a point in their current stroke
-      case "add-stroke": {
+      case Message.ADD_STROKE: {
         clients[data.clientId].action.data.points.push([data.pos[0], data.pos[1]]);
-        Pen.drawClientStroke(data.clientId);
+        PenTool.drawClientStroke(data.clientId);
         break;
       }
       // Another user has ended their stroke
-      case "end-stroke": {
-        Pen.commitStroke(
+      case Message.END_STROKE: {
+        PenTool.commitStroke(
           clients[data.clientId].canvas,
           clients[data.clientId].action.data
         );
@@ -261,60 +278,56 @@ const Client = {
         break;
       }
       // Another user has undone/redone an action
-      case "move-history": {
+      case Message.MOVE_HISTORY: {
         ActionHistory.moveTo(data.num);
         break;
       }
       // Another user has toggled visibility of an action
-      case "toggle-action": {
+      case Message.TOGGLE_ACTION: {
         ActionHistory.toggleAction(data.num, false);
         break;
       }
       // Another user has moved an action
-      case "move-action": {
+      case Message.MOVE_ACTION: {
         ActionHistory.moveAction(data.num, data.offset, false);
         break;
       }
       // Another user has used the flood fill tool
-      case "fill": {
-        Fill.fill(data.x, data.y, data.colour, data.threshold, data.opacity, data.compOp, data.fillBy, data.changeAlpha);
+      case Message.FILL: {
+        FillTool.fill(data.fill);
         break;
       }
       // Another user has cleared the canvas
-      case "clear": {
+      case Message.CLEAR: {
         Canvas.clear(false);
-        ActionHistory.addToUndo({
-          type: "clear"
-        });
+        ActionHistory.addToUndo(PastAction.CLEAR);
         break;
       }
-      case "clear-blank": {
+      case Message.CLEAR_BLANK: {
         Canvas.clearBlank(false);
-        ActionHistory.addToUndo({
-          type: "clear-blank"
-        });
+        ActionHistory.addToUndo(PastAction.CLEAR_BLANK);
         break;
       }
       // Another user has imported a picture onto the canvas
-      case "import-picture": {
-        Selection.importPicture(data.image, data.clientId);
+      case Message.IMPORT_PICTURE: {
+        SelectTool.importPicture(data.image, data.clientId);
         break;
       }
-      case "create-selection": {
-        Session.startClientAction(data.clientId, {
-          type: "selecting",
-          data: {}
-        });
+      case Message.SELECTION_CREATE: {
+        Session.startClientAction(data.clientId, new Action({
+          type: Action.SELECTING,
+          data: data.selection
+        }));
         break;
       }
-      case "remove-selection": {
+      case Message.SELECTION_REMOVE: {
         clients[data.clientId].action = {...NO_ACTION};
         Session.endClientAction(data.clientId);
         Canvas.update();
         break;
       }
       // Another user has changed their selection
-      case "selection-update": {
+      case Message.SELECTION_UPDATE: {
         const sel = clients[data.clientId].action.data;
         sel.selected = data.selection.selected;
         sel.x = data.selection.x;
@@ -322,79 +335,72 @@ const Client = {
         sel.width = data.selection.width;
         sel.height = data.selection.height;
         sel.flipped = data.selection.flipped;
-        Selection.draw(clients[data.clientId].ctx, sel, false, false);
+        SelectTool.draw(clients[data.clientId].ctx, sel, false, false);
         break;
       }
-      case "selection-copy": {
-        Selection.copy(clients[data.clientId].ctx, clients[data.clientId].action.data);
+      case Message.SELECTION_COPY: {
+        SelectTool.copy(clients[data.clientId].ctx, clients[data.clientId].action.data);
         break;
       }
-      case "selection-cut": {
-        Selection.cut(clients[data.clientId].ctx, clients[data.clientId].action.data, data.colour);
+      case Message.SELECTION_CUT: {
+        SelectTool.cut(clients[data.clientId].ctx, clients[data.clientId].action.data, data.colour);
         break;
       }
-      case "selection-paste": {
-        Selection.paste(clients[data.clientId].action.data);
+      case Message.SELECTION_PASTE: {
+        SelectTool.paste(clients[data.clientId].action.data);
         break;
       }
-      case "selection-clear": {
-        Selection.clear(clients[data.clientId].action.data, data.colour);
+      case Message.SELECTION_CLEAR: {
+        SelectTool.clear(clients[data.clientId].action.data, data.colour);
         break;
       }
-      case "line": {
-        Session.startClientAction(data.clientId, {
-          type: "line",
+      case Message.LINE: {
+        Session.startClientAction(data.clientId, new Action({
+          type: Action.LINE,
           data: data.line
-        });
-        Line.draw(data.line, clients[data.clientId].ctx);
+        }));
+        LineTool.draw(data.line, clients[data.clientId].ctx);
         break;
       }
-      case "commit-line": {
-        Line.draw(data.line, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo({
-          type: "line",
-          line: data.line
-        });
+      case Message.COMMIT_LINE: {
+        LineTool.draw(data.line, clients[data.clientId].ctx, { save: true });
+        ActionHistory.addToUndo(PastAction.LINE, data.line);
         Session.endClientAction(data.clientId);
         break;
       }
-      case "rect": {
-        Session.startClientAction(data.clientId, {
-          type: "rect",
+      case Message.RECT: {
+        Session.startClientAction(data.clientId, new Action({
+          type: Action.RECT,
           data: data.rect
-        });
-        Rect.draw(data.rect, clients[data.clientId].ctx);
+        }));
+        RectTool.draw(data.rect, clients[data.clientId].ctx);
         break;
       }
-      case "commit-rect": {
-        Rect.draw(data.rect, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo({
-          type: "rect",
-          rect: data.rect
-        });
+      case Message.COMMIT_RECT: {
+        RectTool.draw(data.rect, clients[data.clientId].ctx, { save: true });
+        ActionHistory.addToUndo(PastAction.RECT, data.rect);
         Session.endClientAction(data.clientId);
         break;
       }
-      case "ellipse": {
-        Session.startClientAction(data.clientId, {
-          type: "ellipse",
+      case Message.ELLIPSE: {
+        Session.startClientAction(data.clientId, new Action({
+          type: Action.ELLIPSE,
           data: data.ellipse
-        });
-        Ellipse.draw(data.ellipse, clients[data.clientId].ctx);
+        }));
+        EllipseTool.draw(data.ellipse, clients[data.clientId].ctx);
         break;
       }
-      case "commit-ellipse": {
-        Ellipse.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
-        ActionHistory.addToUndo({
-          type: "ellipse",
-          ellipse: data.ellipse
-        });
+      case Message.COMMIT_ELLIPSE: {
+        EllipseTool.draw(data.ellipse, clients[data.clientId].ctx, { save: true });
+        ActionHistory.addToUndo(PastAction.ELLIPSE, data.ellipse);
         Session.endClientAction(data.clientId);
         break;
       }
-      case "user-name": {
+      case Message.USER_NAME: {
         clients[data.clientId].name = data.name;
-        if (data.clientId === Client.id) document.getElementById("userName").textContent = data.name || Client.id;
+        if (data.clientId === Client.id) {
+          document.getElementById("userName").textContent = data.name || Client.id;
+        }
         [...document.getElementsByClassName("chatMessageName-" + data.clientId)].forEach((name) => name.textContent = data.name || data.clientId);
         [...document.getElementsByClassName("chatPrivateText-" + data.clientId)].forEach((text) => {
           Chat.writePrivateTextTitle(text, [...text.className.matchAll(/chatPrivateText-([a-z\d]{4})/g)].map((name) => name[1]));
@@ -402,90 +408,96 @@ const Client = {
         Session.updateClientTable();
         break;
       }
-      case "chat-message": {
+      case Message.CHAT_MESSAGE: {
         Chat.addMessage(data);
         break;
       }
       // Another user has changed the canvas size
-      case "resize-canvas": {
+      case Message.RESIZE_CANVAS: {
         Canvas.resize(data.options);
         break;
       }
       // The server needs a copy of the canvas to send to a new user
-      case "request-canvas": {
+      case Message.REQUEST_CANVAS: {
         this.sendMessage({
-          type: "response-canvas",
-          actions: {
-            order: Session.actionOrder,
-            clients: Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action]))
-          },
-          undoActions: ActionHistory.undoActions,
-          redoActions: ActionHistory.redoActions,
+          type: Message.RESPONSE_CANVAS,
+          data: [
+            ActionHistory.actions,
+            ActionHistory.pos,
+            [
+              Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action])),
+              Session.actionOrder
+            ]
+          ],
           clientId: data.clientId
         });
         break;
       }
       // The server has received a copy of the canvas from the first user
-      case "response-canvas": {
-        Canvas.setup(data);
+      case Message.RESPONSE_CANVAS: {
+        Canvas.setup(data.data);
         break;
       }
       // Another user has opened a canvas file
-      case "open-canvas": {
+      case Message.OPEN_CANVAS: {
         Canvas.setup(msgpack.decode(data.file));
         break;
       }
       // A new user has joined the session
-      case "user-joined": {
+      case Message.USER_JOINED: {
         Session.addUsers([data.client], data.total);
         break;
       }
       // A user has left the session
-      case "user-left": {
+      case Message.USER_LEFT: {
         Session.removeUsers([data.client], data.total);
         break;
       }
       // Another user has moved their mouse
-      case "mouse-move": {
+      case Message.MOUSE_MOVE: {
         const cursor = document.getElementById("cursorIcon-" + data.clientId);
         if (data.outside) {
           cursor.style.display = "none";
         } else {
-          const x = (data.pos[0] * Canvas.zoom) + (Canvas.canvas.offsetLeft + (Canvas.canvas.clientLeft * Canvas.zoom)) - Canvas.container.scrollLeft;
-          const y = (data.pos[1] * Canvas.zoom) + (Canvas.canvas.offsetTop + (Canvas.canvas.clientTop * Canvas.zoom)) - Canvas.container.scrollTop;
+          const x = (data.pos[0] * Canvas.zoom) + (Canvas.displayCanvas.offsetLeft - Canvas.pan.x);
+          const y = (data.pos[1] * Canvas.zoom) + (Canvas.displayCanvas.offsetTop - Canvas.pan.y);
           cursor.style.left = x + "px";
           cursor.style.top = y + "px";
           cursor.style.display = "block";
         }
         break;
       }
-      case "display-cursor": {
+      case Message.DISPLAY_CURSOR: {
         document.getElementById("cursorIcon-" + data.clientId).style.display = data.value ? "block" : "none";
         break;
       }
-      case "password-set": {
-        if (data.clientId === this.id) Modal.close("setSessionPasswordModal");
+      case Message.PASSWORD_SET: {
+        if (data.clientId === this.id) {
+          Modal.close("setSessionPasswordModal");
+        }
         Session.updatePassword(data.password);
         break;
       }
-      case "enter-password": {
+      case Message.ENTER_PASSWORD: {
         document.getElementById("enterSessionPasswordId").textContent = data.id;
         Modal.open("enterSessionPasswordModal");
         break;
       }
-      case "wrong-password": {
+      case Message.WRONG_PASSWORD: {
         document.getElementById("sessionWrongPassword").textContent = data.password;
         document.getElementById("sessionWrongPasswordId").textContent = data.id;
         Modal.open("sessionWrongPasswordModal");
         break;
       }
       // User has joined the session successfully
-      case "session-joined": {
+      case Message.SESSION_JOINED: {
         Modal.close("enterSessionPasswordModal");
         
         document.getElementById("drawScreen").style.display = "grid";
         document.getElementById("menuScreen").style.display = "none";
-        if (data.total !== 1) Modal.open("retrieveModal");
+        if (data.total !== 1) {
+          Modal.open("retrieveModal");
+        }
         Session.updateId(data.id);
         Session.updatePassword(data.password);
         
@@ -494,10 +506,11 @@ const Client = {
         this.canvas = clients[this.id].canvas;
         this.ctx = clients[this.id].ctx;
         
-        if (data.restore) break;
+        if (data.restore) {
+          break;
+        }
         
-        ActionHistory.clearUndo();
-        ActionHistory.clearRedo();
+        ActionHistory.reset();
         
         Slider.init();
         
@@ -542,7 +555,7 @@ const Client = {
         Chat.box.classList.add("displayNone");
         
         Canvas.init();
-        ActionHistory.addActionToTable("[ Base Image ]");
+        ActionHistory.addToUndo(PastAction.BASE);
         
         // Resize if too big
         Canvas.setZoom(Canvas.DEFAULT_ZOOM);
@@ -554,19 +567,19 @@ const Client = {
         break;
       }
       // The session the user has tried to join does not exist
-      case "session-no-exist": {
+      case Message.SESSION_NO_EXIST: {
         Modal.close("enterSessionPasswordModal");
         document.getElementById("sessionNoExist").textContent = data.id;
         Modal.open("sessionNoExistModal");
         break;
       }
       // The session the user has tried to create already exists
-      case "session-already-exist": {
+      case Message.SESSION_ALREADY_EXIST: {
         document.getElementById("sessionAlreadyExist").textContent = data.id;
         Modal.open("sessionAlreadyExistModal");
         break;
       }
-      case "session-id-changed": {
+      case Message.SESSION_ID_CHANGED: {
         Session.updateId(data.id);
         if (data.clientId === this.id) {
           Modal.close("changeSessionIdModal");
@@ -575,7 +588,7 @@ const Client = {
         }
         break;
       }
-      case "session-has-id": {
+      case Message.SESSION_HAS_ID: {
         document.getElementById("sessionHasId").textContent = data.id;
         Modal.open("sessionHasIdModal");
         break;
