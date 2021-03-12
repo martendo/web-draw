@@ -329,7 +329,6 @@ document.getElementById("editSettingsBtn").addEventListener("click", () => Modal
 document.getElementById("viewResetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
 document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fit"));
 document.getElementById("viewFillZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fill"));
-document.getElementById("viewChangeThemeBtn").addEventListener("click", () => Modal.open("changeThemeModal"));
 document.getElementById("sessionInfoBtn").addEventListener("click", () => Modal.open("sessionInfoModal"));
 document.getElementById("sessionChangeIdBtn").addEventListener("click", () => {
   document.getElementById("sessionIdNew").value = Session.id;
@@ -466,7 +465,6 @@ document.getElementById("settingsModalDoneBtn").addEventListener("click", () => 
 document.getElementById("sendMouseMovements").addEventListener("input", (event) => Client.setSendMouse(event.target.checked));
 document.getElementById("receiveMouseMovements").addEventListener("input", (event) => Client.setReceiveMouse(event.target.checked));
 
-document.getElementById("changeThemeModalDoneBtn").addEventListener("click", () => Modal.close("changeThemeModal"));
 document.getElementById("lightTheme").addEventListener("change", () => setTheme("light"));
 document.getElementById("darkTheme").addEventListener("change", () => setTheme("dark"));
 const theme = localStorage.getItem("theme");

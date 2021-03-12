@@ -123,8 +123,6 @@
             <li id="viewResetZoomBtn" title="Set the zoom to 100%">Reset Zoom</li>
             <li id="viewFitZoomBtn" title="Set the canvas zoom to fit the window">Fit to Window</li>
             <li id="viewFillZoomBtn" title="Set the canvas zoom to fill the entire window">Fill Window</li>
-            <li class="separator"></li>
-            <li id="viewChangeThemeBtn" title="Change the colour theme of Web Draw">Change Theme</li>
           </ul>
         </li><li id="sessionMenu" class="menuItem">
           <div class="menuLabel">Session</div>
@@ -1116,40 +1114,35 @@
       <div class="modalContent">
         <div class="modalHeader"><h2>Settings</h2></div>
         <div class="modalBody">
-          <table class="table">
-            <tr>
-              <td><input type="checkbox" id="sendMouseMovements" checked></td>
-              <td><label for="sendMouseMovements">Send mouse movements</label></td>
-            </tr>
-            <tr>
-              <td><input type="checkbox" id="receiveMouseMovements" checked></td>
-              <td><label for="receiveMouseMovements">Receive mouse movements</label></td>
-            </tr>
-          </table>
+          <fieldset>
+            <legend>Mouse Movements</legend>
+            <table class="table">
+              <tr>
+                <td><input type="checkbox" id="sendMouseMovements" checked></td>
+                <td><label for="sendMouseMovements">Send mouse movements</label></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" id="receiveMouseMovements" checked></td>
+                <td><label for="receiveMouseMovements">Receive mouse movements</label></td>
+              </tr>
+            </table>
+          </fieldset>
+          <fieldset>
+            <legend>Colour Theme</legend>
+            <table class="table">
+              <tr>
+                <td><input type="radio" name="theme" id="lightTheme" checked></td>
+                <td><label for="lightTheme">Light</label></td>
+              </tr>
+              <tr>
+                <td><input type="radio" name="theme" id="darkTheme"></td>
+                <td><label for="darkTheme">Dark</label></td>
+              </tr>
+            </table>
+          </fieldset>
         </div>
         <div class="modalFooter">
           <button id="settingsModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="changeThemeModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Change Theme</h2></div>
-        <div class="modalBody">
-          <table class="table">
-            <tr>
-              <td><input type="radio" name="theme" id="lightTheme" checked></td>
-              <td><label for="lightTheme">Light</label></td>
-            </tr>
-            <tr>
-              <td><input type="radio" name="theme" id="darkTheme"></td>
-              <td><label for="darkTheme">Dark</label></td>
-            </tr>
-          </table>
-        </div>
-        <div class="modalFooter">
-          <button id="changeThemeModalDoneBtn">Done</button>
         </div>
       </div>
     </div>
