@@ -1,0 +1,5 @@
+# RC files (.firebaserc)
+*.*rc		text linguist-language=JSON
+
+# Ignore list files (.gitignore, .slugignore)
+*.*ignore	text linguist-language=Ignore-List
