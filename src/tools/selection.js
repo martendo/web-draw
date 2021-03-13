@@ -360,6 +360,8 @@ const SelectTool = {
     tempCanvas.height = sel.data.height;
     const tempCtx = tempCanvas.getContext("2d");
     tempCtx.putImageData(sel.data, 0, 0);
+    
+    ctx.imageSmoothingEnabled = false;
     if (adjust) {
       ctx.save();
       ctx.beginPath();
