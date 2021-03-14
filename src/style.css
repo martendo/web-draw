@@ -848,11 +848,7 @@ label {
 table {
   border-collapse: collapse;
 }
-table.table *:not(input) {
-  vertical-align: top;
-}
-table.table td:not(.table),
-table.table th:not(.table) {
+table.table td, table.table th {
   padding: 3px;
 }
 table.table.border {
