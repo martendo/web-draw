@@ -63,8 +63,7 @@ class Selection {
   }
 }
 class ShortSelection {
-  constructor({ selected, x, y, width, height, flipped }) {
-    this.selected = selected;
+  constructor({ x, y, width, height, flipped }) {
     this.x = x;
     this.y = y;
     this.width = width;
