@@ -38,10 +38,10 @@ class Stroke {
       stroke.opacity,
       stroke.compOp,
       stroke.smoothen
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x97, ...new Uint8Array(buffer)]);
     return new Stroke({
       points: properties[0],
       colour: properties[1],

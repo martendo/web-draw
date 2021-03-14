@@ -38,10 +38,10 @@ class Fill {
       fill.opacity,
       fill.compOp,
       fill.fillBy
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x97, ...new Uint8Array(buffer)]);
     return new Fill({
       x: properties[0],
       y: properties[1],

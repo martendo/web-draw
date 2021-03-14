@@ -19,26 +19,21 @@
  */
 
 class PastAction {
-  constructor({ enabled, type, data = null }) {
+  constructor({ enabled, type, data }) {
     this.enabled = enabled;
     this.type = type;
-    if (data != null) {
-      this.data = data;
-    }
+    this.data = data;
   }
   
   static packer(action) {
-    const properties = [
+    return msgpack.encode([
       action.enabled,
-      action.type
-    ];
-    if (action.data != null) {
-      properties.push(action.data);
-    }
-    return msgpack.encode(properties);
+      action.type,
+      action.data
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x93, ...new Uint8Array(buffer)]);
     return new PastAction({
       enabled: properties[0],
       type: properties[1],

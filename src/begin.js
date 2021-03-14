@@ -110,10 +110,10 @@ class Pos2D {
     return msgpack.encode([
       pos.x,
       pos.y
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x92, ...new Uint8Array(buffer)]);
     return new Pos2D({
       x: properties[0],
       y: properties[1]
@@ -147,10 +147,10 @@ class Shape {
       shape.compOp,
       shape.outline,
       shape.fill
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x9A, ...new Uint8Array(buffer)]);
     return new Shape({
       x: properties[0],
       y: properties[1],
@@ -175,10 +175,10 @@ class ShapeColours {
     return msgpack.encode([
       colours.outline,
       colours.fill
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x92, ...new Uint8Array(buffer)]);
     return new ShapeColours({
       outline: properties[0],
       fill: properties[1]

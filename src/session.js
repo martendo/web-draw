@@ -28,10 +28,10 @@ class Action {
     return msgpack.encode([
       action.type,
       action.data
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x92, ...new Uint8Array(buffer)]);
     return new Action({
       type: properties[0],
       data: properties[1]

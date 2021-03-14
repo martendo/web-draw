@@ -44,10 +44,10 @@ class Selection {
       selection.flipped,
       selection.data,
       selection.old
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x99, ...new Uint8Array(buffer)]);
     return new Selection({
       selected: properties[0],
       x: properties[1],
@@ -78,10 +78,10 @@ class ShortSelection {
       shortSel.width,
       shortSel.height,
       shortSel.flipped
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x95, ...new Uint8Array(buffer)]);
     return new ShortSelection({
       x: properties[0],
       y: properties[1],
@@ -103,10 +103,10 @@ class SelectionResize {
       selectionResize.handle,
       selectionResize.x,
       selectionResize.y
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x93, ...new Uint8Array(buffer)]);
     return new SelectionResize({
       handle: properties[0],
       x: properties[1],
@@ -128,10 +128,10 @@ class OldSelection {
       old.y,
       old.width,
       old.height
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x94, ...new Uint8Array(buffer)]);
     return new OldSelection({
       x: properties[0],
       y: properties[1],

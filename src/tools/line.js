@@ -42,10 +42,10 @@ class Line {
       line.caps,
       line.opacity,
       line.compOp
-    ]);
+    ]).slice(1);
   }
   static unpacker(buffer) {
-    const properties = msgpack.decode(buffer);
+    const properties = msgpack.decode([0x99, ...new Uint8Array(buffer)]);
     return new Line({
       x0: properties[0],
       y0: properties[1],
