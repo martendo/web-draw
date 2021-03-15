@@ -43,7 +43,7 @@ const Chat = {
       .replace(/\\([^\sa-z0-9])/img, "$1")
       .replace(/\\/g, "&#92;")
       .replace(/&!(\d+);/g, (match, p1) => {
-        return noStyle[parseInt(p1)];
+        return noStyle[parseInt(p1, 10)];
       });
   },
   

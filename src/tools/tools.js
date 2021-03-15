@@ -258,7 +258,7 @@ function startTool(point) {
   const compOp = parseInt(document.getElementById("compositeSelect").value, 10);
   const shapeOutline = document.getElementById("shapeOutline").checked;
   const shapeFill = document.getElementById("shapeFill").checked;
-  const caps = parseInt(document.getElementById("lineCapSelect").value);
+  const caps = parseInt(document.getElementById("lineCapSelect").value, 10);
   
   if (tool !== "select") {
     SelectTool.remove();

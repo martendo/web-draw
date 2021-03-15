@@ -432,7 +432,7 @@ document.getElementById("canvasResizeOffsetCentre").addEventListener("click", ()
 const resizeFill = document.getElementById("canvasResizeFill");
 resizeFill.value = 1;
 function getResizeFillColour() {
-  switch (parseInt(resizeFill.value)) {
+  switch (parseInt(resizeFill.value, 10)) {
     case 0: {
       return penColours[0];
     }
