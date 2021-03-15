@@ -345,7 +345,9 @@ const ActionHistory = {
       image.width = Session.canvas.width / (Session.canvas.height / 45);
     }
     image.getContext("2d").drawImage(Session.canvas, 0, 0, image.width, image.height);
-    row.insertCell(-1).appendChild(image);
+    const imageCell = row.insertCell(-1);
+    imageCell.classList.add("actionHistoryImageCell");
+    imageCell.appendChild(image);
     
     const nameCell = row.insertCell(-1);
     nameCell.classList.add("actionName");
