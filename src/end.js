@@ -399,6 +399,18 @@ const resizeWidth = document.getElementById("canvasResizeWidth");
 const resizeHeight = document.getElementById("canvasResizeHeight");
 const offsetX = document.getElementById("canvasResizeOffsetX");
 const offsetY = document.getElementById("canvasResizeOffsetY");
+document.getElementById("editResizeBtn").addEventListener("click", () => {
+  resizeWidth.value = Session.canvas.width;
+  resizeHeight.value = Session.canvas.height;
+  offsetX.min = 0;
+  offsetX.max = 0;
+  offsetX.value = 0;
+  offsetY.min = 0;
+  offsetY.max = 0;
+  offsetY.value = 0;
+  updateResizePreview();
+  Modal.open("canvasResizeModal");
+});
 resizeWidth.addEventListener("input", () => {
   const delta = resizeWidth.value - Session.canvas.width;
   offsetX.min = Math.min(delta, 0);
@@ -411,47 +423,96 @@ resizeHeight.addEventListener("input", () => {
   offsetY.max = Math.max(delta, 0);
   offsetY.value = minmax(offsetY.value, offsetY.min, offsetY.max);
 });
-document.getElementById("editResizeBtn").addEventListener("click", () => {
-  resizeWidth.value = Session.canvas.width;
-  resizeHeight.value = Session.canvas.height;
-  offsetX.min = 0;
-  offsetX.max = 0;
-  offsetX.value = 0;
-  offsetY.min = 0;
-  offsetY.max = 0;
-  offsetY.value = 0;
-  Modal.open("canvasResizeModal");
-});
 document.getElementById("canvasResizeOffsetCentre").addEventListener("click", () => {
   offsetX.value = Math.round((resizeWidth.value - Session.canvas.width) / 2);
   offsetY.value = Math.round((resizeHeight.value - Session.canvas.height) / 2);
+  updateResizePreview();
 });
+
 const resizeFill = document.getElementById("canvasResizeFill");
 resizeFill.value = 1;
-document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
-  Modal.close("canvasResizeModal");
-  var bgColour = null;
+function getResizeFillColour() {
   switch (parseInt(resizeFill.value)) {
     case 0: {
-      bgColour = penColours[0];
-      break;
+      return penColours[0];
     }
     case 1: {
-      bgColour = penColours[1];
-      break;
+      return penColours[1];
     }
     case 2: {
-      bgColour = "#ffffff";
-      break;
+      return "#ffffff";
     }
-    // 3: Transparency = null
+    // Transparency = null
+    case 3:
+    default: {
+      return null;
+    }
   }
+}
+
+const previewCanvas = document.getElementById("resizePreviewCanvas");
+const previewCtx = previewCanvas.getContext("2d");
+function updateResizePreview() {
+  const newWidth = parseInt(resizeWidth.value, 10);
+  const newHeight = parseInt(resizeHeight.value, 10);
+
+  const canvasWidth = Session.canvas.width;
+  const canvasHeight = Session.canvas.height;
+
+  const previewWidth = Math.max(newWidth, newWidth + (canvasWidth - newWidth) * 2);
+  const previewHeight = Math.max(newHeight, newHeight + (canvasHeight - newHeight) * 2);
+  var divisor;
+  if (previewWidth > previewHeight) {
+    previewCanvas.width = 200;
+    divisor = previewWidth / 200;
+    previewCanvas.height = previewHeight / divisor;
+  } else {
+    previewCanvas.height = 200;
+    divisor = previewHeight / 200;
+    previewCanvas.width = previewWidth / divisor;
+  }
+  const previewNewWidth = Math.round(newWidth / divisor);
+  const previewNewHeight = Math.round(newHeight / divisor);
+  const previewX = Math.round((previewCanvas.width / 2) - (previewNewWidth / 2));
+  const previewY = Math.round((previewCanvas.height / 2) - (previewNewHeight / 2));
+  const previewCanvasX = Math.round(previewX + (parseInt(offsetX.value, 10) / divisor));
+  const previewCanvasY = Math.round(previewY + (parseInt(offsetY.value, 10) / divisor));
+  const previewCanvasWidth = Math.round(canvasWidth / divisor);
+  const previewCanvasHeight = Math.round(canvasHeight / divisor);
+  
+  const bgColour = getResizeFillColour();
+  if (bgColour) {
+    previewCtx.fillStyle = bgColour;
+  } else {
+    previewCtx.fillStyle = Canvas._transparentPattern;
+  }
+  previewCtx.fillRect(previewX, previewY, previewNewWidth, previewNewHeight);
+  
+  previewCtx.fillStyle = Canvas._transparentPattern;
+  previewCtx.fillRect(previewCanvasX, previewCanvasY, previewCanvasWidth, previewCanvasHeight);
+  previewCtx.drawImage(Session.canvas, previewCanvasX, previewCanvasY, previewCanvasWidth, previewCanvasHeight);
+  
+  previewCtx.lineWidth = 1;
+  previewCtx.strokeStyle = "#000000";
+  previewCtx.globalAlpha = 0.5;
+  previewCtx.strokeRect(previewX - 0.5, previewY - 0.5, previewNewWidth + 1, previewNewHeight + 1);
+  previewCtx.globalAlpha = 0.25;
+  previewCtx.strokeRect(previewCanvasX - 0.5, previewCanvasY - 0.5, previewCanvasWidth + 1, previewCanvasHeight + 1);
+  previewCtx.globalAlpha = 1;
+}
+
+[resizeWidth, resizeHeight, offsetX, offsetY, resizeFill].forEach((input) => {
+  input.addEventListener("input", () => updateResizePreview());
+});
+
+document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
+  Modal.close("canvasResizeModal");
   const options = {
-    width: document.getElementById("canvasResizeWidth").value,
-    height: document.getElementById("canvasResizeHeight").value,
-    x: document.getElementById("canvasResizeOffsetX").value,
-    y: document.getElementById("canvasResizeOffsetY").value,
-    colour: bgColour
+    width: resizeWidth.value,
+    height: resizeHeight.value,
+    x: offsetX.value,
+    y: offsetY.value,
+    colour: getResizeFillColour()
   };
   Client.sendMessage({
     type: Message.RESIZE_CANVAS,

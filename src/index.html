@@ -839,46 +839,59 @@
       <div class="modalContent">
         <div class="modalHeader"><h2>Resize Canvas</h2></div>
         <div class="modalBody">
-          <fieldset>
-            <legend>Canvas Size</legend>
-            <table class="table">
-              <tr>
-                <td><label for="canvasResizeWidth">Width: </label></td>
-                <td><input id="canvasResizeWidth" type="number" min="1" step="1"></td>
-                <td>px</td>
-              </tr>
-              <tr>
-                <td><label for="canvasResizeHeight">Height: </label></td>
-                <td><input id="canvasResizeHeight" type="number" min="1" step="1"></td>
-                <td>px</td>
-              </tr>
-            </table>
-          </fieldset>
-          <fieldset>
-            <legend>Offset</legend>
-            <table class="table">
-              <tr>
-                <td><label for="canvasResizeOffsetX">X: </label></td>
-                <td><input id="canvasResizeOffsetX" type="number" min="0" step="1"></td>
-                <td>px</td>
-              </tr>
-              <tr>
-                <td><label for="canvasResizeOffsetY">Y: </label></td>
-                <td><input id="canvasResizeOffsetY" type="number" min="0" step="1"></td>
-                <td>px</td>
-              </tr>
-              <tr>
-                <td colspan="3"><button id="canvasResizeOffsetCentre">Centre</button></td>
-              </tr>
-            </table>
-          </fieldset>
-          <label for="canvasResizeFill">Fill with:</label>
-          <select id="canvasResizeFill">
-            <option value="0">Colour 1 (foreground)</option>
-            <option value="1">Colour 2 (background)</option>
-            <option value="2">White</option>
-            <option value="3">Transparency</option>
-          </select>
+          <table>
+            <tr>
+              <td>
+                <fieldset>
+                  <legend>Canvas Size</legend>
+                  <table class="table">
+                    <tr>
+                      <td><label for="canvasResizeWidth">Width: </label></td>
+                      <td><input id="canvasResizeWidth" type="number" min="1" step="1"></td>
+                      <td>px</td>
+                    </tr>
+                    <tr>
+                      <td><label for="canvasResizeHeight">Height: </label></td>
+                      <td><input id="canvasResizeHeight" type="number" min="1" step="1"></td>
+                      <td>px</td>
+                    </tr>
+                  </table>
+                </fieldset>
+                <fieldset>
+                  <legend>Offset</legend>
+                  <table class="table">
+                    <tr>
+                      <td><label for="canvasResizeOffsetX">X: </label></td>
+                      <td><input id="canvasResizeOffsetX" type="number" min="0" step="1"></td>
+                      <td>px</td>
+                    </tr>
+                    <tr>
+                      <td><label for="canvasResizeOffsetY">Y: </label></td>
+                      <td><input id="canvasResizeOffsetY" type="number" min="0" step="1"></td>
+                      <td>px</td>
+                    </tr>
+                    <tr>
+                      <td colspan="3"><button id="canvasResizeOffsetCentre">Centre</button></td>
+                    </tr>
+                  </table>
+                </fieldset>
+                <label for="canvasResizeFill">Fill with:</label>
+                <select id="canvasResizeFill">
+                  <option value="0">Colour 1 (foreground)</option>
+                  <option value="1">Colour 2 (background)</option>
+                  <option value="2">White</option>
+                  <option value="3">Transparency</option>
+                </select>
+              </td>
+              <td><span class="spacer"></span></td>
+              <td id="canvasResizePreviewCell">
+                <fieldset>
+                  <legend>Preview</legend>
+                  <canvas id="resizePreviewCanvas"></canvas>
+                </fieldset>
+              </td>
+            </tr>
+          </table>
         </div>
         <div class="modalFooter">
           <button id="resizeModalResizeBtn">Resize</button><button id="resizeModalCancelBtn">Cancel</button>

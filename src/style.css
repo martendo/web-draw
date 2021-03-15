@@ -826,6 +826,13 @@ table.table tr.sessionInfoClient:active {
   background-color: var(--table-cell-highlight-active-colour);
 }
 
+#canvasResizePreviewCell {
+  text-align: center;
+}
+#resizePreviewCanvas {
+  border: 1px solid var(--border-colour);
+}
+
 #retrieveText {
   text-align: center;
 }
