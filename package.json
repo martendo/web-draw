@@ -4,7 +4,8 @@
   "description": "A little real-time online collaborative drawing program.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "postversion": "git push && git push --tags"
   },
   "repository": {
     "type": "git",
