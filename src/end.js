@@ -505,6 +505,13 @@ function updateResizePreview() {
   input.addEventListener("input", () => updateResizePreview());
 });
 
+document.getElementById("resizeModalResetBtn").addEventListener("click", () => {
+  resizeWidth.value = Session.canvas.width;
+  resizeWidth.dispatchEvent(new Event("input"));
+  resizeHeight.value = Session.canvas.height;
+  resizeHeight.dispatchEvent(new Event("input"));
+  resizeFill.value = 1;;
+});
 document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
   Modal.close("canvasResizeModal");
   const options = {
