@@ -575,6 +575,9 @@ function mouseMove(event) {
       break;
     }
   }
+  
+  const exactPoint = Canvas.getPixelPos(event, { floor: false });
+  
   var cursor = "auto";
   if (currentAction.data && currentAction.data.selected) {
     if (currentAction.type === Action.SELECTION_RESIZE) {
@@ -585,7 +588,6 @@ function mouseMove(event) {
       cursor = "move";
     } else {
       const resizeCursor = SelectTool.getResizeHandle(mouse, SelectTool.RESIZE_CURSORS);
-      const exactPoint = Canvas.getPixelPos(event, { floor: false });
       if (resizeCursor !== null) {
         cursor = resizeCursor;
       } else if (isPointInside(exactPoint.x, exactPoint.y, currentAction.data)) {
@@ -599,8 +601,8 @@ function mouseMove(event) {
   if (event.target.tagName !== "CANVAS") {
     mouseMoved.x = -1;
   } else {
-    mouseMoved.x = point.x;
-    mouseMoved.y = point.y;
+    mouseMoved.x = exactPoint.x;
+    mouseMoved.y = exactPoint.y;
   }
 }
 // Handle mouseup
