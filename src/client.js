@@ -440,7 +440,7 @@ const Client = {
       }
       // Another user has opened a canvas file
       case Message.OPEN_CANVAS: {
-        Canvas.setup(msgpack.decode(data.file));
+        Canvas.setup(msgpack.decode([0x92, ...data.file]));
         break;
       }
       // A new user has joined the session

@@ -285,7 +285,7 @@ const Canvas = {
     const file = new Blob([msgpack.encode([
       ActionHistory.actions,
       ActionHistory.pos
-    ])], { type: "application/octet-stream" });
+    ]).slice(1)], { type: "application/octet-stream" });
     const url = URL.createObjectURL(file);
     a.href = url;
     a.download = "image.bin";
@@ -309,7 +309,7 @@ const Canvas = {
       
       const data = new Uint8Array(reader.result);
       try {
-        this.setup(msgpack.decode(data));
+        this.setup(msgpack.decode([0x92, ...data]));
         // Only send to other clients if setup was successful
         Client.sendMessage({
           type: Message.OPEN_CANVAS,
