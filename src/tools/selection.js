@@ -114,6 +114,38 @@ class SelectionResize {
     });
   }
 }
+class SelectionPaste {
+  constructor({ x, y, width, height, flipped, data }) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.flipped = flipped;
+    this.data = data;
+  }
+  
+  static packer(shortSel) {
+    return msgpack.encode([
+      shortSel.x,
+      shortSel.y,
+      shortSel.width,
+      shortSel.height,
+      shortSel.flipped,
+      shortSel.data
+    ]).slice(1);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode([0x96, ...new Uint8Array(buffer)]);
+    return new SelectionPaste({
+      x: properties[0],
+      y: properties[1],
+      width: properties[2],
+      height: properties[3],
+      flipped: properties[4],
+      data: properties[5]
+    });
+  }
+}
 class SelectionClear {
   constructor({ x, y, width, height, colour }) {
     this.x = x;
@@ -422,14 +454,14 @@ const SelectTool = {
       this.drawData(Session.ctx, sel);
     }
     if (user) {
-      ActionHistory.addToUndo(PastAction.SELECTION_PASTE, {
+      ActionHistory.addToUndo(PastAction.SELECTION_PASTE, new SelectionPaste({
         x: sel.x,
         y: sel.y,
         width: sel.width,
         height: sel.height,
         flipped: sel.flipped,
         data: sel.data
-      });
+      }));
     }
   },
   clear(sel, colour, user = true) {

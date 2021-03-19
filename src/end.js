@@ -40,6 +40,7 @@ msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
   Selection,
   SelectionResize,
   SelectionClear,
+  SelectionPaste,
   OldSelection,
   ShortSelection,
   Line,
