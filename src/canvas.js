@@ -150,20 +150,8 @@ const Canvas = {
     }
     this.mixingCtx.globalCompositeOperation = DEFAULT_COMP_OP;
     if (save) {
-      if (!only) {
-        const tempCanvas = this._copyCanvas(this.mixingCanvas);
-        // Update display canvas
-        this.update({
-          extras: extras,
-          save: false,
-          only: only
-        });
-        Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
-        Session.ctx.drawImage(tempCanvas, 0, 0);
-      } else {
-        Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
-        Session.ctx.drawImage(this.mixingCanvas, 0, 0);
-      }
+      Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
+      Session.ctx.drawImage(this.mixingCanvas, 0, 0);
     }
     this.drawCanvas();
   },
