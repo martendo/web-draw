@@ -186,6 +186,36 @@ class ShapeColours {
   }
 }
 
+class RectWithColour {
+  constructor({ x, y, width, height, colour }) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.colour = colour;
+  }
+  
+  static packer(rect) {
+    return msgpack.encode([
+      rect.x,
+      rect.y,
+      rect.width,
+      rect.height,
+      rect.colour
+    ]).slice(1);
+  }
+  static unpacker(buffer) {
+    const properties = msgpack.decode([0x95, ...new Uint8Array(buffer)]);
+    return new RectWithColour({
+      x: properties[0],
+      y: properties[1],
+      width: properties[2],
+      height: properties[3],
+      colour: properties[4]
+    });
+  }
+}
+
 // Check if a point is within an area
 function isPointInside(x, y, rect) {
   return (

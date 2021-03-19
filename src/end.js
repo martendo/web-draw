@@ -39,13 +39,13 @@ msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
   Fill,
   Selection,
   SelectionResize,
-  SelectionClear,
   SelectionPaste,
   OldSelection,
   ShortSelection,
   Line,
   Shape,
-  ShapeColours
+  ShapeColours,
+  RectWithColour
 ].forEach((object, index) => {
   const type = 0x20 + index;
   msgpack.codec.preset.addExtPacker(type, object, (obj) => object.packer(obj));
@@ -498,13 +498,13 @@ document.getElementById("resizeModalResetBtn").addEventListener("click", () => {
 });
 document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
   Modal.close("canvasResizeModal");
-  const options = {
+  const options = new RectWithColour({
     width: parseInt(resizeWidth.value, 10),
     height: parseInt(resizeHeight.value, 10),
     x: parseInt(offsetX.value, 10),
     y: parseInt(offsetY.value, 10),
     colour: getResizeFillColour()
-  };
+  });
   Client.sendMessage({
     type: Message.RESIZE_CANVAS,
     options: options

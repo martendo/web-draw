@@ -146,35 +146,6 @@ class SelectionPaste {
     });
   }
 }
-class SelectionClear {
-  constructor({ x, y, width, height, colour }) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-    this.colour = colour;
-  }
-  
-  static packer(selectionClear) {
-    return msgpack.encode([
-      selectionClear.x,
-      selectionClear.y,
-      selectionClear.width,
-      selectionClear.height,
-      selectionClear.colour
-    ]).slice(1);
-  }
-  static unpacker(buffer) {
-    const properties = msgpack.decode([0x95, ...new Uint8Array(buffer)]);
-    return new SelectionClear({
-      x: properties[0],
-      y: properties[1],
-      width: properties[2],
-      height: properties[3],
-      colour: properties[4]
-    });
-  }
-}
 class OldSelection {
   constructor({ x, y, width, height }) {
     this.x = x;
@@ -469,7 +440,7 @@ const SelectTool = {
     Session.ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
     Canvas.update();
     if (user) {
-      ActionHistory.addToUndo(PastAction.SELECTION_CLEAR, new SelectionClear({
+      ActionHistory.addToUndo(PastAction.SELECTION_CLEAR, new RectWithColour({
         x: sel.x,
         y: sel.y,
         width: sel.width,
