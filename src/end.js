@@ -39,6 +39,7 @@ msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
   Fill,
   Selection,
   SelectionResize,
+  SelectionClear,
   OldSelection,
   ShortSelection,
   Line,
