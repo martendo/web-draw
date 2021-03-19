@@ -25,10 +25,10 @@ msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
     imageData.data,
     imageData.width,
     imageData.height
-  ]);
+  ]).slice(1);
 });
 msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
-  const properties = msgpack.decode(buffer);
+  const properties = msgpack.decode([0x93, ...new Uint8Array(buffer)]);
   return new ImageData(properties[0], properties[1], properties[2]);
 });
 [
