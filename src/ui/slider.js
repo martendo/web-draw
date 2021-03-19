@@ -23,7 +23,7 @@ const Slider = {
   
   // Callback functions
   CALLBACKS: {
-    "updateColourAlpha": function updateColourAlpha(value) {
+    "updateColourAlpha": (value) => {
       for (var i = 0; i < 2; i++) {
         const colourValue = document.getElementById(`penColour${i}Value`);
         colourValue.value = colourValue.value.slice(0, -2) + ("0" + Math.round(value / 100 * 255).toString(16)).slice(-2);
