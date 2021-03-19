@@ -394,20 +394,20 @@ document.getElementById("editResizeBtn").addEventListener("click", () => {
   Modal.open("canvasResizeModal");
 });
 resizeWidth.addEventListener("input", () => {
-  const delta = resizeWidth.value - Session.canvas.width;
+  const delta = parseInt(resizeWidth.value, 10) - Session.canvas.width;
   offsetX.min = Math.min(delta, 0);
   offsetX.max = Math.max(delta, 0);
-  offsetX.value = minmax(offsetX.value, offsetX.min, offsetX.max);
+  offsetX.value = minmax(parseInt(offsetX.value, 10), offsetX.min, offsetX.max);
 });
 resizeHeight.addEventListener("input", () => {
-  const delta = resizeHeight.value - Session.canvas.height;
+  const delta = parseInt(resizeHeight.value, 10) - Session.canvas.height;
   offsetY.min = Math.min(delta, 0);
   offsetY.max = Math.max(delta, 0);
-  offsetY.value = minmax(offsetY.value, offsetY.min, offsetY.max);
+  offsetY.value = minmax(parseInt(offsetY.value, 10), offsetY.min, offsetY.max);
 });
 document.getElementById("canvasResizeOffsetCentre").addEventListener("click", () => {
-  offsetX.value = Math.round((resizeWidth.value - Session.canvas.width) / 2);
-  offsetY.value = Math.round((resizeHeight.value - Session.canvas.height) / 2);
+  offsetX.value = Math.round((parseInt(resizeWidth.value, 10) - Session.canvas.width) / 2);
+  offsetY.value = Math.round((parseInt(resizeHeight.value, 10) - Session.canvas.height) / 2);
   updateResizePreview();
 });
 
@@ -497,10 +497,10 @@ document.getElementById("resizeModalResetBtn").addEventListener("click", () => {
 document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
   Modal.close("canvasResizeModal");
   const options = {
-    width: resizeWidth.value,
-    height: resizeHeight.value,
-    x: offsetX.value,
-    y: offsetY.value,
+    width: parseInt(resizeWidth.value, 10),
+    height: parseInt(resizeHeight.value, 10),
+    x: parseInt(offsetX.value, 10),
+    y: parseInt(offsetY.value, 10),
     colour: getResizeFillColour()
   };
   Client.sendMessage({
