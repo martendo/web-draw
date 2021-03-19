@@ -139,7 +139,7 @@ const Colour = {
   },
   // Update colour value and box, but don't set the colour
   update(num, value) {
-    const valueWithAlpha = value + ("0" + Math.round(parseFloat(document.getElementById("opacityInput").dataset.value, 10) / 100 * 255).toString(16)).slice(-2);
+    const valueWithAlpha = value + ("0" + Math.round(parseFloat(document.getElementById("opacityInput").dataset.value) / 100 * 255).toString(16)).slice(-2);
     document.getElementById("penColour" + num).style.backgroundColor = valueWithAlpha;
     const colourValue = document.getElementById(`penColour${num}Value`);
     colourValue.value = valueWithAlpha;

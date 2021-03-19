@@ -90,7 +90,7 @@ const Canvas = {
   },
   // Set the canvas zoom with the number input
   setZoomValue(event) {
-    this.setZoom(parseFloat(event.currentTarget.value / 100), true);
+    this.setZoom(parseFloat(event.currentTarget.value) / 100, true);
   },
   // Set the canvas zoom to whatever fits in the canvas area, optionally only if it doesn't already fit
   zoomToWindow(type = "fit", allowLarger = true) {

@@ -148,7 +148,7 @@ const Tools = {
             break;
           }
           case "slider": {
-            Slider.setValue(input, parseFloat(inputs[input], 10));
+            Slider.setValue(input, parseFloat(inputs[input]));
             break;
           }
           case "checked": {
