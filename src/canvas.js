@@ -429,7 +429,7 @@ const Canvas = {
     }
     this.update();
     if (user) {
-      ActionHistory.addToUndo(PastAction.RESIZE_CANVAS, options);
+      ActionHistory.append(PastAction.RESIZE_CANVAS, options);
     }
   },
   
@@ -444,7 +444,7 @@ const Canvas = {
     Session.ctx.fillRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.update();
     if (user) {
-      ActionHistory.addToUndo(PastAction.CLEAR_BLANK);
+      ActionHistory.append(PastAction.CLEAR_BLANK);
     }
   },
   
@@ -458,7 +458,7 @@ const Canvas = {
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
     this.update();
     if (user) {
-      ActionHistory.addToUndo(PastAction.CLEAR);
+      ActionHistory.append(PastAction.CLEAR);
     }
   }
 };

@@ -425,7 +425,7 @@ const SelectTool = {
       this.drawData(Session.ctx, sel);
     }
     if (user) {
-      ActionHistory.addToUndo(PastAction.SELECTION_PASTE, new SelectionPaste({
+      ActionHistory.append(PastAction.SELECTION_PASTE, new SelectionPaste({
         x: sel.x,
         y: sel.y,
         width: sel.width,
@@ -440,7 +440,7 @@ const SelectTool = {
     Session.ctx.fillRect(sel.x, sel.y, sel.width, sel.height);
     Canvas.update();
     if (user) {
-      ActionHistory.addToUndo(PastAction.SELECTION_CLEAR, new RectWithColour({
+      ActionHistory.append(PastAction.SELECTION_CLEAR, new RectWithColour({
         x: sel.x,
         y: sel.y,
         width: sel.width,

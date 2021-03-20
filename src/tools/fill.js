@@ -173,7 +173,7 @@ const FillTool = {
       save: true
     });
     if (user) {
-      ActionHistory.addToUndo(PastAction.FILL, fill);
+      ActionHistory.append(PastAction.FILL, fill);
     }
   }
 };

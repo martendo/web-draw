@@ -60,7 +60,7 @@ const ActionHistory = {
   pos: -1,
   
   // Clear redoable actions, push an action onto action history, enable the undo button
-  addToUndo(type, data = null) {
+  append(type, data = null) {
     this.clearRedo();
     this.actions.push(new PastAction({
       enabled: true,

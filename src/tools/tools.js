@@ -637,7 +637,7 @@ function clearMouseHold(event) {
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
-      ActionHistory.addToUndo(PastAction.LINE, currentAction.data);
+      ActionHistory.append(PastAction.LINE, currentAction.data);
       break;
     }
     case Action.RECT: {
@@ -649,7 +649,7 @@ function clearMouseHold(event) {
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
-      ActionHistory.addToUndo(PastAction.RECT, currentAction.data);
+      ActionHistory.append(PastAction.RECT, currentAction.data);
       break;
     }
     case Action.ELLIPSE: {
@@ -661,7 +661,7 @@ function clearMouseHold(event) {
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
-      ActionHistory.addToUndo(PastAction.ELLIPSE, currentAction.data);
+      ActionHistory.append(PastAction.ELLIPSE, currentAction.data);
       break;
     }
     case Action.SELECTING: {

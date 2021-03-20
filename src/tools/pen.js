@@ -87,7 +87,7 @@ const PenTool = {
     Canvas.update({ save: true });
     srcCanvas.getContext("2d").clearRect(0, 0, srcCanvas.width, srcCanvas.height);
     if (user) {
-      ActionHistory.addToUndo(PastAction.STROKE, stroke);
+      ActionHistory.append(PastAction.STROKE, stroke);
     }
   },
   
