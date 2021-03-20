@@ -240,7 +240,7 @@ wss.on("connection", (socket) => {
       case Message.FILL:
       case Message.CLEAR:
       case Message.CLEAR_BLANK:
-      case Message.IMPORT_PICTURE:
+      case Message.IMPORT_IMAGE:
       case Message.OPEN_CANVAS:
       case Message.RESIZE_CANVAS:
       case Message.MOVE_HISTORY:

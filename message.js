@@ -51,7 +51,7 @@ module.exports = Object.freeze({
   REQUEST_CANVAS: 44,
   RESPONSE_CANVAS: 45,
   
-  IMPORT_PICTURE: 46,
+  IMPORT_IMAGE: 46,
   OPEN_CANVAS: 47,
   RESIZE_CANVAS: 48,
   

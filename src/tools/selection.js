@@ -491,12 +491,12 @@ const SelectTool = {
     Canvas.update();
   },
   
-  importPicture(src, clientId) {
+  importImage(src, clientId) {
     const img = new Image();
     img.addEventListener("load", () => {
       if (clientId === Client.id) {
         Client.sendMessage({
-          type: Message.IMPORT_PICTURE,
+          type: Message.IMPORT_IMAGE,
           image: img.src,
           clientId: Client.id
         });

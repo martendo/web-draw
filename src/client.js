@@ -308,9 +308,9 @@ const Client = {
         ActionHistory.addToUndo(PastAction.CLEAR_BLANK);
         break;
       }
-      // Another user has imported a picture onto the canvas
-      case Message.IMPORT_PICTURE: {
-        SelectTool.importPicture(data.image, data.clientId);
+      // Another user has imported an image onto the canvas
+      case Message.IMPORT_IMAGE: {
+        SelectTool.importImage(data.image, data.clientId);
         break;
       }
       case Message.SELECTION_CREATE: {

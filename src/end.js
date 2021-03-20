@@ -252,7 +252,7 @@ const quickColourSelect = document.getElementById("quickColourSelect");
 quickColourSelect.addEventListener("click", (event) => { event.preventDefault(); });
 quickColourSelect.addEventListener("contextmenu", (event) => { event.preventDefault(); });
 
-document.getElementById("choosePicture").addEventListener("change", (event) => Canvas.importPicture(event));
+document.getElementById("chooseImage").addEventListener("change", (event) => Canvas.importImage(event));
 document.getElementById("chooseCanvasFile").addEventListener("change", (event) => Canvas.open(event));
 
 const penColourBoxes = document.getElementsByClassName("penColour");
@@ -302,7 +302,7 @@ document.getElementById("fileOpenBtn").addEventListener("click", () => {
 });
 document.getElementById("fileExportBtn").addEventListener("click", () => Canvas.export());
 document.getElementById("fileImportBtn").addEventListener("click", () => {
-  const filePicker = document.getElementById("choosePicture");
+  const filePicker = document.getElementById("chooseImage");
   filePicker.click();
 });
 document.getElementById("editUndoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(-1));

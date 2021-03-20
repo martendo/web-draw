@@ -420,7 +420,7 @@ const Canvas = {
   },
   
   // Import image and put on canvas
-  importPicture(event) {
+  importImage(event) {
     switchTool("select");
     const file = event.currentTarget.files[0];
     const reader = new FileReader();
@@ -428,7 +428,7 @@ const Canvas = {
       window.alert("There was an error reading the file.\n\n" + reader.error);
       console.error(`Error reading file ${file}:`, event);
     };
-    reader.onload = () => SelectTool.importPicture(reader.result, Client.id);
+    reader.onload = () => SelectTool.importImage(reader.result, Client.id);
     reader.readAsDataURL(file);
   },
   
