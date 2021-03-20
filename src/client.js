@@ -192,7 +192,7 @@ const Client = {
       connectionInfo.appendChild(reloadBtn);
       const downloadBtn = document.createElement("button");
       downloadBtn.textContent = "Download Canvas";
-      downloadBtn.addEventListener("click", () => Canvas.save());
+      downloadBtn.addEventListener("click", () => Canvas.saveFile());
       connectionInfo.appendChild(downloadBtn);
       document.getElementById("menuOptionsContainer").style.display = "none";
       

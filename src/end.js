@@ -253,7 +253,7 @@ quickColourSelect.addEventListener("click", (event) => { event.preventDefault();
 quickColourSelect.addEventListener("contextmenu", (event) => { event.preventDefault(); });
 
 document.getElementById("chooseImage").addEventListener("change", (event) => Canvas.importImage(event));
-document.getElementById("chooseCanvasFile").addEventListener("change", (event) => Canvas.open(event));
+document.getElementById("chooseCanvasFile").addEventListener("change", (event) => Canvas.openFile(event));
 
 const penColourBoxes = document.getElementsByClassName("penColour");
 for (let i = 0; i < penColourBoxes.length; i++) {
@@ -295,12 +295,12 @@ for (let i = 0; i < menuLabels.length; i++) {
     });
   }
 }
-document.getElementById("fileSaveBtn").addEventListener("click", () => Canvas.save());
+document.getElementById("fileSaveBtn").addEventListener("click", () => Canvas.saveFile());
 document.getElementById("fileOpenBtn").addEventListener("click", () => {
   const filePicker = document.getElementById("chooseCanvasFile");
   filePicker.click();
 });
-document.getElementById("fileExportBtn").addEventListener("click", () => Canvas.export());
+document.getElementById("fileExportBtn").addEventListener("click", () => Canvas.exportImage());
 document.getElementById("fileImportBtn").addEventListener("click", () => {
   const filePicker = document.getElementById("chooseImage");
   filePicker.click();

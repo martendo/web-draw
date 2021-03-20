@@ -260,14 +260,27 @@ const Canvas = {
   },
   
   // Export canvas image
-  export() {
+  exportImage() {
     const a = document.createElement("a");
     a.style.display = "none";
     a.href = Session.canvas.toDataURL("image/png");
     a.download = "image.png";
     a.click();
   },
-  save() {
+  // Import image and create selection with image
+  importImage(event) {
+    switchTool("select");
+    const file = event.currentTarget.files[0];
+    const reader = new FileReader();
+    reader.onerror = (event) => {
+      window.alert("There was an error reading the file.\n\n" + reader.error);
+      console.error(`Error reading file ${file}:`, event);
+    };
+    reader.onload = () => SelectTool.importImage(reader.result, Client.id);
+    reader.readAsDataURL(file);
+  },
+  // Download canvas file
+  saveFile() {
     const a = document.createElement("a");
     a.style.display = "none";
     const file = new Blob([msgpack.encode([
@@ -280,7 +293,8 @@ const Canvas = {
     a.click();
     URL.revokeObjectURL(url);
   },
-  open(event) {
+  // Open canvas file and set up canvas
+  openFile(event) {
     const file = event.currentTarget.files[0];
     const reader = new FileReader();
     reader.onerror = (event) => {
@@ -417,19 +431,6 @@ const Canvas = {
     if (user) {
       ActionHistory.addToUndo(PastAction.RESIZE_CANVAS, options);
     }
-  },
-  
-  // Import image and put on canvas
-  importImage(event) {
-    switchTool("select");
-    const file = event.currentTarget.files[0];
-    const reader = new FileReader();
-    reader.onerror = (event) => {
-      window.alert("There was an error reading the file.\n\n" + reader.error);
-      console.error(`Error reading file ${file}:`, event);
-    };
-    reader.onload = () => SelectTool.importImage(reader.result, Client.id);
-    reader.readAsDataURL(file);
   },
   
   // Clear the (session) canvas to the blank colour
