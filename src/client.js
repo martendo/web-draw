@@ -234,25 +234,25 @@ const Client = {
         break;
       }
       case Message.LATENCY: {
-        document.getElementById("pingInfo").textContent = data.latency + " ms";
+        document.getElementById("pingInfo").textContent = `${data.latency} ms`;
         prevPings.push(data.latency);
         var average = 0;
         for (var i = 0; i < prevPings.length; i++) {
           average += prevPings[i];
         }
-        average = parseFloat((average / prevPings.length).toFixed(1));
-        document.getElementById("avgPingInfo").textContent = average + " ms";
+        average = `${parseFloat((average / prevPings.length).toFixed(1))} ms`;
+        document.getElementById("avgPingInfo").textContent = average;
         
-        document.getElementById("minLatency").textContent = prevPings.reduce((a, b) => Math.min(a, b)) + " ms";
-        document.getElementById("maxLatency").textContent = prevPings.reduce((a, b) => Math.max(a, b)) + " ms";
-        document.getElementById("avgLatency").textContent = average + " ms";
+        document.getElementById("minLatency").textContent = `${Math.min(...prevPings)} ms`;
+        document.getElementById("maxLatency").textContent = `${Math.max(...prevPings)} ms`;
+        document.getElementById("avgLatency").textContent = average;
         
         const pingTable = document.getElementById("pingTableBody");
         const row = pingTable.insertRow(-1);
         const numCell = row.insertCell(-1);
         const latencyCell = row.insertCell(-1);
         numCell.textContent = prevPings.length;
-        latencyCell.textContent = data.latency + " ms";
+        latencyCell.textContent = `${data.latency} ms`;
         
         break;
       }
