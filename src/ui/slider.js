@@ -62,7 +62,7 @@ const Slider = {
   },
   setValue(id, value, { fraction = null, callback = true } = {}) {
     const input = document.getElementById(id + "Input");
-    value = value.toFixed(input.dataset.dplaces);
+    value = value.toFixed(input.dataset.fdigits);
     input.dataset.value = value;
     document.getElementById(id + "Value").textContent = value;
     
