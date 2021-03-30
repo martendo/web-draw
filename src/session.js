@@ -229,7 +229,7 @@ const Session = {
   
   updateId(id) {
     this.id = id;
-    const title = `Web Draw - ${this.id}`;
+    const title = `Web Draw – ${this.id}`;
     document.title = title;
     window.history.replaceState({}, title, `/s/${encodeURIComponent(this.id)}`);
     document.getElementById("sessionId").textContent = this.id;
