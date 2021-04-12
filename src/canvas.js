@@ -325,7 +325,7 @@ const Canvas = {
     reader.readAsArrayBuffer(file);
   },
   
-  setup([ history, pos, [ clientActions, actionOrder ] = [] ]) {
+  setup([history, pos, [clientActions, actionOrder] = []]) {
     this.init();
     // Zoom canvas to fit in canvas area if it doesn't already
     this.zoomToWindow("fit", false);
