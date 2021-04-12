@@ -29,7 +29,7 @@ class PastAction {
     return msgpack.encode([
       action.enabled,
       action.type,
-      action.data
+      action.data,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -37,7 +37,7 @@ class PastAction {
     return new PastAction({
       enabled: properties[0],
       type: properties[1],
-      data: properties[2]
+      data: properties[2],
     });
   }
 }
@@ -65,7 +65,7 @@ const ActionHistory = {
     this.actions.push(new PastAction({
       enabled: true,
       type: type,
-      data: data
+      data: data,
     }));
     this.pos++;
     this.enableAvailableButtons();
@@ -82,7 +82,7 @@ const ActionHistory = {
     }
     Client.sendMessage({
       type: Message.MOVE_HISTORY,
-      num: num
+      num: num,
     });
     this.moveTo(num);
   },
@@ -121,7 +121,7 @@ const ActionHistory = {
     if (user) {
       Client.sendMessage({
         type: Message.TOGGLE_ACTION,
-        num: num
+        num: num,
       });
     }
     const action = this.actions[num];
@@ -134,7 +134,7 @@ const ActionHistory = {
       Client.sendMessage({
         type: Message.MOVE_ACTION,
         num: num,
-        offset: offset
+        offset: offset,
       });
     }
     const action = this.actions.splice(num, 1)[0];
@@ -155,8 +155,8 @@ const ActionHistory = {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.data.compOp
-          }
+            compOp: action.data.compOp,
+          },
         });
         break;
       }
@@ -189,8 +189,8 @@ const ActionHistory = {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.data.compOp
-          }
+            compOp: action.data.compOp,
+          },
         });
         break;
       }
@@ -199,8 +199,8 @@ const ActionHistory = {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.data.compOp
-          }
+            compOp: action.data.compOp,
+          },
         });
         break;
       }
@@ -209,8 +209,8 @@ const ActionHistory = {
           save: true,
           only: {
             id: Client.id,
-            compOp: action.data.compOp
-          }
+            compOp: action.data.compOp,
+          },
         });
         break;
       }
@@ -262,7 +262,7 @@ const ActionHistory = {
             Images.DOWN,
             "actionMoveDown",
             () => this.moveAction(num, +1),
-            "Move this action down"
+            "Move this action down",
           ));
         }
       }
@@ -331,7 +331,7 @@ const ActionHistory = {
       }
       Client.sendMessage({
         type: Message.MOVE_HISTORY,
-        num: num
+        num: num,
       });
       this.moveTo(num);
     });
@@ -362,7 +362,7 @@ const ActionHistory = {
         enabled ? Images.VISIBLE : Images.NO_VISIBLE,
         "actionToggle",
         () => this.toggleAction(num),
-        "Toggle this action"
+        "Toggle this action",
       ));
       
       const moveCell = row.insertCell(-1);
@@ -372,7 +372,7 @@ const ActionHistory = {
           Images.UP,
           "actionMoveUp",
           () => this.moveAction(num, -1),
-          "Move this action up"
+          "Move this action up",
         ));
       }
       
@@ -381,7 +381,7 @@ const ActionHistory = {
           Images.DOWN,
           "actionMoveDown",
           () => this.moveAction(num, +1),
-          "Move this action down"
+          "Move this action down",
         ));
       }
     }
@@ -458,5 +458,5 @@ const ActionHistory = {
     } else {
       this.disableRedo();
     }
-  }
+  },
 };

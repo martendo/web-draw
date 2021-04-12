@@ -29,14 +29,14 @@ const Slider = {
         colourValue.value = colourValue.value.slice(0, -2) + ("0" + Math.round(value / 100 * 255).toString(16)).slice(-2);
         document.getElementById("penColour" + i).style.backgroundColor = colourValue.value;
       }
-    }
+    },
   },
   
   // All the slider inputs to set up
   DEFAULT_VALUES: {
     "size": 10,
     "opacity": 100,
-    "fillThreshold": 15
+    "fillThreshold": 15,
   },
   
   init() {
@@ -80,7 +80,7 @@ const Slider = {
     const slider = document.getElementById(id + "Input");
     const newVal = minmax(parseFloat(slider.dataset.value) + (dir === "up" ? 1 : -1), parseFloat(slider.dataset.min), parseFloat(slider.dataset.max));
     this.setValue(id, newVal);
-  }
+  },
 };
 
 const sliders = document.getElementsByClassName("sliderInput");

@@ -31,21 +31,21 @@ const Canvas = {
   zoom: null,
   pan: {
     x: 0,
-    y: 0
+    y: 0,
   },
   scrollbarX: {
     trough: null,
     thumb: null,
-    drag: null
+    drag: null,
   },
   scrollbarY: {
     trough: null,
     thumb: null,
-    drag: null
+    drag: null,
   },
   canvasArea: {
     width: 0,
-    height: 0
+    height: 0,
   },
   
   container: document.getElementById("canvasContainer"),
@@ -77,7 +77,7 @@ const Canvas = {
     if (this.zoom + delta >= this.MIN_ZOOM) {
       const pixelPan = {
         x: this.pan.x / this.zoom,
-        y: this.pan.y / this.zoom
+        y: this.pan.y / this.zoom,
       };
       const oldPixelPos = this.getPixelPos(cachedMouseEvent, { floor: false });
       this.zoom += delta;
@@ -105,11 +105,11 @@ const Canvas = {
     if (keepCentre) {
       const centre = {
         x: (this.canvasArea.width / 2) + this.pan.x,
-        y: (this.canvasArea.height / 2) + this.pan.y
+        y: (this.canvasArea.height / 2) + this.pan.y,
       };
       const oldCentre = {
         x: centre.x / this.zoom,
-        y: centre.y / this.zoom
+        y: centre.y / this.zoom,
       };
       this.zoom = zoom;
       this.pan.x += (oldCentre.x - (centre.x / this.zoom)) * this.zoom;
@@ -165,7 +165,7 @@ const Canvas = {
     const height = Session.canvas.height * this.zoom;
     this.canvasArea = {
       width: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
-      height: this.displayCanvas.height - this.SCROLLBAR_WIDTH
+      height: this.displayCanvas.height - this.SCROLLBAR_WIDTH,
     };
     
     // Ensure canvas is visible
@@ -177,25 +177,25 @@ const Canvas = {
       x: 0,
       y: this.displayCanvas.height - this.SCROLLBAR_WIDTH,
       width: this.canvasArea.width,
-      height: this.SCROLLBAR_WIDTH
+      height: this.SCROLLBAR_WIDTH,
     };
     this.scrollbarX.thumb = {
       x: (this.pan.x / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom) + 1,
       y: this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1,
       width: Math.min((this.canvasArea.width / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom), this.scrollbarX.trough.width - 2),
-      height: this.SCROLLBAR_WIDTH - 2
+      height: this.SCROLLBAR_WIDTH - 2,
     };
     this.scrollbarY.trough = {
       x: this.displayCanvas.width - this.SCROLLBAR_WIDTH,
       y: 0,
       width: this.SCROLLBAR_WIDTH,
-      height: this.canvasArea.height
+      height: this.canvasArea.height,
     };
     this.scrollbarY.thumb = {
       x: this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1,
       y: (this.pan.y / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom) + 1,
       width: this.SCROLLBAR_WIDTH - 2,
-      height: Math.min((this.canvasArea.height / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom), this.scrollbarY.trough.height - 2)
+      height: Math.min((this.canvasArea.height / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom), this.scrollbarY.trough.height - 2),
     };
     
     // Centre canvas in canvas area if smaller than it
@@ -285,7 +285,7 @@ const Canvas = {
     a.style.display = "none";
     const file = new Blob([msgpack.encode([
       ActionHistory.actions,
-      ActionHistory.pos
+      ActionHistory.pos,
     ]).slice(1)], { type: "application/octet-stream" });
     const url = URL.createObjectURL(file);
     a.href = url;
@@ -306,7 +306,7 @@ const Canvas = {
       
       const backupHistory = [
         ActionHistory.actions.slice(),
-        ActionHistory.pos
+        ActionHistory.pos,
       ];
       
       const data = new Uint8Array(reader.result);
@@ -315,7 +315,7 @@ const Canvas = {
         // Only send to other clients if setup was successful
         Client.sendMessage({
           type: Message.OPEN_CANVAS,
-          file: data
+          file: data,
         });
       } catch (err) {
         console.error("Error setting up canvas: " + err);
@@ -351,17 +351,17 @@ const Canvas = {
     if (typeof event.clientX === "undefined") {
       mouse = {
         x: event.changedTouches[0].clientX,
-        y: event.changedTouches[0].clientY
+        y: event.changedTouches[0].clientY,
       };
     } else {
       mouse = {
         x: event.clientX,
-        y: event.clientY
+        y: event.clientY,
       };
     }
     return {
       x: (mouse.x - this.displayCanvas.offsetLeft),
-      y: (mouse.y - this.displayCanvas.offsetTop)
+      y: (mouse.y - this.displayCanvas.offsetTop),
     };
   },
   // Get the pixel position of the cursor on the canvas
@@ -369,7 +369,7 @@ const Canvas = {
     var mouse = this.getCursorPos(event);
     mouse = {
       x: (mouse.x + this.pan.x) / this.zoom,
-      y: (mouse.y + this.pan.y) / this.zoom
+      y: (mouse.y + this.pan.y) / this.zoom,
     };
     if (round) {
       mouse.x = Math.round(mouse.x);
@@ -437,7 +437,7 @@ const Canvas = {
   clearBlank(user = true) {
     if (user) {
       Client.sendMessage({
-        type: Message.CLEAR_BLANK
+        type: Message.CLEAR_BLANK,
       });
     }
     Session.ctx.fillStyle = Colour.BLANK;
@@ -452,7 +452,7 @@ const Canvas = {
   clear(user = true) {
     if (user) {
       Client.sendMessage({
-        type: Message.CLEAR
+        type: Message.CLEAR,
       });
     }
     Session.ctx.clearRect(0, 0, Session.canvas.width, Session.canvas.height);
@@ -460,7 +460,7 @@ const Canvas = {
     if (user) {
       ActionHistory.append(PastAction.CLEAR);
     }
-  }
+  },
 };
 Canvas.mixingCtx = Canvas.mixingCanvas.getContext("2d");
 

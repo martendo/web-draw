@@ -37,7 +37,7 @@ class Stroke {
       stroke.caps,
       stroke.opacity,
       stroke.compOp,
-      stroke.smoothen
+      stroke.smoothen,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -49,7 +49,7 @@ class Stroke {
       caps: properties[3],
       opacity: properties[4],
       compOp: properties[5],
-      smoothen: properties[6]
+      smoothen: properties[6],
     });
   }
 }
@@ -68,7 +68,7 @@ const PenTool = {
     Client.sendMessage({
       type: Message.ADD_STROKE,
       clientId: Client.id,
-      pos: [x, y]
+      pos: [x, y],
     });
     currentAction.data.points.push([x, y]);
     this.drawStroke(Client.ctx, currentAction.data);
@@ -109,7 +109,7 @@ const PenTool = {
         const p0 = stroke.points[i], p1 = stroke.points[i + 1];
         const midPoint = [
           (p0[0] + p1[0]) / 2,
-          (p0[1] + p1[1]) / 2
+          (p0[1] + p1[1]) / 2,
         ];
         ctx.quadraticCurveTo(p0[0], p0[1], midPoint[0], midPoint[1]);
       }
@@ -125,5 +125,5 @@ const PenTool = {
     ctx.globalAlpha = 1;
     
     Canvas.update(options);
-  }
+  },
 };

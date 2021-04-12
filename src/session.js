@@ -27,14 +27,14 @@ class Action {
   static packer(action) {
     return msgpack.encode([
       action.type,
-      action.data
+      action.data,
     ]).slice(1);
   }
   static unpacker(buffer) {
     const properties = msgpack.decode([0x92, ...new Uint8Array(buffer)]);
     return new Action({
       type: properties[0],
-      data: properties[1]
+      data: properties[1],
     });
   }
 }
@@ -75,7 +75,7 @@ const Session = {
         name: client.name,
         canvas: clientCanvas,
         ctx: clientCanvas.getContext("2d"),
-        action: {...NO_ACTION}
+        action: {...NO_ACTION},
       };
     });
     this.updateUserInfo(total);
@@ -190,20 +190,20 @@ const Session = {
   create() {
     Client.sendMessage({
       type: Message.CREATE_SESSION,
-      id: document.getElementById("sessionIdInput").value
+      id: document.getElementById("sessionIdInput").value,
     });
   },
   // Request to join a session
   join() {
     Client.sendMessage({
       type: Message.JOIN_SESSION,
-      id: document.getElementById("sessionIdInput").value
+      id: document.getElementById("sessionIdInput").value,
     });
   },
   // Leave a session
   leave() {
     Client.sendMessage({
-      type: Message.LEAVE_SESSION
+      type: Message.LEAVE_SESSION,
     });
     
     document.getElementById("menuScreen").style.display = "grid";
@@ -223,7 +223,7 @@ const Session = {
   changeId() {
     Client.sendMessage({
       type: Message.SESSION_ID,
-      id: document.getElementById("sessionIdNew").value
+      id: document.getElementById("sessionIdNew").value,
     });
   },
   
@@ -268,7 +268,7 @@ const Session = {
   setPassword() {
     Client.sendMessage({
       type: Message.SESSION_PASSWORD,
-      password: document.getElementById("sessionPasswordNew").value
+      password: document.getElementById("sessionPasswordNew").value,
     });
   },
   
@@ -276,7 +276,7 @@ const Session = {
     Client.sendMessage({
       type: Message.ENTER_PASSWORD,
       password: document.getElementById("enterSessionPassword").value,
-      id: document.getElementById("enterSessionPasswordId").textContent
+      id: document.getElementById("enterSessionPasswordId").textContent,
     });
   },
   
@@ -289,11 +289,11 @@ const Session = {
       Client.sendMessage({
         type: Message.USER_NAME,
         name: name,
-        clientId: Client.id
+        clientId: Client.id,
       });
       document.getElementById("userName").textContent = name;
     }
     Modal.close("userModal");
-  }
+  },
 };
 Session.ctx = Session.canvas.getContext("2d");

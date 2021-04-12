@@ -46,5 +46,5 @@ const RectTool = {
     ctx.globalAlpha = 1;
     
     Canvas.update(options);
-  }
+  },
 };

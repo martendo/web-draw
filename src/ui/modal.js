@@ -38,5 +38,5 @@ const Modal = {
       }
     }
     this.index = 100;
-  }
+  },
 };

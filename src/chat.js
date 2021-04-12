@@ -73,7 +73,7 @@ const Chat = {
     Client.sendMessage({
       type: Message.CHAT_MESSAGE,
       message: msg,
-      clientId: Client.id
+      clientId: Client.id,
     });
   },
   
@@ -235,7 +235,7 @@ const Chat = {
   close() {
     this.box.classList.add("displayNone");
     Canvas.updateCanvasAreaSize();
-  }
+  },
 };
 
 function elementFitHeight(el) {

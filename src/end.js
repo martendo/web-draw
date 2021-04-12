@@ -24,7 +24,7 @@ msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
   return msgpack.encode([
     imageData.data,
     imageData.width,
-    imageData.height
+    imageData.height,
   ]).slice(1);
 });
 msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
@@ -45,7 +45,7 @@ msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
   Line,
   Shape,
   ShapeColours,
-  RectWithColour
+  RectWithColour,
 ].forEach((object, index) => {
   const type = 0x20 + index;
   msgpack.codec.preset.addExtPacker(type, object, (obj) => object.packer(obj));
@@ -65,7 +65,7 @@ var clients = {};
 // Whether mouse has moved or not since last update was sent to server
 var mouseMoved = {
   moved: false,
-  outside: false
+  outside: false,
 };
 // Cache mousemove event so it may be used outside of a MouseEvent listener
 var cachedMouseEvent = null;
@@ -503,11 +503,11 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
     height: parseInt(resizeHeight.value, 10),
     x: parseInt(offsetX.value, 10),
     y: parseInt(offsetY.value, 10),
-    colour: getResizeFillColour()
+    colour: getResizeFillColour(),
   });
   Client.sendMessage({
     type: Message.RESIZE_CANVAS,
-    options: options
+    options: options,
   });
   Canvas.resize(options);
 });
@@ -541,7 +541,7 @@ document.getElementById("sessionHasIdModalOkBtn").addEventListener("click", () =
 document.getElementById("setSessionPasswordModalRemoveBtn").addEventListener("click", () => {
   Client.sendMessage({
     type: Message.SESSION_PASSWORD,
-    password: null
+    password: null,
   });
 });
 document.getElementById("setSessionPasswordModalSetBtn").addEventListener("click", () => Session.setPassword());
@@ -576,7 +576,7 @@ document.getElementById("selectClearBtn").addEventListener("click", () => {
   Client.sendMessage({
     type: Message.SELECTION_CLEAR,
     colour: penColours[1],
-    clientId: Client.id
+    clientId: Client.id,
   });
   SelectTool.clear(clients[Client.id].action.data, penColours[1]);
 });

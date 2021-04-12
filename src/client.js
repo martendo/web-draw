@@ -51,7 +51,7 @@ const Client = {
       this.sendMessage({
         type: Message.MOUSE_MOVE,
         outside: true,
-        clientId: this.id
+        clientId: this.id,
       });
       mouseMoved.outside = true;
     } else if (!outside) {
@@ -60,9 +60,9 @@ const Client = {
         type: Message.MOUSE_MOVE,
         pos: [
           mouseMoved.x,
-          mouseMoved.y
+          mouseMoved.y,
         ],
-        clientId: this.id
+        clientId: this.id,
       });
       mouseMoved.outside = false;
     }
@@ -74,7 +74,7 @@ const Client = {
   setSendMouse(value) {
     this.sendMessage({
       type: Message.SEND_MOUSE,
-      value: value
+      value: value,
     });
     this.sendMouse = value;
     if (this.sendMouse) {
@@ -89,7 +89,7 @@ const Client = {
   setReceiveMouse(value) {
     this.sendMessage({
       type: Message.RECEIVE_MOUSE,
-      value: value
+      value: value,
     });
     for (const clientId in clients) {
       if (clientId === this.id) {
@@ -135,12 +135,12 @@ const Client = {
           type: Message.RECONNECT,
           client: {
             id: this.id,
-            name: clients[this.id].name
+            name: clients[this.id].name,
           },
           session: {
             id: Session.id,
-            password: Session.password
-          }
+            password: Session.password,
+          },
         });
         return;
       }
@@ -152,7 +152,7 @@ const Client = {
         this.sendMessage({
           type: Message.URL_SESSION,
           id: decodeURIComponent(result[1]),
-          password: (pass ? decodeURIComponent(pass[1]) : null)
+          password: (pass ? decodeURIComponent(pass[1]) : null),
         });
       }
       // Remove session path in case session isn't joined (e.g. wrong password)
@@ -271,7 +271,7 @@ const Client = {
       case Message.END_STROKE: {
         PenTool.commitStroke(
           clients[data.clientId].canvas,
-          clients[data.clientId].action.data
+          clients[data.clientId].action.data,
         );
         clients[data.clientId].action.type = null;
         Session.endClientAction(data.clientId);
@@ -316,7 +316,7 @@ const Client = {
       case Message.SELECTION_CREATE: {
         Session.startClientAction(data.clientId, new Action({
           type: Action.SELECTING,
-          data: data.selection
+          data: data.selection,
         }));
         break;
       }
@@ -357,7 +357,7 @@ const Client = {
       case Message.LINE: {
         Session.startClientAction(data.clientId, new Action({
           type: Action.LINE,
-          data: data.line
+          data: data.line,
         }));
         LineTool.draw(data.line, clients[data.clientId].ctx);
         break;
@@ -371,7 +371,7 @@ const Client = {
       case Message.RECT: {
         Session.startClientAction(data.clientId, new Action({
           type: Action.RECT,
-          data: data.rect
+          data: data.rect,
         }));
         RectTool.draw(data.rect, clients[data.clientId].ctx);
         break;
@@ -385,7 +385,7 @@ const Client = {
       case Message.ELLIPSE: {
         Session.startClientAction(data.clientId, new Action({
           type: Action.ELLIPSE,
-          data: data.ellipse
+          data: data.ellipse,
         }));
         EllipseTool.draw(data.ellipse, clients[data.clientId].ctx);
         break;
@@ -426,10 +426,10 @@ const Client = {
             ActionHistory.pos,
             [
               Object.fromEntries(Object.keys(clients).filter((id) => id !== data.clientId).map((id) => [id, clients[id].action])),
-              Session.actionOrder
-            ]
+              Session.actionOrder,
+            ],
           ],
-          clientId: data.clientId
+          clientId: data.clientId,
         });
         break;
       }
@@ -599,5 +599,5 @@ const Client = {
         return;
       }
     }
-  }
+  },
 };

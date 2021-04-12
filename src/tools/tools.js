@@ -27,7 +27,7 @@ const Tools = {
     "select",
     "line",
     "rect",
-    "ellipse"
+    "ellipse",
   ],
   
   // `value`: Value goes in `value` attribute (select)
@@ -37,47 +37,47 @@ const Tools = {
     "pen": {
       "value": {
         "compositeSelect": 0,
-        "lineCapSelect": 0
+        "lineCapSelect": 0,
       },
       "slider": {
         "opacity": 100,
         "size": 10,
       },
       "checked": {
-        "smoothenStrokes": true
-      }
+        "smoothenStrokes": true,
+      },
     },
     
     "eraser": {
       "value": {
-        "lineCapSelect": 0
+        "lineCapSelect": 0,
       },
       "slider": {
         "opacity": 100,
-        "size": 10
+        "size": 10,
       },
       "checked": {
         "smoothenStrokes": true,
-        "eraseTransparent": true
-      }
+        "eraseTransparent": true,
+      },
     },
     
     "fill": {
       "value": {
         "compositeSelect": 0,
-        "fillBySelect": 0
+        "fillBySelect": 0,
       },
       "slider": {
         "opacity": 100,
-        "fillThreshold": 15
-      }
+        "fillThreshold": 15,
+      },
     },
     
     "colourPicker": {
       "checked": {
         "colourPickerMerge": false,
-        "colourPickerOpacity": false
-      }
+        "colourPickerOpacity": false,
+      },
     },
     
     "select": null,
@@ -85,17 +85,17 @@ const Tools = {
     "line": {
       "value": {
         "compositeSelect": 0,
-        "lineCapSelect": 0
+        "lineCapSelect": 0,
       },
       "slider": {
         "opacity": 100,
         "size": 10,
-      }
+      },
     },
     
     "rect": {
       "value": {
-        "compositeSelect": 0
+        "compositeSelect": 0,
       },
       "slider": {
         "opacity": 100,
@@ -103,13 +103,13 @@ const Tools = {
       },
       "checked": {
         "shapeOutline": true,
-        "shapeFill": false
-      }
+        "shapeFill": false,
+      },
     },
     
     "ellipse": {
       "value": {
-        "compositeSelect": 0
+        "compositeSelect": 0,
       },
       "slider": {
         "opacity": 100,
@@ -117,9 +117,9 @@ const Tools = {
       },
       "checked": {
         "shapeOutline": true,
-        "shapeFill": false
-      }
-    }
+        "shapeFill": false,
+      },
+    },
   },
   
   // Save current tool's settings
@@ -173,7 +173,7 @@ const Tools = {
         }
       }
     }
-  }
+  },
 };
 
 // Handle mousedown on canvas
@@ -191,9 +191,9 @@ function mouseHold(event) {
         mouse: {...mouse},
         thumb: {
           x: Canvas.scrollbarX.thumb.x,
-          y: Canvas.scrollbarX.thumb.y
+          y: Canvas.scrollbarX.thumb.y,
         },
-        pan: {...Canvas.pan}
+        pan: {...Canvas.pan},
       };
     }
     return;
@@ -204,9 +204,9 @@ function mouseHold(event) {
         mouse: {...mouse},
         thumb: {
           x: Canvas.scrollbarY.thumb.x,
-          y: Canvas.scrollbarY.thumb.y
+          y: Canvas.scrollbarY.thumb.y,
         },
-        pan: {...Canvas.pan}
+        pan: {...Canvas.pan},
       };
     }
     return;
@@ -234,13 +234,13 @@ function mouseHold(event) {
       currentAction.data.resize = {
         handle: handle,
         x: roundedPoint.x,
-        y: roundedPoint.y
+        y: roundedPoint.y,
       };
       currentAction.data.old = {
         x: currentAction.data.x,
         y: currentAction.data.y,
         width: currentAction.data.width,
-        height: currentAction.data.height
+        height: currentAction.data.height,
       };
       currentAction.type = Action.SELECTION_RESIZE;
       Session.startClientAction(Client.id, currentAction);
@@ -248,7 +248,7 @@ function mouseHold(event) {
     } else if (isPointInside(point.x, point.y, currentAction.data)) {
       currentAction.data.move = {
         x: point.x,
-        y: point.y
+        y: point.y,
       };
       currentAction.type = Action.SELECTION_MOVE;
       Session.startClientAction(Client.id, currentAction);
@@ -292,13 +292,13 @@ function startTool(point) {
           caps: caps,
           opacity: opacity,
           compOp: tool === "pen" ? compOp : (document.getElementById("eraseTransparent").checked ? 2 : 0),
-          smoothen: smoothen
-        })
+          smoothen: smoothen,
+        }),
       }));
       Client.sendMessage({
         type: Message.START_STROKE,
         clientId: Client.id,
-        action: clients[Client.id].action
+        action: clients[Client.id].action,
       });
       PenTool.draw(point.x, point.y);
       break;
@@ -311,11 +311,11 @@ function startTool(point) {
         threshold: parseInt(document.getElementById("fillThresholdInput").dataset.value, 10),
         opacity: opacity,
         compOp: compOp,
-        fillBy: parseInt(document.getElementById("fillBySelect").value, 10)
+        fillBy: parseInt(document.getElementById("fillBySelect").value, 10),
       });
       Client.sendMessage({
         type: Message.FILL,
-        fill: fill
+        fill: fill,
       });
       FillTool.fill(fill);
       break;
@@ -351,28 +351,28 @@ function startTool(point) {
         height: 0,
         move: new Pos2D({
           x: null,
-          y: null
+          y: null,
         }),
         resize: new SelectionResize({
           handle: null,
           x: null,
-          y: null
+          y: null,
         }),
         flipped: new Pos2D({
           x: false,
-          y: false
+          y: false,
         }),
         data: null,
-        old: null
+        old: null,
       });
       Client.sendMessage({
         type: Message.SELECTION_CREATE,
         clientId: Client.id,
-        selection: selection
+        selection: selection,
       });
       Session.startClientAction(Client.id, new Action({
         type: Action.SELECTING,
-        data: selection
+        data: selection,
       }));
       break;
     }
@@ -388,8 +388,8 @@ function startTool(point) {
           width: size,
           caps: caps,
           opacity: opacity,
-          compOp: compOp
-        })
+          compOp: compOp,
+        }),
       }));
       break;
     }
@@ -406,14 +406,14 @@ function startTool(point) {
           height: 0,
           colours: new ShapeColours({
             outline: penColours[currentPen],
-            fill: penColours[(currentPen + 1) % 2]
+            fill: penColours[(currentPen + 1) % 2],
           }),
           lineWidth: size,
           opacity: opacity,
           compOp: compOp,
           outline: shapeOutline,
-          fill: shapeFill
-        })
+          fill: shapeFill,
+        }),
       }));
       break;
     }
@@ -430,14 +430,14 @@ function startTool(point) {
           height: 0,
           colours: new ShapeColours({
             outline: penColours[currentPen],
-            fill: penColours[(currentPen + 1) % 2]
+            fill: penColours[(currentPen + 1) % 2],
           }),
           lineWidth: size,
           opacity: opacity,
           compOp: compOp,
           outline: shapeOutline,
-          fill: shapeFill
-        })
+          fill: shapeFill,
+        }),
       }));
       break;
     }
@@ -486,7 +486,7 @@ function mouseMove(event) {
       Client.sendMessage({
         type: Message.LINE,
         clientId: Client.id,
-        line: currentAction.data
+        line: currentAction.data,
       });
       clients[Client.id].action = currentAction;
       LineTool.draw(currentAction.data, Client.ctx);
@@ -499,7 +499,7 @@ function mouseMove(event) {
       Client.sendMessage({
         type: Message.RECT,
         clientId: Client.id,
-        rect: currentAction.data
+        rect: currentAction.data,
       });
       clients[Client.id].action = currentAction;
       RectTool.draw(currentAction.data, Client.ctx);
@@ -512,7 +512,7 @@ function mouseMove(event) {
       Client.sendMessage({
         type: Message.ELLIPSE,
         clientId: Client.id,
-        ellipse: currentAction.data
+        ellipse: currentAction.data,
       });
       clients[Client.id].action = currentAction;
       EllipseTool.draw(currentAction.data, Client.ctx);
@@ -640,7 +640,7 @@ function clearMouseHold(event) {
       PenTool.draw(point.x, point.y);
       Client.sendMessage({
         type: Message.END_STROKE,
-        clientId: Client.id
+        clientId: Client.id,
       });
       PenTool.commitStroke(Client.canvas, currentAction.data);
       break;
@@ -650,7 +650,7 @@ function clearMouseHold(event) {
       Client.sendMessage({
         type: Message.COMMIT_LINE,
         line: currentAction.data,
-        clientId: Client.id
+        clientId: Client.id,
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
@@ -662,7 +662,7 @@ function clearMouseHold(event) {
       Client.sendMessage({
         type: Message.COMMIT_RECT,
         rect: currentAction.data,
-        clientId: Client.id
+        clientId: Client.id,
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);
@@ -674,7 +674,7 @@ function clearMouseHold(event) {
       Client.sendMessage({
         type: Message.COMMIT_ELLIPSE,
         ellipse: currentAction.data,
-        clientId: Client.id
+        clientId: Client.id,
       });
       Canvas.update({ save: true });
       Client.ctx.clearRect(0, 0, Client.canvas.width, Client.canvas.height);

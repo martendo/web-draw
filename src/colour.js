@@ -30,23 +30,23 @@ const Colour = {
     values: [
       [
         "#000000", "#7f7f7f", "#880015", "#ed1c24", "#ff7f27",
-        "#fff200", "#22b14c", "#00a2e8", "#3f48cc", "#a349a4"
+        "#fff200", "#22b14c", "#00a2e8", "#3f48cc", "#a349a4",
       ],
       [
         "#ffffff", "#c3c3c3", "#b97a57", "#ffaec9", "#ffc90e",
-        "#efe4b0", "#b5e61d", "#99d9ea", "#7092be", "#c8bfe7"
-      ]
+        "#efe4b0", "#b5e61d", "#99d9ea", "#7092be", "#c8bfe7",
+      ],
     ],
     names: [
       [
         "Black", "Grey-50%", "Dark red", "Red", "Orange",
-        "Yellow", "Green", "Turquoise", "Indigo", "Purple"
+        "Yellow", "Green", "Turquoise", "Indigo", "Purple",
       ],
       [
         "White", "Grey-25%", "Brown", "Rose", "Gold",
-        "Light yellow", "Lime", "Light turquoise", "Blue-grey", "Lavender"
-      ]
-    ]
+        "Light yellow", "Lime", "Light turquoise", "Blue-grey", "Lavender",
+      ],
+    ],
   }),
   
   // Convert hex colour value to an RGBA array
@@ -56,7 +56,7 @@ const Colour = {
       parseInt(result[1], 16),
       parseInt(result[2], 16),
       parseInt(result[3], 16),
-      alpha
+      alpha,
     ] : null;
   },
   rgbToHex(colour) {
@@ -162,5 +162,5 @@ const Colour = {
     }
     event.preventDefault();
     this.change(num, col, false);
-  }
+  },
 };

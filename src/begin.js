@@ -41,7 +41,7 @@ const CLOSE_CODES = Object.freeze({
   1012: "Service Restart",
   1013: "Try Again Later",
   1014: "Bad Gateway",
-  1015: "TLS Handshake"
+  1015: "TLS Handshake",
 });
 
 // Values of tool setting <select>s
@@ -49,7 +49,7 @@ const CLOSE_CODES = Object.freeze({
 const CAPS = Object.freeze([
   "round",
   "butt",
-  "square"
+  "square",
 ]);
 // Canvas globalCompositeOperation options
 const COMP_OPS = Object.freeze([
@@ -78,13 +78,13 @@ const COMP_OPS = Object.freeze([
   "hue",
   "saturation",
   "color",
-  "luminosity"
+  "luminosity",
 ]);
 const DEFAULT_COMP_OP = COMP_OPS[0];
 
 const NO_ACTION = Object.freeze({
   type: null,
-  data: null
+  data: null,
 });
 
 const Images = Object.freeze({
@@ -93,10 +93,23 @@ const Images = Object.freeze({
   NO_VISIBLE: "{{ BASE64:src/img/no-visible.png }}",
   UP: "{{ BASE64:src/img/up.png }}",
   DOWN: "{{ BASE64:src/img/down.png }}",
-  TRANSPARENT: "{{ BASE64:src/img/transparent.png }}"
+  TRANSPARENT: "{{ BASE64:src/img/transparent.png }}",
 });
 
-const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_NAMES = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 
 const DOCUMENT_STYLE = window.getComputedStyle(document.documentElement);
 
@@ -109,14 +122,14 @@ class Pos2D {
   static packer(pos) {
     return msgpack.encode([
       pos.x,
-      pos.y
+      pos.y,
     ]).slice(1);
   }
   static unpacker(buffer) {
     const properties = msgpack.decode([0x92, ...new Uint8Array(buffer)]);
     return new Pos2D({
       x: properties[0],
-      y: properties[1]
+      y: properties[1],
     });
   }
 }
@@ -146,7 +159,7 @@ class Shape {
       shape.opacity,
       shape.compOp,
       shape.outline,
-      shape.fill
+      shape.fill,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -174,14 +187,14 @@ class ShapeColours {
   static packer(colours) {
     return msgpack.encode([
       colours.outline,
-      colours.fill
+      colours.fill,
     ]).slice(1);
   }
   static unpacker(buffer) {
     const properties = msgpack.decode([0x92, ...new Uint8Array(buffer)]);
     return new ShapeColours({
       outline: properties[0],
-      fill: properties[1]
+      fill: properties[1],
     });
   }
 }
@@ -201,7 +214,7 @@ class RectWithColour {
       rect.y,
       rect.width,
       rect.height,
-      rect.colour
+      rect.colour,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -211,7 +224,7 @@ class RectWithColour {
       y: properties[1],
       width: properties[2],
       height: properties[3],
-      colour: properties[4]
+      colour: properties[4],
     });
   }
 }

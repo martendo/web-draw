@@ -57,5 +57,5 @@ module.exports = Object.freeze({
   
   MOVE_HISTORY: 49,
   TOGGLE_ACTION: 50,
-  MOVE_ACTION: 51
+  MOVE_ACTION: 51,
 });

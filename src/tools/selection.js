@@ -43,7 +43,7 @@ class Selection {
       selection.resize,
       selection.flipped,
       selection.data,
-      selection.old
+      selection.old,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -58,7 +58,7 @@ class Selection {
       resize: properties[6],
       flipped: properties[7],
       data: properties[8],
-      old: properties[9]
+      old: properties[9],
     });
   }
 }
@@ -77,7 +77,7 @@ class ShortSelection {
       shortSel.y,
       shortSel.width,
       shortSel.height,
-      shortSel.flipped
+      shortSel.flipped,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -87,7 +87,7 @@ class ShortSelection {
       y: properties[1],
       width: properties[2],
       height: properties[3],
-      flipped: properties[4]
+      flipped: properties[4],
     });
   }
 }
@@ -102,7 +102,7 @@ class SelectionResize {
     return msgpack.encode([
       selectionResize.handle,
       selectionResize.x,
-      selectionResize.y
+      selectionResize.y,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -110,7 +110,7 @@ class SelectionResize {
     return new SelectionResize({
       handle: properties[0],
       x: properties[1],
-      y: properties[2]
+      y: properties[2],
     });
   }
 }
@@ -131,7 +131,7 @@ class SelectionPaste {
       shortSel.width,
       shortSel.height,
       shortSel.flipped,
-      shortSel.data
+      shortSel.data,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -142,7 +142,7 @@ class SelectionPaste {
       width: properties[2],
       height: properties[3],
       flipped: properties[4],
-      data: properties[5]
+      data: properties[5],
     });
   }
 }
@@ -159,7 +159,7 @@ class OldSelection {
       old.x,
       old.y,
       old.width,
-      old.height
+      old.height,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -168,7 +168,7 @@ class OldSelection {
       x: properties[0],
       y: properties[1],
       width: properties[2],
-      height: properties[3]
+      height: properties[3],
     });
   }
 }
@@ -182,7 +182,7 @@ const SelectTool = {
   RESIZE_CURSORS: [
     "nwse-resize", "ns-resize", "nesw-resize",
     "ew-resize",                "ew-resize",
-    "nesw-resize", "ns-resize", "nwse-resize"
+    "nesw-resize", "ns-resize", "nwse-resize",
   ],
   
   getResizeHandle(point, handles) {
@@ -200,56 +200,56 @@ const SelectTool = {
       x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: this.HANDLE_GRAB_SIZE
+      height: this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[0];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x + (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y - (this.HANDLE_GRAB_SIZE / 2),
       width: selection.width - this.HANDLE_GRAB_SIZE,
-      height: this.HANDLE_GRAB_SIZE
+      height: this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[1];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x + selection.width - (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: this.HANDLE_GRAB_SIZE
+      height: this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[2];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: selection.height - this.HANDLE_GRAB_SIZE
+      height: selection.height - this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[3];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x + selection.width - (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y + (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: selection.height - this.HANDLE_GRAB_SIZE
+      height: selection.height - this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[4];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x - (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y + selection.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: this.HANDLE_GRAB_SIZE
+      height: this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[5];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x + (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y + selection.height - (this.HANDLE_GRAB_SIZE / 2),
       width: selection.width - this.HANDLE_GRAB_SIZE,
-      height: this.HANDLE_GRAB_SIZE
+      height: this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[6];
     } else if (isPointInside(point.x, point.y, {
       x: selection.x + selection.width - (this.HANDLE_GRAB_SIZE / 2),
       y: selection.y + selection.height - (this.HANDLE_GRAB_SIZE / 2),
       width: this.HANDLE_GRAB_SIZE,
-      height: this.HANDLE_GRAB_SIZE
+      height: this.HANDLE_GRAB_SIZE,
     })) {
       handle = handles[7];
     }
@@ -376,7 +376,7 @@ const SelectTool = {
     Client.sendMessage({
       type: Message.SELECTION_UPDATE,
       selection: new ShortSelection({...selection}),
-      clientId: Client.id
+      clientId: Client.id,
     });
   },
   updateSizeAndPos() {
@@ -431,7 +431,7 @@ const SelectTool = {
         width: sel.width,
         height: sel.height,
         flipped: sel.flipped,
-        data: sel.data
+        data: sel.data,
       }));
     }
   },
@@ -445,7 +445,7 @@ const SelectTool = {
         y: sel.y,
         width: sel.width,
         height: sel.height,
-        colour: colour
+        colour: colour,
       }));
     }
   },
@@ -455,7 +455,7 @@ const SelectTool = {
     }
     Client.sendMessage({
       type: Message.SELECTION_COPY,
-      clientId: Client.id
+      clientId: Client.id,
     });
     this.copy(Client.ctx, clients[Client.id].action.data);
   },
@@ -466,7 +466,7 @@ const SelectTool = {
     Client.sendMessage({
       type: Message.SELECTION_CUT,
       colour: penColours[1],
-      clientId: Client.id
+      clientId: Client.id,
     });
     this.cut(Client.ctx, clients[Client.id].action.data, penColours[1]);
   },
@@ -476,14 +476,14 @@ const SelectTool = {
     }
     Client.sendMessage({
       type: Message.SELECTION_PASTE,
-      clientId: Client.id
+      clientId: Client.id,
     });
     this.paste(clients[Client.id].action.data);
   },
   remove() {
     Client.sendMessage({
       type: Message.SELECTION_REMOVE,
-      clientId: Client.id
+      clientId: Client.id,
     });
     clients[Client.id].action = {...NO_ACTION};
     Session.endClientAction(Client.id);
@@ -498,7 +498,7 @@ const SelectTool = {
         Client.sendMessage({
           type: Message.IMPORT_IMAGE,
           image: img.src,
-          clientId: Client.id
+          clientId: Client.id,
         });
       }
       const tempCanvas = document.createElement("canvas");
@@ -516,23 +516,23 @@ const SelectTool = {
         height: data.height,
         move: new Pos2D({
           x: null,
-          y: null
+          y: null,
         }),
         resize: new SelectionResize({
           handle: null,
           x: null,
-          y: null
+          y: null,
         }),
         flipped: new Pos2D({
           x: false,
-          y: false
+          y: false,
         }),
         data: data,
-        old: null
+        old: null,
       });
       Session.startClientAction(clientId, new Action({
         type: null, // Not editing the selection, but it should exist
-        data: selection
+        data: selection,
       }));
       this.draw(clients[clientId].ctx, selection, clientId === Client.id, false);
       if (clientId === Client.id) {
@@ -617,5 +617,5 @@ const SelectTool = {
       }
     }
     clients[Client.id].action = action;
-  }
+  },
 };

@@ -37,7 +37,7 @@ class Fill {
       fill.threshold,
       fill.opacity,
       fill.compOp,
-      fill.fillBy
+      fill.fillBy,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -49,7 +49,7 @@ class Fill {
       threshold: properties[3],
       opacity: properties[4],
       compOp: properties[5],
-      fillBy: properties[6]
+      fillBy: properties[6],
     });
   }
 }
@@ -123,7 +123,7 @@ const FillTool = {
       pixels[pixelPos],
       pixels[pixelPos + 1],
       pixels[pixelPos + 2],
-      pixels[pixelPos + 3]
+      pixels[pixelPos + 3],
     ];
     const seen = new Array(pixels.length).fill(false);
     while(pixelStack.length > 0) {
@@ -168,12 +168,12 @@ const FillTool = {
     Canvas.update({
       extras: [{
         canvas: fillCtx.canvas,
-        compOp: fill.compOp
+        compOp: fill.compOp,
       }],
-      save: true
+      save: true,
     });
     if (user) {
       ActionHistory.append(PastAction.FILL, fill);
     }
-  }
+  },
 };

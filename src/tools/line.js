@@ -41,7 +41,7 @@ class Line {
       line.width,
       line.caps,
       line.opacity,
-      line.compOp
+      line.compOp,
     ]).slice(1);
   }
   static unpacker(buffer) {
@@ -77,5 +77,5 @@ const LineTool = {
     ctx.globalAlpha = 1;
     
     Canvas.update(options);
-  }
+  },
 };

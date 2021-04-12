@@ -62,25 +62,25 @@ class Session {
       clients: [...this.clients.values()].map((c) => {
         return {
           id: c.id,
-          name: c.name
+          name: c.name,
         };
       }),
       password: this.password,
-      restore: restore
+      restore: restore,
     });
     client.broadcast({
       type: Message.USER_JOINED,
       total: this.clients.size,
       client: {
         id: client.id,
-        name: client.name
-      }
+        name: client.name,
+      },
     });
     console.log(`Client ${client.id} joined session ${this.id} - ${this.clients.size} clients in session`);
     if (this.clients.size !== 1) {
       [...this.clients.values()][0].send({
         type: Message.REQUEST_CANVAS,
-        clientId: client.id
+        clientId: client.id,
       });
     }
   }
@@ -95,8 +95,8 @@ class Session {
       total: this.clients.size,
       client: {
         id: client.id,
-        name: client.name
-      }
+        name: client.name,
+      },
     });
     client.session = null;
     console.log(`Client ${client.id} left session ${this.id} - ${this.clients.size} clients in session`);
@@ -119,7 +119,7 @@ class Session {
     this.broadcast({
       type: Message.PASSWORD_SET,
       password: this.password,
-      clientId: client.id
+      clientId: client.id,
     });
     console.log(`Set session ${this.id} password ${password}`);
   }
@@ -175,7 +175,7 @@ function joinSession(client, id, pass = null, restore) {
     } else {
       client.send({
         type: Message.ENTER_PASSWORD,
-        id: id
+        id: id,
       });
     }
   } else {
@@ -193,7 +193,7 @@ function checkSessionPassword(client, id, password) {
   if (!session) {
     client.send({
       type: Message.SESSION_NO_EXIST,
-      id: id
+      id: id,
     });
   } else if (password === session.password) {
     session.join(client);
@@ -201,7 +201,7 @@ function checkSessionPassword(client, id, password) {
     client.send({
       type: Message.WRONG_PASSWORD,
       password: password,
-      id: id
+      id: id,
     });
   }
 }
@@ -210,14 +210,14 @@ wss.on("connection", (socket) => {
   const client = new Client(socket, createUniqueId(clients));
   client.send({
     type: Message.CONNECTED,
-    id: client.id
+    id: client.id,
   });
   console.log(`Client connect ${client.id} - ${clients.size} clients connected`);
   socket.on("pong", () => {
     const latency = Date.now() - client.pingTime;
     client.send({
       type: Message.LATENCY,
-      latency: latency
+      latency: latency,
     });
     client.isAlive = true;
   });
@@ -289,7 +289,7 @@ wss.on("connection", (socket) => {
               message: data.message.slice(3 + idList.length + 1),
               clientId: client.id,
               priv: ids,
-              timestamp: timestamp
+              timestamp: timestamp,
             });
           });
         } else {
@@ -315,7 +315,7 @@ wss.on("connection", (socket) => {
         if (sessions.has(id)) {
           client.send({
             type: Message.SESSION_ALREADY_EXIST,
-            id: id
+            id: id,
           });
         } else {
           createSession(client, id);
@@ -328,7 +328,7 @@ wss.on("connection", (socket) => {
         } else {
           client.send({
             type: Message.SESSION_NO_EXIST,
-            id: data.id
+            id: data.id,
           });
         }
         break;
@@ -359,7 +359,7 @@ wss.on("connection", (socket) => {
         client.name = data.client.name;
         client.send({
           type: Message.CONNECTED,
-          id: client.id
+          id: client.id,
         });
         
         if (data.session.id && !sessions.has(data.session.id)) {
@@ -372,7 +372,7 @@ wss.on("connection", (socket) => {
         client.session.broadcast({
           type: Message.USER_NAME,
           name: client.name,
-          clientId: client.id
+          clientId: client.id,
         });
         
         break;
@@ -381,7 +381,7 @@ wss.on("connection", (socket) => {
         if (sessions.has(data.id)) {
           client.send({
             type: Message.SESSION_HAS_ID,
-            id: data.id
+            id: data.id,
           });
         } else {
           console.log(`Change session ${client.session.id} to ${data.id}`);
@@ -391,7 +391,7 @@ wss.on("connection", (socket) => {
           client.session.broadcast({
             type: Message.SESSION_ID_CHANGED,
             id: data.id,
-            clientId: client.id
+            clientId: client.id,
           });
         }
         break;
@@ -404,7 +404,7 @@ wss.on("connection", (socket) => {
         client.broadcast({
           type: Message.DISPLAY_CURSOR,
           clientId: client.id,
-          value: data.value
+          value: data.value,
         });
         break;
       }
