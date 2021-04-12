@@ -25,6 +25,7 @@ Well, pretty much anything.
 
 These are the tools that are currently available:
 - ![pen](/src/img/pen.png) Pen Tool
+- ![eraser](/src/img/eraser.png) Eraser Tool
 - ![flood-fill](/src/img/flood-fill.png) Flood Fill Tool
 - ![colour-picker](/src/img/colour-picker.png) Colour Picker Tool
 - ![select](/src/img/select.png) Rectangular Select Tool

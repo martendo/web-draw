@@ -171,6 +171,13 @@
         </tr>
         <tr>
           <td>
+            <button id="eraserBtn" title="Eraser Tool&#10;Erase to background colour or transparency">
+              <img id="eraserBtnIcon" src="{{ BASE64:src/img/eraser.png }}" alt="E">
+            </button>
+          </td>
+        </tr>
+        <tr>
+          <td>
             <button id="fillBtn" title="Flood Fill Tool&#10;Fill an area of the same colour">
               <img id="fillBtnIcon" src="{{ BASE64:src/img/flood-fill.png }}" alt="F">
             </button>
@@ -297,7 +304,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
+            <tr class="toolSettings penSettings eraserSettings fillSettings lineSettings rectSettings ellipseSettings">
               <td>
                 <div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-fdigits="1" data-callback="updateColourAlpha" title="Opacity, in percent">
                   <div class="sliderLabel">Opacity</div>
@@ -316,7 +323,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="toolSettings penSettings lineSettings rectSettings ellipseSettings">
+            <tr class="toolSettings penSettings eraserSettings lineSettings rectSettings ellipseSettings">
               <td>
                 <div class="sliderInput" id="sizeInput" data-min="1" data-width="150" data-max="10000" data-fdigits="0" title="The size of the pen in pixels">
                   <div class="sliderLabel">Size</div>
@@ -335,7 +342,7 @@
                 </div>
               </td>
             </tr>
-            <tr class="toolSettings penSettings lineSettings">
+            <tr class="toolSettings penSettings eraserSettings lineSettings">
               <td>
                 <div class="selectInput" title="The shape at the ends of a line">
                   <label class="selectLabel" for="lineCapSelect">Caps</label>
@@ -347,10 +354,16 @@
                 </div>
               </td>
             </tr>
-            <tr class="toolSettings penSettings">
+            <tr class="toolSettings penSettings eraserSettings">
               <td title="Use quadratic curves between points instead of straight lines">
                 <input id="smoothenStrokes" type="checkbox">
                 <label for="smoothenStrokes">Smoothen strokes</label>
+              </td>
+            </tr>
+            <tr class="toolSettings eraserSettings">
+              <td title="Erase to transparency and not the background colour">
+                <input id="eraseTransparent" type="checkbox">
+                <label for="eraseTransparent">Erase to transparency</label>
               </td>
             </tr>
             <tr class="toolSettings rectSettings ellipseSettings">
@@ -592,6 +605,7 @@
           <h3 id="help-left_toolbar">Left Toolbar</h3>
           On the left, you've got all your different tools.<br>
           <strong>Pen</strong>: Draw a free-form line however you want!<br>
+          <strong>Eraser</strong>: Erase part of the canvas to transparency or the background colour. (Uses pen tool internally)<br>
           <strong>Flood Fill</strong>: Fill an area of a similar colour, decided by the fill threshold. Colours with a difference within the threshold will be recoloured.<br>
           <strong>Colour Picker</strong>: Click on a spot on the canvas and set one of your colours to the colour of that spot.<br>
           <strong>Rectangular Select</strong>: Select an area on the canvas to manipulate. You can copy, cut, paste, and clear pixels in your selection.<br>

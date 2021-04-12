@@ -21,6 +21,7 @@
 const Tools = {
   NAMES: [
     "pen",
+    "eraser",
     "fill",
     "colourPicker",
     "select",
@@ -44,6 +45,20 @@ const Tools = {
       },
       "checked": {
         "smoothenStrokes": true
+      }
+    },
+    
+    "eraser": {
+      "value": {
+        "lineCapSelect": 0
+      },
+      "slider": {
+        "opacity": 100,
+        "size": 10
+      },
+      "checked": {
+        "smoothenStrokes": true,
+        "eraseTransparent": true
       }
     },
     
@@ -259,23 +274,25 @@ function startTool(point) {
   const shapeOutline = document.getElementById("shapeOutline").checked;
   const shapeFill = document.getElementById("shapeFill").checked;
   const caps = parseInt(document.getElementById("lineCapSelect").value, 10);
+  const smoothen = document.getElementById("smoothenStrokes").checked;
   
   if (tool !== "select") {
     SelectTool.remove();
   }
   
   switch (tool) {
-    case "pen": {
+    case "pen":
+    case "eraser": {
       Session.startClientAction(Client.id, new Action({
         type: Action.STROKE,
         data: new Stroke({
           points: [],
-          colour: penColours[currentPen],
+          colour: tool === "pen" ? penColours[currentPen] : penColours[(currentPen + 1) % 2],
           size: size,
           caps: caps,
           opacity: opacity,
-          compOp: compOp,
-          smoothen: document.getElementById("smoothenStrokes").checked
+          compOp: tool === "pen" ? compOp : (document.getElementById("eraseTransparent").checked ? 2 : 0),
+          smoothen: smoothen
         })
       }));
       Client.sendMessage({
