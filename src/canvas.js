@@ -75,10 +75,6 @@ const Canvas = {
   // Zoom the canvas with the mouse wheel
   changeZoom(delta) {
     if (this.zoom + delta >= this.MIN_ZOOM) {
-      const pixelPan = {
-        x: this.pan.x / this.zoom,
-        y: this.pan.y / this.zoom,
-      };
       const oldPixelPos = this.getPixelPos(cachedMouseEvent, { floor: false });
       this.zoom += delta;
       const newPixelPos = this.getPixelPos(cachedMouseEvent, { floor: false });
