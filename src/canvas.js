@@ -27,6 +27,7 @@ const Canvas = {
   MIN_ZOOM: 0,
   
   SCROLLBAR_WIDTH: 15,
+  SCROLLBAR_THUMB_MIN_SIZE: 15 * 2,
   
   zoom: null,
   pan: {
@@ -178,7 +179,7 @@ const Canvas = {
     this.scrollbarX.thumb = {
       x: (this.pan.x / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom) + 1,
       y: this.displayCanvas.height - this.SCROLLBAR_WIDTH + 1,
-      width: Math.min((this.canvasArea.width / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom), this.scrollbarX.trough.width - 2),
+      width: minmax((this.canvasArea.width / Session.canvas.width) * ((this.scrollbarX.trough.width - 2) / this.zoom), this.SCROLLBAR_THUMB_MIN_SIZE, this.scrollbarX.trough.width - 2),
       height: this.SCROLLBAR_WIDTH - 2,
     };
     this.scrollbarY.trough = {
@@ -191,7 +192,7 @@ const Canvas = {
       x: this.displayCanvas.width - this.SCROLLBAR_WIDTH + 1,
       y: (this.pan.y / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom) + 1,
       width: this.SCROLLBAR_WIDTH - 2,
-      height: Math.min((this.canvasArea.height / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom), this.scrollbarY.trough.height - 2),
+      height: minmax((this.canvasArea.height / Session.canvas.height) * ((this.scrollbarY.trough.height - 2) / this.zoom), this.SCROLLBAR_THUMB_MIN_SIZE, this.scrollbarY.trough.height - 2),
     };
     
     // Centre canvas in canvas area if smaller than it
