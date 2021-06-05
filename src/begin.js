@@ -2,7 +2,7 @@
  * This file is part of Web Draw.
  *
  * Web Draw - A little real-time online collaborative drawing program.
- * Copyright (C) 2020-2021 martendo7
+ * Copyright (C) 2020-2021 martendo
  *
  * Web Draw is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
