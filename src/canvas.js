@@ -223,7 +223,8 @@ const Canvas = {
       if (type !== null && type !== Action.SELECTING && type !== Action.SELECTION_MOVE && type !== Action.SELECTION_RESIZE) {
         continue;
       }
-      SelectTool.draw(this.displayCtx, client.action.data, clientId === Client.id, clientId === Client.id, true);
+      const handles = clientId === Client.id && type !== Action.SELECTING;
+      SelectTool.draw(this.displayCtx, client.action.data, handles, clientId === Client.id, true);
     }
     
     // Border around image

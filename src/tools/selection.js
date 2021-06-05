@@ -392,7 +392,7 @@ const SelectTool = {
   update(handles) {
     const selection = clients[Client.id].action.data;
     
-    this.draw(Client.ctx, selection, handles);
+    Canvas.update();
     this.updateSizeAndPos();
     
     // Send to other clients (remove unnecessary info too)

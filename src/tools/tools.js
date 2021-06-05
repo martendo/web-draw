@@ -718,6 +718,7 @@ function clearMouseHold(event) {
   if (!keepAction) {
     Session.endClientAction(Client.id);
   }
+  Canvas.update();
 }
 
 // Switch the current tool
