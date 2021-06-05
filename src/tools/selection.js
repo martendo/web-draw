@@ -256,6 +256,44 @@ const SelectTool = {
     return handle;
   },
   
+  _drawDashedRect(ctx, dash, rect) {
+    function drawRect() {
+      // Left side
+      ctx.beginPath();
+      ctx.moveTo(Math.round(rect.x) + 0.5, Math.round(rect.y) + 0.5);
+      ctx.lineTo(Math.round(rect.x) + 0.5, Math.round(rect.y + rect.height) + 0.5);
+      ctx.stroke();
+      // Right side
+      ctx.beginPath();
+      ctx.moveTo(Math.round(rect.x + rect.width) + 0.5, Math.round(rect.y) + 0.5);
+      ctx.lineTo(Math.round(rect.x + rect.width) + 0.5, Math.round(rect.y + rect.height) + 0.5);
+      ctx.stroke();
+      // Top side
+      ctx.beginPath();
+      ctx.moveTo(Math.round(rect.x) + 0.5, Math.round(rect.y) + 0.5);
+      ctx.lineTo(Math.round(rect.x + rect.width) + 0.5, Math.round(rect.y) + 0.5);
+      ctx.stroke();
+      // Bottom side
+      ctx.beginPath();
+      ctx.moveTo(Math.round(rect.x) + 0.5, Math.round(rect.y + rect.height) + 0.5);
+      ctx.lineTo(Math.round(rect.x + rect.width) + 0.5, Math.round(rect.y + rect.height) + 0.5);
+      ctx.stroke();
+    }
+    
+    ctx.strokeStyle = "#000000";
+    ctx.lineWidth = 1;
+    ctx.setLineDash([dash, dash]);
+    ctx.lineDashOffset = 0.5;
+    
+    drawRect();
+    
+    ctx.strokeStyle = "#ffffff";
+    ctx.lineDashOffset = dash + 0.5;
+    
+    drawRect();
+    
+    ctx.setLineDash([]);
+  },
   draw(ctx, sel, handles, drawOld = true, adjust = false) {
     if (adjust) {
       sel = new Selection({...sel});
@@ -276,14 +314,7 @@ const SelectTool = {
     
     // Previously selected area
     if (sel.old && drawOld) {
-      ctx.strokeStyle = "#000000";
-      ctx.lineWidth = 1;
-      ctx.setLineDash([2, 2]);
-      ctx.lineDashOffset = 0.5;
-      ctx.strokeRect(Math.round(sel.old.x) + 0.5, Math.round(sel.old.y) + 0.5, Math.round(sel.old.width), Math.round(sel.old.height));
-      ctx.strokeStyle = "#ffffff";
-      ctx.lineDashOffset = 2.5;
-      ctx.strokeRect(Math.round(sel.old.x) + 0.5, Math.round(sel.old.y) + 0.5, Math.round(sel.old.width), Math.round(sel.old.height));
+      this._drawDashedRect(ctx, 2, sel.old);
     }
     
     // Selected image data
@@ -292,15 +323,7 @@ const SelectTool = {
     }
     
     // Selection box
-    ctx.strokeStyle = "#000000";
-    ctx.lineWidth = 1;
-    ctx.setLineDash([5, 5]);
-    ctx.lineDashOffset = 0.5;
-    ctx.strokeRect(Math.round(sel.x) + 0.5, Math.round(sel.y) + 0.5, Math.round(sel.width), Math.round(sel.height));
-    ctx.strokeStyle = "#ffffff";
-    ctx.lineDashOffset = 5.5;
-    ctx.strokeRect(Math.round(sel.x) + 0.5, Math.round(sel.y) + 0.5, Math.round(sel.width), Math.round(sel.height));
-    ctx.setLineDash([]);
+    this._drawDashedRect(ctx, 5, sel);
     
     if (handles) {
       // Selection resize handles
