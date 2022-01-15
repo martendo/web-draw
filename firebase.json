@@ -1,22 +1,22 @@
 {
-  "hosting": {
-    "target": "app",
-    "public": "public",
-    "rewrites": [{
-      "source": "/s/*",
-      "destination": "/index.html"
-    }],
-    "headers": [{
-      "source": "**",
-      "headers": [{
-        "key": "Cache-Control",
-        "value": "no-cache"
-      }]
-    }],
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  }
+	"hosting": {
+		"target": "app",
+		"public": "public",
+		"rewrites": [{
+			"source": "/s/*",
+			"destination": "/index.html"
+		}],
+		"headers": [{
+			"source": "**",
+			"headers": [{
+				"key": "Cache-Control",
+				"value": "no-cache"
+			}]
+		}],
+		"ignore": [
+			"firebase.json",
+			"**/.*",
+			"**/node_modules/**"
+		]
+	}
 }
