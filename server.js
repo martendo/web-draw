@@ -22,7 +22,7 @@
 
 const WebSocket = require("ws");
 const msgpack = require("msgpack-lite");
-const Message = require("./message.js");
+const Message = require("./src/message.js");
 
 const wss = new WebSocket.Server({port: process.env.PORT || 3000});
 

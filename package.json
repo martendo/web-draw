@@ -26,8 +26,7 @@
 		"utf-8-validate": "^5.0.5"
 	},
 	"devDependencies": {
-		"clean-css": "^5.1.2",
-		"grunt": "^1.4.0",
+		"clean-css-cli": "^5.5.0",
 		"html-minifier": "^4.0.0",
 		"uglify-es": "^3.3.9"
 	}
