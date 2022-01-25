@@ -29,6 +29,11 @@ EXPORTSUB := 's/module\.exports/const Message/'
 INFOINS = '1i$(INFO)'
 HTMLINFOINS = '1i$(subst $() *, ,$(subst $() */,-->,$(subst /*,<!--,$(INFO))))'
 
+SUBSTITUTE = cp $< $@
+build/index.html: SUBSTITUTE = sed -E -e $(BASE64SUB) -e $(DATESUB) -e $(VERSIONSUB) $< > $@
+build/style.css build/begin.js: SUBSTITUTE = sed -E $(BASE64SUB) $< > $@
+build/message.js: SUBSTITUTE = sed -E $(EXPORTSUB) $< > $@
+
 # Strict mode and IIFE
 SEDJS := '1i "use strict";'
 SEDMINJS := -e '1i"use strict";(()=>{' -e '$$a})();'
@@ -46,16 +51,10 @@ clean:
 	rm -rf build
 	rm -f $(OUTS)
 
-# Perform transformations
-build/%.html: src/%.html
+# Perform substitutions
+build/%: src/%
 	@mkdir -p $(@D)
-	sed -E -e $(BASE64SUB) -e $(DATESUB) -e $(VERSIONSUB) $< > $@
-build/%.css: src/%.css
-	@mkdir -p $(@D)
-	sed -E $(BASE64SUB) $< > $@
-build/%.js: src/%.js
-	@mkdir -p $(@D)
-	sed -E -e $(BASE64SUB) -e $(EXPORTSUB) $< > $@
+	$(SUBSTITUTE)
 
 .SECONDARY: $(patsubst src/%.js,build/%.js,$(SRCS))
 
