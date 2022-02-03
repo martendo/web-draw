@@ -535,9 +535,6 @@ document.getElementById("enterSessionPasswordModalJoinBtn").addEventListener("cl
 document.getElementById("enterSessionPasswordModalCancelBtn").addEventListener("click", () => Modal.close("enterSessionPasswordModal"));
 document.getElementById("sessionWrongPasswordModalOkBtn").addEventListener("click", () => Modal.close("sessionWrongPasswordModal"));
 
-document.getElementById("appInfoLink").addEventListener("click", () => Modal.open("appInfoModal"));
-document.getElementById("appInfoModalDoneBtn").addEventListener("click", () => Modal.close("appInfoModal"));
-
 document.getElementById("errorModalOkBtn").addEventListener("click", () => Modal.close("errorModal"));
 document.getElementById("oldCanvasFileModalOkBtn").addEventListener("click", () => Modal.close("oldCanvasFileModal"));
 document.getElementById("disconnectModalGiveUpBtn").addEventListener("click", () => Client.disconnect());

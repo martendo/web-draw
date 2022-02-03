@@ -2,7 +2,7 @@
 	"name": "web-draw",
 	"version": "0.12.8",
 	"description": "A little real-time online collaborative drawing program.",
-	"main": "server.js",
+	"private": true,
 	"scripts": {
 		"start": "node server.js",
 		"postversion": "git push && git push --tags"
