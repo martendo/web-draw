@@ -30,10 +30,11 @@ JSINFOINS = '1i/*\n * Web Draw v$(VERSION) ($(HOMEPAGE))\n * Copyright (C) 2020-
 
 BASE64SUB := 's/(.*)\{\{BASE64:([^}]+)\}\}(.*)/printf "%s%s%s" '\''\1'\'' "data:image\/png;base64,$$(base64 -w 0 < '\''\2'\'')" '\''\3'\''/e'
 DATESUB = 's/(.*)\{\{DATE\}\}(.*)/\1$(DATE)\2/'
+YEARSUB = 's/(.*)\{\{YEAR\}\}(.*)/\1$(YEAR)\2/'
 VERSIONSUB = 's/(.*)\{\{VERSION\}\}(.*)/\1v$(VERSION)\2/'
 
 SUBSTITUTE = cp $< $@
-build/sub/index.html: SUBSTITUTE = sed -E -e $(BASE64SUB) -e $(DATESUB) -e $(VERSIONSUB) $< > $@
+build/sub/index.html: SUBSTITUTE = sed -E -e $(BASE64SUB) -e $(DATESUB) -e $(YEARSUB) -e $(VERSIONSUB) $< > $@
 build/sub/style.css build/sub/images.ts: SUBSTITUTE = sed -E $(BASE64SUB) $< > $@
 
 .PHONY: all min clean
