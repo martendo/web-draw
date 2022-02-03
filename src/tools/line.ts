@@ -18,8 +18,21 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-class Line {
-	constructor({x0, y0, x1, y1, colour, width, caps, opacity, compOp}) {
+import * as msgpack from "msgpack-lite";
+import * as Canvas from "../canvas";
+
+export class Line {
+	x0: number;
+	y0: number;
+	x1: number;
+	y1: number;
+	colour: string;
+	width: number;
+	caps: Canvas.LineCap;
+	opacity: number;
+	compOp: Canvas.CompositeOp;
+
+	constructor({x0, y0, x1, y1, colour, width, caps, opacity, compOp}: Line) {
 		this.x0 = x0;
 		this.y0 = y0;
 		this.x1 = x1;
@@ -31,7 +44,7 @@ class Line {
 		this.compOp = compOp;
 	}
 
-	static packer(line) {
+	static packer(line: Line): Uint8Array {
 		return msgpack.encode([
 			line.x0,
 			line.y0,
@@ -45,8 +58,8 @@ class Line {
 		]).slice(1);
 	}
 
-	static unpacker(buffer) {
-		const properties = msgpack.decode([0x99, ...new Uint8Array(buffer)]);
+	static unpacker(buffer: Uint8Array): Line {
+		const properties: [number, number, number, number, string, number, number, number, Canvas.CompositeOp] = msgpack.decode([0x99, ...new Uint8Array(buffer)]);
 		return new Line({
 			x0: properties[0],
 			y0: properties[1],
@@ -61,22 +74,20 @@ class Line {
 	}
 }
 
-const LineTool = {
-	draw(line, ctx, options) {
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+export function draw(line: Line, ctx: CanvasRenderingContext2D, options?): void {
+	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-		ctx.strokeStyle = line.colour;
-		ctx.lineCap = CAPS[line.caps];
-		ctx.lineWidth = line.width;
-		ctx.globalAlpha = line.opacity;
+	ctx.strokeStyle = line.colour;
+	ctx.lineCap = Canvas.CAPS[line.caps];
+	ctx.lineWidth = line.width;
+	ctx.globalAlpha = line.opacity;
 
-		ctx.beginPath();
-		ctx.moveTo(line.x0, line.y0);
-		ctx.lineTo(line.x1, line.y1);
-		ctx.stroke();
+	ctx.beginPath();
+	ctx.moveTo(line.x0, line.y0);
+	ctx.lineTo(line.x1, line.y1);
+	ctx.stroke();
 
-		ctx.globalAlpha = 1;
+	ctx.globalAlpha = 1;
 
-		Canvas.update(options);
-	},
-};
+	Canvas.update(options);
+}

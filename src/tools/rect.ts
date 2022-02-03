@@ -18,32 +18,33 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const RectTool = {
-	draw(rect, ctx, options) {
-		if (!rect.outline && !rect.fill)
-			return;
-		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+import * as Canvas from "../canvas";
+import {Shape} from "./shape";
 
-		const x = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;
-		const y = rect.lineWidth % 2 !== 0 ? rect.y + 0.5 : rect.y;
+export function draw(rect: Shape, ctx: CanvasRenderingContext2D, options?): void {
+	if (!rect.outline && !rect.fill)
+		return;
+	ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-		ctx.lineJoin = "miter";
-		ctx.globalAlpha = rect.opacity;
+	const x: number = rect.lineWidth % 2 !== 0 ? rect.x + 0.5 : rect.x;
+	const y: number = rect.lineWidth % 2 !== 0 ? rect.y + 0.5 : rect.y;
 
-		ctx.beginPath();
-		ctx.rect(x, y, rect.width, rect.height);
-		if (rect.fill) {
-			ctx.fillStyle = rect.colours.fill;
-			ctx.fill();
-		}
-		if (rect.outline) {
-			ctx.strokeStyle = rect.colours.outline;
-			ctx.lineWidth = rect.lineWidth;
-			ctx.stroke();
-		}
+	ctx.lineJoin = "miter";
+	ctx.globalAlpha = rect.opacity;
 
-		ctx.globalAlpha = 1;
+	ctx.beginPath();
+	ctx.rect(x, y, rect.width, rect.height);
+	if (rect.fill) {
+		ctx.fillStyle = rect.colours.fill;
+		ctx.fill();
+	}
+	if (rect.outline) {
+		ctx.strokeStyle = rect.colours.outline;
+		ctx.lineWidth = rect.lineWidth;
+		ctx.stroke();
+	}
 
-		Canvas.update(options);
-	},
-};
+	ctx.globalAlpha = 1;
+
+	Canvas.update(options);
+}

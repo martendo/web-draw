@@ -4,6 +4,7 @@ public/404.html
 public/index.html
 public/style.css
 public/script.js
+server.js
 
 # Logs
 logs

@@ -267,38 +267,38 @@
 								<div class="selectInput" title="How new content is added to the existing content">
 									<label class="selectLabel" for="compositeSelect">Mode</label>
 									<select id="compositeSelect">
-										<option value="0" title="New content is drawn on top of the existing content.">Normal</option> <!-- source-over -->
-										<option value="1" title="New content is drawn behind the existing content.">Behind</option> <!-- destination-over -->
-										<option value="2" title="Existing content is kept where it doesn't overlap the new content.">Erase</option> <!-- destination-out -->
+										<option value="SOURCE_OVER" title="New content is drawn on top of the existing content.">Normal</option>
+										<option value="DESTINATION_OVER" title="New content is drawn behind the existing content.">Behind</option>
+										<option value="DESTINATION_OUT" title="Existing content is kept where it doesn't overlap the new content.">Erase</option>
 										<option class="separator" disabled>---</option>
-										<option value="3" title="Retains the lightest pixels of both layers.">Lighten Only</option> <!-- lighten -->
-										<option value="4" title="The pixels are inverted, multiplied, and inverted again.">Screen</option> <!-- screen -->
-										<option value="5" title="Divides the bottom layer by the inverted top layer.">Dodge</option> <!-- color-dodge -->
-										<option value="6" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option> <!-- lighter -->
+										<option value="LIGHTEN" title="Retains the lightest pixels of both layers.">Lighten Only</option>
+										<option value="SCREEN" title="The pixels are inverted, multiplied, and inverted again.">Screen</option>
+										<option value="COLOR_DODGE" title="Divides the bottom layer by the inverted top layer.">Dodge</option>
+										<option value="LIGHTER" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option>
 										<option class="separator" disabled>---</option>
-										<option value="7" title="Retains the darkest pixels of both layers.">Darken Only</option> <!-- darken -->
-										<option value="8" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option> <!-- color-burn -->
-										<option value="9" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option> <!-- multiply -->
+										<option value="DARKEN" title="Retains the darkest pixels of both layers.">Darken Only</option>
+										<option value="COLOR_BURN" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option>
+										<option value="MULTIPLY" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option>
 										<option class="separator" disabled>---</option>
-										<option value="10" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option> <!-- overlay -->
-										<option value="11" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option> <!-- hard-light -->
-										<option value="12" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option> <!-- soft-light -->
+										<option value="OVERLAY" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option>
+										<option value="HARD_LIGHT" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option>
+										<option value="SOFT_LIGHT" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option>
 										<option class="separator" disabled>---</option>
-										<option value="13" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option> <!-- difference -->
-										<option value="14" title="Like difference, but with lower contrast.">Exclusion</option> <!-- exclusion -->
+										<option value="DIFFERENCE" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option>
+										<option value="EXCLUSION" title="Like difference, but with lower contrast.">Exclusion</option>
 										<option class="separator" disabled>---</option>
-										<option value="15" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option> <!-- source-in -->
-										<option value="16" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option> <!-- source-out -->
-										<option value="17" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option> <!-- source-atop -->
-										<option value="18" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option> <!-- destination-in -->
-										<option value="19" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option> <!-- destination-atop -->
-										<option value="20" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option> <!-- xor -->
-										<option value="21" title="Only the new shape is shown.">New Only</option> <!-- copy -->
+										<option value="SOURCE_IN" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option>
+										<option value="SOURCE_OUT" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option>
+										<option value="SOURCE_ATOP" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option>
+										<option value="DESTINATION_IN" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option>
+										<option value="DESTINATION_ATOP" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option>
+										<option value="XOR" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option>
+										<option value="COPY" title="Only the new shape is shown.">New Only</option>
 										<option class="separator" disabled>---</option>
-										<option value="22" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option> <!-- hue -->
-										<option value="23" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option> <!-- saturation -->
-										<option value="24" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option> <!-- color -->
-										<option value="25" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option> <!-- luminosity -->
+										<option value="HUE" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option>
+										<option value="SATURATION" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option>
+										<option value="COLOR" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option>
+										<option value="LUMINOSITY" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option>
 									</select>
 								</div>
 							</td>
@@ -346,9 +346,9 @@
 								<div class="selectInput" title="The shape at the ends of a line">
 									<label class="selectLabel" for="lineCapSelect">Caps</label>
 									<select id="lineCapSelect">
-										<option value="0" title="The ends of lines are rounded.">Round</option>
-										<option value="1" title="The ends of lines are squared off at the endpoints.">Butt</option>
-										<option value="2" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
+										<option value="ROUND" title="The ends of lines are rounded.">Round</option>
+										<option value="BUTT" title="The ends of lines are squared off at the endpoints.">Butt</option>
+										<option value="SQUARE" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
 									</select>
 								</div>
 							</td>
@@ -401,12 +401,12 @@
 								<div class="selectInput" title="Colour channels used to determine colour similarity">
 									<label class="selectLabel" for="fillBySelect">Fill by</label>
 									<select id="fillBySelect">
-										<option value="0" title="Check all channels">RGBA</option>
-										<option value="1" title="Check all colour channels, but not alpha">RGB</option>
-										<option value="2" title="Check only the red colour channel">Red</option>
-										<option value="3" title="Check only the green colour channel">Green</option>
-										<option value="4" title="Check only the blue colour channel">Blue</option>
-										<option value="5" title="Check only the alpha channel">Alpha</option>
+										<option value="RGBA" title="Check all channels">RGBA</option>
+										<option value="RGB" title="Check all colour channels, but not alpha">RGB</option>
+										<option value="RED" title="Check only the red colour channel">Red</option>
+										<option value="GREEN" title="Check only the green colour channel">Green</option>
+										<option value="BLUE" title="Check only the blue colour channel">Blue</option>
+										<option value="ALPHA" title="Check only the alpha channel">Alpha</option>
 									</select>
 								</div>
 							</td>
@@ -1153,9 +1153,6 @@
 				</div>
 			</div>
 		</div>
-
-		<script src="https://cdn.jsdelivr.net/npm/msgpack-lite/dist/msgpack.min.js"></script>
 		<script src="/script.js"></script>
-
 	</body>
 </html>

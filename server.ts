@@ -18,30 +18,31 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-"use strict";
+import * as WebSocket from "ws";
+import * as msgpack from "msgpack-lite";
+import {Message} from "./src/message";
 
-const WebSocket = require("ws");
-const msgpack = require("msgpack-lite");
-const Message = require("./src/message.js");
+const wss: WebSocket.Server = new WebSocket.Server({port: parseInt(process.env.PORT, 10) || 3000});
 
-const wss = new WebSocket.Server({port: process.env.PORT || 3000});
+const sessions: Map<string, Session> = new Map();
+const clients: Map<string, Client> = new Map();
 
-const sessions = new Map();
-const clients = new Map();
-
-function createUniqueId(map, len = 4, chars = "bcdfghjklmnpqrstvwxyz0123456789") {
-	var id;
+function createUniqueId(map: Map<string, unknown>, len: number = 4, chars: string = "bcdfghjklmnpqrstvwxyz0123456789"): string {
+	let id: string;
 	do {
 		id = "";
-		for (var i = 0; i < len; i++) {
+		for (let i: number = 0; i < len; i++)
 			id += chars[(Math.random() * chars.length) | 0];
-		}
 	} while (map.has(id));
 	return id;
 }
 
 class Session {
-	constructor(id) {
+	id: string;
+	clients: Map<string, Client>;
+	password: string | null;
+
+	constructor(id: string) {
 		this.id = id;
 		this.clients = new Map();
 		this.password = null;
@@ -49,7 +50,7 @@ class Session {
 		console.log(`Create session ${this.id} - ${sessions.size} sessions open`);
 	}
 
-	join(client, restore = false) {
+	join(client: Client, restore: boolean = false): void {
 		if (client.session)
 			console.error("Client already in session!");
 		this.clients.set(client.id, client);
@@ -58,7 +59,7 @@ class Session {
 			type: Message.SESSION_JOINED,
 			id: this.id,
 			total: this.clients.size,
-			clients: [...this.clients.values()].map((c) => {
+			clients: [...this.clients.values()].map((c: Client): {id: string, name: string} => {
 				return {
 					id: c.id,
 					name: c.name,
@@ -84,7 +85,7 @@ class Session {
 		}
 	}
 
-	leave(client) {
+	leave(client: Client): void {
 		if (client.session !== this)
 			console.error("Client not in this session!");
 		this.clients.delete(client.id);
@@ -106,13 +107,13 @@ class Session {
 	}
 
 	// Send a message to all clients in this session
-	broadcast(data) {
-		this.clients.forEach((client) => {
+	broadcast(data: any): void {
+		this.clients.forEach((client: Client): void => {
 			client.send(data);
 		});
 	}
 
-	setPassword(client, password) {
+	setPassword(client: Client, password: string | null): void {
 		this.password = password;
 		this.broadcast({
 			type: Message.PASSWORD_SET,
@@ -124,7 +125,15 @@ class Session {
 }
 
 class Client {
-	constructor(connection, id) {
+	connection: WebSocket;
+	id: string;
+	name: string | null;
+	session: Session | null;
+	isAlive: boolean;
+	pingTime: number;
+	receiveMouse: boolean;
+
+	constructor(connection: WebSocket, id: string) {
 		this.connection = connection;
 		this.id = id;
 		this.name = null;
@@ -135,11 +144,11 @@ class Client {
 	}
 
 	// Send a message to all other clients in session except this client
-	broadcast(data, callback = null) {
+	broadcast(data: any, callback: (Client) => boolean = null) {
 		if (!this.session)
 			return;
 
-		this.session.clients.forEach((client) => {
+		this.session.clients.forEach((client: Client): void => {
 			if (client !== this) {
 				if (typeof callback === "function") {
 					if (!callback(client))
@@ -151,26 +160,28 @@ class Client {
 	}
 
 	// Send a message to this client
-	send(data) {
-		const msg = msgpack.encode(data);
-		this.connection.send(msg, {binary: true}, (error) => {
+	send(data: any): void {
+		const msg: Buffer = msgpack.encode(data);
+		this.connection.send(msg, {binary: true}, (error: Error) => {
 			if (error)
 				console.error("Message send failed", msg, error);
 		});
 	}
 
-	ping() {
-		if (!this.isAlive)
-			return this.connection.terminate();
+	ping(): void {
+		if (!this.isAlive) {
+			this.connection.terminate();
+			return;
+		}
 		this.isAlive = false;
-		this.connection.ping(() => {
+		this.connection.ping((): void => {
 			this.pingTime = Date.now();
 		});
 	}
 }
 
-function joinSession(client, id, pass = null, restore) {
-	const session = sessions.get(id);
+function joinSession(client: Client, id: string, pass: string | null = null, restore: boolean = false): void {
+	const session: Session = sessions.get(id);
 	if (session.password) {
 		if (pass) {
 			checkSessionPassword(client, id, pass);
@@ -184,14 +195,16 @@ function joinSession(client, id, pass = null, restore) {
 		session.join(client, restore);
 	}
 }
-function createSession(client, id, pass = null, restore) {
-	const session = new Session(id);
+
+function createSession(client: Client, id: string, pass: string | null = null, restore: boolean = false): Session {
+	const session: Session = new Session(id);
 	joinSession(client, id, pass, restore);
 	session.setPassword(client, pass);
 	return session;
 }
-function checkSessionPassword(client, id, password) {
-	const session = sessions.get(id);
+
+function checkSessionPassword(client: Client, id: string, password: string | null): void {
+	const session: Session = sessions.get(id);
 	if (!session) {
 		client.send({
 			type: Message.SESSION_NO_EXIST,
@@ -208,37 +221,37 @@ function checkSessionPassword(client, id, password) {
 	}
 }
 
-wss.on("connection", (socket) => {
-	const client = new Client(socket, createUniqueId(clients));
+wss.on("connection", (socket: WebSocket): void => {
+	const client: Client = new Client(socket, createUniqueId(clients));
 	client.send({
 		type: Message.CONNECTED,
 		id: client.id,
 	});
 	console.log(`Client connect ${client.id} - ${clients.size} clients connected`);
-	socket.on("pong", () => {
-		const latency = Date.now() - client.pingTime;
+	socket.on("pong", (): void => {
+		const latency: number = Date.now() - client.pingTime;
 		client.send({
 			type: Message.LATENCY,
 			latency: latency,
 		});
 		client.isAlive = true;
 	});
-	const pingClient = setInterval(() => client.ping(), 10000);
-	setTimeout(() => client.ping(), 1000);
-	socket.on("error", (error) => {
+	const pingClient: NodeJS.Timer = setInterval((): void => client.ping(), 10000);
+	setTimeout((): void => client.ping(), 1000);
+	socket.on("error", (error: Error): void => {
 		console.error(error);
 	});
-	socket.on("close", (code) => {
+	socket.on("close", (code: number): void => {
 		clients.delete(client.id);
 		console.log(`Client disconnect ${client.id} - ${code} - ${clients.size} clients connected`);
 		clearInterval(pingClient);
-		const session = client.session;
+		const session: Session | null = client.session;
 		if (session)
 			session.leave(client);
 		socket.close();
 	});
-	socket.on("message", (msg) => {
-		const data = msgpack.decode(msg);
+	socket.on("message", (msg: Buffer): void => {
+		const data: {type: Message, [key: string]: any} = msgpack.decode(msg);
 		switch (data.type) {
 			case Message.FILL:
 			case Message.CLEAR:
@@ -264,21 +277,19 @@ wss.on("connection", (socket) => {
 			case Message.RECT:
 			case Message.COMMIT_RECT:
 			case Message.ELLIPSE:
-			case Message.COMMIT_ELLIPSE: {
+			case Message.COMMIT_ELLIPSE:
 				client.broadcast(data);
 				break;
-			}
-			case Message.MOUSE_MOVE: {
-				client.broadcast(data, (c) => c.receiveMouse);
+			case Message.MOUSE_MOVE:
+				client.broadcast(data, (c: Client): boolean => c.receiveMouse);
 				break;
-			}
-			case Message.CHAT_MESSAGE: {
-				const timestamp = Date.now();
+			case Message.CHAT_MESSAGE:
+				const timestamp: number = Date.now();
 				if (data.message.slice(0, 3) === "to:") {
-					const idList = data.message.split(" ")[0].slice(3);
-					var ids = idList.split(",");
+					const idList: string = data.message.split(" ")[0].slice(3);
+					let ids: Array<string> = idList.split(",");
 					// Remove recipients who are not in client's session
-					ids = ids.filter((id) => client.session.clients.has(id));
+					ids = ids.filter((id: string): boolean => client.session.clients.has(id));
 					// Sending to nobody, end
 					if (ids.length === 0)
 						break;
@@ -287,7 +298,7 @@ wss.on("connection", (socket) => {
 					ids.push(client.id);
 					// Remove duplicate recipients
 					ids = [...new Set(ids)];
-					ids.forEach((id) => {
+					ids.forEach((id: string): void => {
 						client.session.clients.get(id).send({
 							type: Message.CHAT_MESSAGE,
 							message: data.message.slice(3 + idList.length + 1),
@@ -301,18 +312,15 @@ wss.on("connection", (socket) => {
 					client.session.broadcast(data);
 				}
 				break;
-			}
-			case Message.USER_NAME: {
+			case Message.USER_NAME:
 				client.name = data.name;
 				client.session.broadcast(data);
 				break;
-			}
-			case Message.RESPONSE_CANVAS: {
+			case Message.RESPONSE_CANVAS:
 				client.session.clients.get(data.clientId).send(data);
 				break;
-			}
-			case Message.CREATE_SESSION: {
-				var id = data.id;
+			case Message.CREATE_SESSION:
+				let id: string = data.id;
 				if (id === "")
 					id = createUniqueId(sessions);
 				if (sessions.has(id)) {
@@ -324,8 +332,7 @@ wss.on("connection", (socket) => {
 					createSession(client, id);
 				}
 				break;
-			}
-			case Message.JOIN_SESSION: {
+			case Message.JOIN_SESSION:
 				if (sessions.has(data.id)) {
 					joinSession(client, data.id);
 				} else {
@@ -335,26 +342,21 @@ wss.on("connection", (socket) => {
 					});
 				}
 				break;
-			}
-			case Message.ENTER_PASSWORD: {
+			case Message.ENTER_PASSWORD:
 				checkSessionPassword(client, data.id, data.password);
 				break;
-			}
-			case Message.LEAVE_SESSION: {
-				const session = client.session;
+			case Message.LEAVE_SESSION:
+				const session: Session | null = client.session;
 				if (session)
 					session.leave(client);
 				break;
-			}
-			case Message.URL_SESSION: {
-				if (sessions.has(data.id)) {
+			case Message.URL_SESSION:
+				if (sessions.has(data.id))
 					joinSession(client, data.id, data.password);
-				} else {
+				else
 					createSession(client, data.id, data.password);
-				}
 				break;
-			}
-			case Message.RECONNECT: {
+			case Message.RECONNECT:
 				if (data.client.id && !clients.has(data.client.id)) {
 					clients.delete(client.id);
 					client.id = data.client.id;
@@ -381,8 +383,7 @@ wss.on("connection", (socket) => {
 				});
 
 				break;
-			}
-			case Message.SESSION_ID: {
+			case Message.SESSION_ID:
 				if (sessions.has(data.id)) {
 					client.send({
 						type: Message.SESSION_HAS_ID,
@@ -400,27 +401,22 @@ wss.on("connection", (socket) => {
 					});
 				}
 				break;
-			}
-			case Message.SESSION_PASSWORD: {
+			case Message.SESSION_PASSWORD:
 				client.session.setPassword(client, data.password);
 				break;
-			}
-			case Message.SEND_MOUSE: {
+			case Message.SEND_MOUSE:
 				client.broadcast({
 					type: Message.DISPLAY_CURSOR,
 					clientId: client.id,
 					value: data.value,
 				});
 				break;
-			}
-			case Message.RECEIVE_MOUSE: {
+			case Message.RECEIVE_MOUSE:
 				client.receiveMouse = data.value;
 				break;
-			}
-			default: {
+			default:
 				console.error(`Unknown message ${data.type}!`, data);
 				break;
-			}
 		}
 	});
 });

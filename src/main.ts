@@ -18,110 +18,112 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Add various objects to msgpack codec
-// ImageData
-msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData) => {
+import * as msgpack from "msgpack-lite";
+import {Message} from "./message";
+import * as ActionHistory from "./action-history";
+import {PastAction} from "./action-history";
+import * as Canvas from "./canvas";
+import {ColourRect} from "./canvas";
+import * as Chat from "./chat";
+import * as Client from "./client";
+import * as Colour from "./colour";
+import * as Modal from "./ui/modal";
+import * as Session from "./session";
+import {Action} from "./session";
+import {Stroke} from "./tools/pen";
+import {Line} from "./tools/line";
+import {Fill} from "./tools/fill";
+import {Shape, ShapeColours} from "./tools/shape";
+import * as SelectTool from "./tools/selection";
+import {Selection, SelectionResize, SelectionPaste, OldSelection, ShortSelection} from "./tools/selection";
+import * as Tools from "./tools/tools";
+import {Vector2, copyText, setTheme, minmax} from "./helpers";
+
+// msgpack-lite does not define an ImageData Ext type (type 0x00 unused)
+msgpack.codec.preset.addExtPacker(0x00, ImageData, (imageData: ImageData): Uint8Array => {
 	return msgpack.encode([
 		imageData.data,
 		imageData.width,
 		imageData.height,
 	]).slice(1);
 });
-msgpack.codec.preset.addExtUnpacker(0x00, (buffer) => {
-	const properties = msgpack.decode([0x93, ...new Uint8Array(buffer)]);
+msgpack.codec.preset.addExtUnpacker(0x00, (buffer: Uint8Array): ImageData => {
+	const properties: [Uint8ClampedArray, number, number] = msgpack.decode([0x93, ...new Uint8Array(buffer)]);
 	return new ImageData(properties[0], properties[1], properties[2]);
 });
-[
-	Pos2D,
-	PastAction,
-	Action,
-	Stroke,
-	Fill,
-	Selection,
-	SelectionResize,
-	SelectionPaste,
-	OldSelection,
-	ShortSelection,
-	Line,
-	Shape,
-	ShapeColours,
-	RectWithColour,
-].forEach((object, index) => {
-	const type = 0x20 + index;
-	msgpack.codec.preset.addExtPacker(type, object, (obj) => object.packer(obj));
-	msgpack.codec.preset.addExtUnpacker(type, (buffer) => object.unpacker(buffer));
-});
 
-// List of ping latency measurements to calculate average
-var prevPings = [];
-
-// Drawing and tool variables
-var penColours = Colour.DEFAULTS.slice();
-var currentPen = 0;
-var tool = "pen";
-
-var clients = {};
-
-// Whether mouse has moved or not since last update was sent to server
-var mouseMoved = {
-	moved: false,
-	outside: false,
-};
-// Cache mousemove event so it may be used outside of a MouseEvent listener
-var cachedMouseEvent = null;
-
-// Most recent custom colours
-var customColours = [];
+// Each MessagePack type object needs a constructor, packer, and unpacker
+interface TypeObject<Type> {
+	new(...args: any[]): Type;
+	packer(object: Type): Uint8Array;
+	unpacker(buffer: Uint8Array): Type;
+}
+// MessagePack Ext format type; msgpack-lite already defines some of 0x00-0x1F
+let type: number = 0x20;
+function addExt<Type>(typeObject: TypeObject<Type>): void {
+	msgpack.codec.preset.addExtPacker<Type>(type, typeObject, (object: Type) => typeObject.packer(object));
+	msgpack.codec.preset.addExtUnpacker<Type>(type, (buffer: Uint8Array) => typeObject.unpacker(buffer));
+	type++;
+}
+addExt<Vector2<any>>(Vector2);
+addExt<PastAction>(PastAction);
+addExt<Action>(Action);
+addExt<Stroke>(Stroke);
+addExt<Fill>(Fill);
+addExt<Selection>(Selection);
+addExt<SelectionResize>(SelectionResize);
+addExt<SelectionPaste>(SelectionPaste);
+addExt<OldSelection>(OldSelection);
+addExt<ShortSelection>(ShortSelection);
+addExt<Line>(Line);
+addExt<Shape>(Shape);
+addExt<ShapeColours>(ShapeColours);
+addExt<ColourRect>(ColourRect);
 
 // Tell the user if their browser does not support WebSockets
 if (!("WebSocket" in window))
 	Modal.open("noWsModal");
 
-const waitConnect = () => {
-	const wait = document.getElementById("connectionInfoWait");
-	if (wait.textContent.length === 3)
-		wait.textContent = "";
-	wait.innerHTML += "&#183;";
-};
-const connectionWait = setInterval(() => waitConnect(), 500);
-waitConnect();
-
 Client.init();
 
-Tools.loadToolSettings(tool);
+Tools.initToolSettings();
+Tools.loadToolSettings(Tools.currentTool);
 
 // Set up events that end or cancel actions for all of the page in case it happens outside of the canvas
-document.addEventListener("pointermove", (event) => mouseMove(event), {passive: false});
-document.addEventListener("pointerup", (event) => clearMouseHold(event), {passive: false});
-document.addEventListener("pointercancel", (event) => clearMouseHold(event), {passive: false});
-document.addEventListener("pointerleave", (event) => clearMouseHold(event), {passive: false});
+document.addEventListener("pointermove", (event) => Tools.mouseMove(event), {passive: false});
+document.addEventListener("pointerup", (event) => Tools.clearMouseHold(event), {passive: false});
+document.addEventListener("pointercancel", (event) => Tools.clearMouseHold(event), {passive: false});
+document.addEventListener("pointerleave", (event) => Tools.clearMouseHold(event), {passive: false});
 document.addEventListener("contextmenu", (event) => {
-	const tagName = event.target.tagName;
-	if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA")
-		return;
+	if (event.target instanceof Element) {
+		const tagName: string = event.target.tagName;
+		if (tagName === "A" || tagName === "INPUT" || tagName === "TEXTAREA")
+			return;
+	}
 	event.preventDefault();
 	event.stopPropagation();
 });
 document.addEventListener("click", (event) => {
-	if (event.target.tagName === "LI")
+	if (event.target instanceof Element && event.target.tagName === "LI")
 		return;
-	const selected = document.getElementsByClassName("menuSelected");
-	for (var i = 0; i < selected.length; i++)
+	const selected: HTMLCollectionOf<HTMLLIElement> = document.getElementsByClassName("menuSelected") as HTMLCollectionOf<HTMLLIElement>;
+	for (let i: number = 0; i < selected.length; i++)
 		selected[i].classList.remove("menuSelected");
 });
 
 window.addEventListener("resize", () => Canvas.updateCanvasAreaSize());
 
 Canvas.displayCanvas.addEventListener("pointermove", (event) => {
-	cachedMouseEvent = event;
+	Client.cacheMouseEvent(event);
 });
 
 document.addEventListener("keydown", (event) => {
 	// Keyboard shortcuts that can only be used when not currently typing or on the canvas
-	const tagName = event.target.tagName;
+	const tagName: string | null = event.target instanceof Element ? event.target.tagName : null;
+	const typing: boolean = event.target instanceof HTMLElement ? event.target.isContentEditable : false;
 
 	notTyping:
-	if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !event.target.isContentEditable && Modal.index === 100) {
+	if (tagName !== "INPUT" && tagName !== "TEXTAREA" && !typing && Modal.index === 100) {
 		if (!event.ctrlKey) {
 			switch (event.key) {
 				case "1": {
@@ -170,19 +172,19 @@ document.addEventListener("keydown", (event) => {
 					break;
 				}
 				case "c": {
-					if (tool !== "select")
+					if (Tools.currentTool !== "select")
 						break notTyping;
 					SelectTool.doCopy();
 					break;
 				}
 				case "x": {
-					if (tool !== "select")
+					if (Tools.currentTool !== "select")
 						break notTyping;
 					SelectTool.doCut();
 					break;
 				}
 				case "v": {
-					if (tool !== "select")
+					if (Tools.currentTool !== "select")
 						break notTyping;
 					SelectTool.doPaste();
 					break;
@@ -215,12 +217,12 @@ document.addEventListener("keydown", (event) => {
 });
 
 // Set up events for the canvas, but not the move or ending ones (see above event listeners)
-Canvas.displayCanvas.addEventListener("pointerdown", (event) => mouseHold(event));
+Canvas.displayCanvas.addEventListener("pointerdown", (event) => Tools.mouseHold(event));
 Canvas.displayCanvas.addEventListener("wheel", (event) => {
 	event.preventDefault();
 	if (!event.ctrlKey) {
 		// Scroll
-		const delta = Math.sign(event.deltaY) * 75;
+		const delta: number = Math.sign(event.deltaY) * 75;
 		if (event.shiftKey)
 			Canvas.pan.x += delta;
 		else
@@ -228,7 +230,7 @@ Canvas.displayCanvas.addEventListener("wheel", (event) => {
 		Canvas.drawCanvas();
 	} else {
 		// Zoom
-		const delta = Math.sign(event.deltaY) * -0.25;
+		const delta: number = Math.sign(event.deltaY) * -0.25;
 		Canvas.changeZoom(delta);
 	}
 });
@@ -237,46 +239,40 @@ Canvas.displayCanvas.addEventListener("wheel", (event) => {
 document.getElementById("createSessionBtn").addEventListener("click", () => Session.create());
 document.getElementById("joinSessionBtn").addEventListener("click", () => Session.join());
 
-const colourPicker = document.getElementById("colourPicker");
-colourPicker.addEventListener("input", (event) => Colour.update(currentPen, event.target.value));
-colourPicker.addEventListener("change", (event) => Colour.change(currentPen, event.target.value));
+const colourPicker: HTMLInputElement = document.getElementById("colourPicker") as HTMLInputElement;
+colourPicker.addEventListener("input", (event: InputEvent) => Colour.update(null, colourPicker.value));
+colourPicker.addEventListener("change", (event: Event) => Colour.change(null, colourPicker.value));
 
-const quickColourSelect = document.getElementById("quickColourSelect");
+const quickColourSelect: HTMLTableElement = document.getElementById("quickColourSelect") as HTMLTableElement;
 quickColourSelect.addEventListener("click", (event) => event.preventDefault());
 quickColourSelect.addEventListener("contextmenu", (event) => event.preventDefault());
 
 document.getElementById("chooseImage").addEventListener("change", (event) => Canvas.importImage(event));
 document.getElementById("chooseCanvasFile").addEventListener("change", (event) => Canvas.openFile(event));
 
-const penColourBoxes = document.getElementsByClassName("penColour");
-for (let i = 0; i < penColourBoxes.length; i++) {
-	const penColourBox = penColourBoxes[i];
-	penColourBox.addEventListener("click", () => {
-		currentPen = i;
-		Colour.openPicker(i);
-	});
-	penColourBox.addEventListener("contextmenu", () => {
-		currentPen = i;
-		Colour.openPicker(i);
-	});
+const penColourBoxes: HTMLCollectionOf<HTMLSpanElement> = document.getElementsByClassName("penColour") as HTMLCollectionOf<HTMLSpanElement>;
+for (let i: number = 0; i < penColourBoxes.length; i++) {
+	const penColourBox: HTMLSpanElement = penColourBoxes[i];
+	penColourBox.addEventListener("click", () => Colour.openPicker(i as 0 | 1));
+	penColourBox.addEventListener("contextmenu", () => Colour.openPicker(i as 0 | 1));
 }
-const penColourValues = document.getElementsByClassName("penColourValue");
-for (let i = 0; i < penColourValues.length; i++) {
-	penColourValues[i].addEventListener("keydown", (event) => {
+const penColourValues: HTMLCollectionOf<HTMLInputElement> = document.getElementsByClassName("penColourValue") as HTMLCollectionOf<HTMLInputElement>;
+for (let i: number = 0; i < penColourValues.length; i++) {
+	penColourValues[i].addEventListener("keydown", (event: KeyboardEvent) => {
 		if (event.key === "Enter")
-			Colour.changeWithValue(i, event);
+			Colour.changeWithValue(i as 0 | 1, event);
 	});
 }
 for (const toolName of Tools.NAMES)
-	document.getElementById(toolName + "Btn").addEventListener("click", () => switchTool(toolName));
+	document.getElementById(toolName + "Btn").addEventListener("click", () => Tools.switchTool(toolName));
 
-const menuLabels = document.getElementsByClassName("menuLabel");
-for (let i = 0; i < menuLabels.length; i++) {
-	const menuLabel = menuLabels[i];
+const menuLabels: HTMLCollectionOf<HTMLDivElement> = document.getElementsByClassName("menuLabel") as HTMLCollectionOf<HTMLDivElement>;
+for (let i: number = 0; i < menuLabels.length; i++) {
+	const menuLabel: HTMLDivElement = menuLabels[i];
 	if (menuLabel.parentElement.getElementsByClassName("menuDropdown").length > 0) {
 		menuLabel.addEventListener("click", () => {
-			const selected = document.getElementsByClassName("menuSelected");
-			for (var i = 0; i < selected.length; i++) {
+			const selected: HTMLCollectionOf<HTMLLIElement> = document.getElementsByClassName("menuSelected") as HTMLCollectionOf<HTMLLIElement>;
+			for (let i: number = 0; i < selected.length; i++) {
 				if (selected[i] !== menuLabel.parentElement)
 					selected[i].classList.remove("menuSelected");
 			}
@@ -299,7 +295,7 @@ document.getElementById("viewFitZoomBtn").addEventListener("click", () => Canvas
 document.getElementById("viewFillZoomBtn").addEventListener("click", () => Canvas.zoomToWindow("fill"));
 document.getElementById("sessionInfoBtn").addEventListener("click", () => Modal.open("sessionInfoModal"));
 document.getElementById("sessionChangeIdBtn").addEventListener("click", () => {
-	document.getElementById("sessionIdNew").value = Session.id;
+	(document.getElementById("sessionIdNew") as HTMLInputElement).value = Session.id;
 	Modal.open("changeSessionIdModal");
 });
 document.getElementById("sessionSetPasswordBtn").addEventListener("click", () => Modal.open("setSessionPasswordModal"));
@@ -310,13 +306,13 @@ document.getElementById("helpInfoBtn").addEventListener("click", () => Modal.ope
 document.getElementById("helpBtn").addEventListener("click", () => Modal.open("helpModal"));
 document.getElementById("infoBtn").addEventListener("click", () => Modal.open("infoModal"));
 document.getElementById("userBtn").addEventListener("click", () => {
-	document.getElementById("userNameInput").value = clients[Client.id].name || "";
+	(document.getElementById("userNameInput") as HTMLInputElement).value = Session.clients[Client.id].name || "";
 	Modal.open("userModal");
 });
 document.getElementById("chatBtn").addEventListener("click", () => Chat.toggle());
 document.getElementById("chatXBtn").addEventListener("click", () => Chat.close());
 
-const tabs = [...document.getElementsByClassName("tab")];
+const tabs: HTMLTableCellElement[] = [...(document.getElementsByClassName("tab") as HTMLCollectionOf<HTMLTableCellElement>)];
 tabs.forEach((tab) => {
 	tab.addEventListener("click", () => {
 		tabs.forEach((t) => {
@@ -329,16 +325,16 @@ tabs.forEach((tab) => {
 });
 document.getElementById("toolTab").dispatchEvent(new Event("click"));
 
-Chat.input.addEventListener("keydown", (event) => {
+Chat.chatInput.addEventListener("keydown", (event) => {
 	if (event.key === "Enter" && !event.shiftKey) {
 		Chat.send();
 		event.preventDefault();
 	}
 });
-Chat.input.addEventListener("input", () => {
-	const box = document.getElementById("chatMessages");
-	const isAtBottom = box.scrollTop === box.scrollHeight - box.clientHeight;
-	elementFitHeight(Chat.input);
+Chat.chatInput.addEventListener("input", () => {
+	const box: HTMLDivElement = document.getElementById("chatMessages") as HTMLDivElement;
+	const isAtBottom: boolean = box.scrollTop === box.scrollHeight - box.clientHeight;
+	Chat.updateChatInputHeight();
 	if (isAtBottom)
 		box.scrollTop = box.scrollHeight - box.clientHeight;
 });
@@ -346,7 +342,7 @@ document.getElementById("chatSendBtn").addEventListener("click", () => Chat.send
 
 document.getElementById("undoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(-1));
 document.getElementById("redoBtn").addEventListener("click", () => ActionHistory.moveWithOffset(+1));
-const clearBtn = document.getElementById("clearBtn");
+const clearBtn: HTMLButtonElement = document.getElementById("clearBtn") as HTMLButtonElement;
 clearBtn.addEventListener("click", () => Canvas.clearBlank());
 clearBtn.addEventListener("dblclick", () => Canvas.clear());
 document.getElementById("resetZoomBtn").addEventListener("click", () => Canvas.setZoom(Canvas.DEFAULT_ZOOM));
@@ -362,49 +358,49 @@ document.getElementById("allPingsLink").addEventListener("click", () => Modal.op
 
 document.getElementById("allPingsModalDoneBtn").addEventListener("click", () => Modal.close("allPingsModal"));
 
-const resizeWidth = document.getElementById("canvasResizeWidth");
-const resizeHeight = document.getElementById("canvasResizeHeight");
-const offsetX = document.getElementById("canvasResizeOffsetX");
-const offsetY = document.getElementById("canvasResizeOffsetY");
+const resizeWidth: HTMLInputElement = document.getElementById("canvasResizeWidth") as HTMLInputElement;
+const resizeHeight: HTMLInputElement = document.getElementById("canvasResizeHeight") as HTMLInputElement;
+const offsetX: HTMLInputElement = document.getElementById("canvasResizeOffsetX") as HTMLInputElement;
+const offsetY: HTMLInputElement = document.getElementById("canvasResizeOffsetY") as HTMLInputElement;
 document.getElementById("editResizeBtn").addEventListener("click", () => {
-	resizeWidth.value = Session.canvas.width;
-	resizeHeight.value = Session.canvas.height;
-	offsetX.min = 0;
-	offsetX.max = 0;
-	offsetX.value = 0;
-	offsetY.min = 0;
-	offsetY.max = 0;
-	offsetY.value = 0;
+	resizeWidth.value = Session.canvas.width.toString();
+	resizeHeight.value = Session.canvas.height.toString();
+	offsetX.min = "0";
+	offsetX.max = "0";
+	offsetX.value = "0";
+	offsetY.min = "0";
+	offsetY.max = "0";
+	offsetY.value = "0";
 	updateResizePreview();
 	Modal.open("canvasResizeModal");
 });
 resizeWidth.addEventListener("input", () => {
-	const delta = parseInt(resizeWidth.value, 10) - Session.canvas.width;
-	offsetX.min = Math.min(delta, 0);
-	offsetX.max = Math.max(delta, 0);
-	offsetX.value = minmax(parseInt(offsetX.value, 10), offsetX.min, offsetX.max);
+	const delta: number = parseInt(resizeWidth.value, 10) - Session.canvas.width;
+	offsetX.min = Math.min(delta, 0).toString();
+	offsetX.max = Math.max(delta, 0).toString();
+	offsetX.value = minmax(parseInt(offsetX.value, 10), parseInt(offsetX.min, 10), parseInt(offsetX.max, 10)).toString();
 });
 resizeHeight.addEventListener("input", () => {
-	const delta = parseInt(resizeHeight.value, 10) - Session.canvas.height;
-	offsetY.min = Math.min(delta, 0);
-	offsetY.max = Math.max(delta, 0);
-	offsetY.value = minmax(parseInt(offsetY.value, 10), offsetY.min, offsetY.max);
+	const delta: number = parseInt(resizeHeight.value, 10) - Session.canvas.height;
+	offsetY.min = Math.min(delta, 0).toString();
+	offsetY.max = Math.max(delta, 0).toString();
+	offsetY.value = minmax(parseInt(offsetY.value, 10), parseInt(offsetY.min, 10), parseInt(offsetY.max, 10)).toString();
 });
 document.getElementById("canvasResizeOffsetCentre").addEventListener("click", () => {
-	offsetX.value = Math.round((parseInt(resizeWidth.value, 10) - Session.canvas.width) / 2);
-	offsetY.value = Math.round((parseInt(resizeHeight.value, 10) - Session.canvas.height) / 2);
+	offsetX.value = Math.round((parseInt(resizeWidth.value, 10) - Session.canvas.width) / 2).toString();
+	offsetY.value = Math.round((parseInt(resizeHeight.value, 10) - Session.canvas.height) / 2).toString();
 	updateResizePreview();
 });
 
-const resizeFill = document.getElementById("canvasResizeFill");
-resizeFill.value = 1;
-function getResizeFillColour() {
+const resizeFill: HTMLSelectElement = document.getElementById("canvasResizeFill") as HTMLSelectElement;
+resizeFill.value = "1";
+function getResizeFillColour(): string | null {
 	switch (parseInt(resizeFill.value, 10)) {
 		case 0: {
-			return penColours[0];
+			return Colour.currents[0];
 		}
 		case 1: {
-			return penColours[1];
+			return Colour.currents[1];
 		}
 		case 2: {
 			return "#ffffff";
@@ -417,18 +413,19 @@ function getResizeFillColour() {
 	}
 }
 
-const previewCanvas = document.getElementById("resizePreviewCanvas");
-const previewCtx = previewCanvas.getContext("2d");
+const previewCanvas: HTMLCanvasElement = document.getElementById("resizePreviewCanvas") as HTMLCanvasElement;
+const previewCtx: CanvasRenderingContext2D = previewCanvas.getContext("2d");
+
 function updateResizePreview() {
-	const newWidth = parseInt(resizeWidth.value, 10);
-	const newHeight = parseInt(resizeHeight.value, 10);
+	const newWidth: number = parseInt(resizeWidth.value, 10);
+	const newHeight: number = parseInt(resizeHeight.value, 10);
 
-	const canvasWidth = Session.canvas.width;
-	const canvasHeight = Session.canvas.height;
+	const canvasWidth: number = Session.canvas.width;
+	const canvasHeight: number = Session.canvas.height;
 
-	const previewWidth = Math.max(newWidth, newWidth + (canvasWidth - newWidth) * 2);
-	const previewHeight = Math.max(newHeight, newHeight + (canvasHeight - newHeight) * 2);
-	var divisor;
+	const previewWidth: number = Math.max(newWidth, newWidth + (canvasWidth - newWidth) * 2);
+	const previewHeight: number = Math.max(newHeight, newHeight + (canvasHeight - newHeight) * 2);
+	let divisor: number;
 	if (previewWidth > previewHeight) {
 		previewCanvas.width = 200;
 		divisor = previewWidth / 200;
@@ -438,23 +435,23 @@ function updateResizePreview() {
 		divisor = previewHeight / 200;
 		previewCanvas.width = previewWidth / divisor;
 	}
-	const previewNewWidth = Math.round(newWidth / divisor);
-	const previewNewHeight = Math.round(newHeight / divisor);
-	const previewX = Math.round((previewCanvas.width / 2) - (previewNewWidth / 2));
-	const previewY = Math.round((previewCanvas.height / 2) - (previewNewHeight / 2));
-	const previewCanvasX = Math.round(previewX + (parseInt(offsetX.value, 10) / divisor));
-	const previewCanvasY = Math.round(previewY + (parseInt(offsetY.value, 10) / divisor));
-	const previewCanvasWidth = Math.round(canvasWidth / divisor);
-	const previewCanvasHeight = Math.round(canvasHeight / divisor);
+	const previewNewWidth: number = Math.round(newWidth / divisor);
+	const previewNewHeight: number = Math.round(newHeight / divisor);
+	const previewX: number = Math.round((previewCanvas.width / 2) - (previewNewWidth / 2));
+	const previewY: number = Math.round((previewCanvas.height / 2) - (previewNewHeight / 2));
+	const previewCanvasX: number = Math.round(previewX + (parseInt(offsetX.value, 10) / divisor));
+	const previewCanvasY: number = Math.round(previewY + (parseInt(offsetY.value, 10) / divisor));
+	const previewCanvasWidth: number = Math.round(canvasWidth / divisor);
+	const previewCanvasHeight: number = Math.round(canvasHeight / divisor);
 
-	const bgColour = getResizeFillColour();
-	if (bgColour)
+	const bgColour: string | null = getResizeFillColour();
+	if (bgColour !== null)
 		previewCtx.fillStyle = bgColour;
 	else
-		previewCtx.fillStyle = Canvas._transparentPattern;
+		previewCtx.fillStyle = Canvas.transparentPattern;
 	previewCtx.fillRect(previewX, previewY, previewNewWidth, previewNewHeight);
 
-	previewCtx.fillStyle = Canvas._transparentPattern;
+	previewCtx.fillStyle = Canvas.transparentPattern;
 	previewCtx.fillRect(previewCanvasX, previewCanvasY, previewCanvasWidth, previewCanvasHeight);
 	previewCtx.drawImage(Session.canvas, previewCanvasX, previewCanvasY, previewCanvasWidth, previewCanvasHeight);
 
@@ -472,15 +469,15 @@ function updateResizePreview() {
 });
 
 document.getElementById("resizeModalResetBtn").addEventListener("click", () => {
-	resizeWidth.value = Session.canvas.width;
+	resizeWidth.value = Session.canvas.width.toString();
 	resizeWidth.dispatchEvent(new Event("input"));
-	resizeHeight.value = Session.canvas.height;
+	resizeHeight.value = Session.canvas.height.toString();
 	resizeHeight.dispatchEvent(new Event("input"));
-	resizeFill.value = 1;;
+	resizeFill.value = "1";
 });
 document.getElementById("resizeModalResizeBtn").addEventListener("click", () => {
 	Modal.close("canvasResizeModal");
-	const options = new RectWithColour({
+	const options: ColourRect = new ColourRect({
 		width: parseInt(resizeWidth.value, 10),
 		height: parseInt(resizeHeight.value, 10),
 		x: parseInt(offsetX.value, 10),
@@ -496,15 +493,17 @@ document.getElementById("resizeModalResizeBtn").addEventListener("click", () => 
 document.getElementById("resizeModalCancelBtn").addEventListener("click", () => Modal.close("canvasResizeModal"));
 
 document.getElementById("settingsModalDoneBtn").addEventListener("click", () => Modal.close("settingsModal"));
-document.getElementById("sendMouseMovements").addEventListener("input", (event) => Client.setSendMouse(event.target.checked));
-document.getElementById("receiveMouseMovements").addEventListener("input", (event) => Client.setReceiveMouse(event.target.checked));
+const sendMouseMovements: HTMLInputElement = document.getElementById("sendMouseMovements") as HTMLInputElement;
+sendMouseMovements.addEventListener("input", (event: InputEvent) => Client.setSendMouse(sendMouseMovements.checked));
+const receiveMouseMovements: HTMLInputElement = document.getElementById("receiveMouseMovements") as HTMLInputElement;
+receiveMouseMovements.addEventListener("input", (event: InputEvent) => Client.setReceiveMouse(receiveMouseMovements.checked));
 
 document.getElementById("lightTheme").addEventListener("change", () => setTheme("light"));
 document.getElementById("darkTheme").addEventListener("change", () => setTheme("dark"));
-const theme = localStorage.getItem("theme");
+const theme: string = localStorage.getItem("theme");
 if (theme) {
 	document.documentElement.className = theme;
-	document.getElementById(theme + "Theme").checked = true;
+	(document.getElementById(theme + "Theme") as HTMLInputElement).checked = true;
 }
 
 document.getElementById("helpModalDoneBtn").addEventListener("click", () => {
@@ -544,7 +543,7 @@ document.getElementById("sessionAlreadyExistModalOkBtn").addEventListener("click
 document.getElementById("userModalSaveBtn").addEventListener("click", () => Session.saveUserSettings());
 document.getElementById("userModalCancelBtn").addEventListener("click", () => Modal.close("userModal"));
 
-document.getElementById("canvasZoom").addEventListener("input", (event) => Canvas.setZoomValue(event));
+document.getElementById("canvasZoom").addEventListener("input", (event: InputEvent) => Canvas.setZoomValue(event));
 
 document.getElementById("selectCopyBtn").addEventListener("click", () => SelectTool.doCopy());
 document.getElementById("selectCutBtn").addEventListener("click", () => SelectTool.doCut());
@@ -552,10 +551,10 @@ document.getElementById("selectPasteBtn").addEventListener("click", () => Select
 document.getElementById("selectClearBtn").addEventListener("click", () => {
 	Client.sendMessage({
 		type: Message.SELECTION_CLEAR,
-		colour: penColours[1],
+		colour: Colour.currents[1],
 		clientId: Client.id,
 	});
-	SelectTool.clear(clients[Client.id].action.data, penColours[1]);
+	SelectTool.clear(Session.clients[Client.id].action.data, Colour.currents[1]);
 });
 
 window.addEventListener("beforeunload", () => {

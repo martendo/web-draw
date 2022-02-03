@@ -3,14 +3,15 @@ public/
 src/*/
 src/*.html
 src/*.css
-src/action-history.js
-src/begin.js
-src/canvas.js
-src/chat.js
-src/client.js
-src/colour.js
-src/end.js
-src/session.js
+src/action-history.ts
+src/canvas.ts
+src/chat.ts
+src/client.ts
+src/colour.ts
+src/helpers.ts
+src/images.ts
+src/main.ts
+src/session.ts
 
 # Other unnecessary files
 .github/
