@@ -18,8 +18,8 @@ TSCSERVERFLAGS := --target es2017 --module CommonJS
 
 TZ := America/Toronto
 
-DATE = $(shell TZ='$(TZ)' date +"%b %-e, %Y")
-YEAR = $(shell TZ='$(TZ)' date +"%Y")
+DATE = $(shell TZ='$(TZ)' date --date="$$(git log -1 --format='%cI')" +'%-e %B %Y')
+YEAR = $(lastword $(DATE))
 VERSION := $(shell sed -nE 's/^.*"version": "([^"]+)".*$$/\1/p' package.json)
 AUTHOR := $(shell sed -nE 's/^.*"author": "([^"]+)".*$$/\1/p' package.json)
 HOMEPAGE := $(shell sed -nE 's/^.*"homepage": "([^"]+)".*$$/\1/p' package.json)
