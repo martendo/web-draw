@@ -4,7 +4,7 @@
 	"description": "A little real-time online collaborative drawing program.",
 	"private": true,
 	"scripts": {
-		"build": "make server.js",
+		"build": "make server.js && rm -rf Makefile server.ts tsconfig.json webpack.config.js public src .git .gitignore .gitattributes .github .firebaserc firebase.json LICENSE README.md",
 		"start": "node server.js",
 		"postversion": "git push && git push --tags"
 	},
