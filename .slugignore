@@ -1,11 +1,21 @@
 # Web app files
-public
-src
+public/
+src/*/
+src/*.html
+src/*.css
+src/action-history.ts
+src/canvas.ts
+src/chat.ts
+src/client.ts
+src/colour.ts
+src/helpers.ts
+src/images.ts
+src/main.ts
+src/session.ts
 
 # Other unnecessary files
-.github
+.github/
 *.md
 LICENSE
-Gruntfile.js
 .firebaserc
 firebase.json

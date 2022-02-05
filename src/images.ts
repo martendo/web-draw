@@ -2,7 +2,7 @@
  * This file is part of Web Draw.
  *
  * Web Draw - A little real-time online collaborative drawing program.
- * Copyright (C) 2020-2021 martendo
+ * Copyright (C) 2020-2022 martendo
  *
  * Web Draw is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,25 +18,9 @@
  * along with Web Draw.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-const Modal = {
-  // Current modal z-index - newest modal should always show up at the top
-  index: 100,
-  
-  open(id) {
-    const modal = document.getElementById(id);
-    // `grid` centres content without translate but others don't...
-    modal.style.display = "grid";
-    modal.style.zIndex = this.index++;
-  },
-  close(id) {
-    document.getElementById(id).style.display = "none";
-    const modals = document.getElementsByClassName("modal");
-    for (var i = 0; i < modals.length; i++) {
-      const modal = modals[i];
-      if (modal.style.display !== "none" && modal.style.display !== "") {
-        return;
-      }
-    }
-    this.index = 100;
-  },
-};
+export const CURSOR: string = "{{BASE64:src/img/cursor.png}}";
+export const VISIBLE: string = "{{BASE64:src/img/visible.png}}";
+export const NO_VISIBLE: string = "{{BASE64:src/img/no-visible.png}}";
+export const UP: string = "{{BASE64:src/img/up.png}}";
+export const DOWN: string = "{{BASE64:src/img/down.png}}";
+export const TRANSPARENT: string = "{{BASE64:src/img/transparent.png}}";

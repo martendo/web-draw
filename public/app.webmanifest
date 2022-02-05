@@ -1,25 +1,25 @@
 {
-  "name": "Web Draw",
-  "short_name": "Web Draw",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#f8f8f8",
-  "theme_color": "#00a2e8",
-  "description": "A little real-time online collaborative drawing program.",
-  "scope": "/",
-  "lang": "en-CA",
-  "dir": "ltr",
-  "icons": [{
-    "src": "/pen-icon.png",
-    "sizes": "128x128 25x25",
-    "type": "image/png"
-  }, {
-    "src": "/android-chrome-192x192.png",
-    "sizes": "192x192",
-    "type": "image/png"
-  }, {
-    "src": "/android-chrome-256x256.png",
-    "sizes": "256x256",
-    "type": "image/png"
-  }]
+	"name": "Web Draw",
+	"short_name": "Web Draw",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#f8f8f8",
+	"theme_color": "#00a2e8",
+	"description": "A little real-time online collaborative drawing program.",
+	"scope": "/",
+	"lang": "en-CA",
+	"dir": "ltr",
+	"icons": [{
+		"src": "/pen-icon.png",
+		"sizes": "128x128 25x25",
+		"type": "image/png"
+	}, {
+		"src": "/android-chrome-192x192.png",
+		"sizes": "192x192",
+		"type": "image/png"
+	}, {
+		"src": "/android-chrome-256x256.png",
+		"sizes": "256x256",
+		"type": "image/png"
+	}]
 }

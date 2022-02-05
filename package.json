@@ -1,34 +1,40 @@
 {
-  "name": "web-draw",
-  "version": "0.12.8",
-  "description": "A little real-time online collaborative drawing program.",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "postversion": "git push && git push --tags"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/martendo/web-draw.git"
-  },
-  "author": "martendo",
-  "license": "GPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/martendo/web-draw/issues"
-  },
-  "homepage": "https://github.com/martendo/web-draw",
-  "dependencies": {
-    "msgpack-lite": "^0.1.26",
-    "ws": "^7.4.5"
-  },
-  "optionalDependencies": {
-    "bufferutil": "^4.0.3",
-    "utf-8-validate": "^5.0.5"
-  },
-  "devDependencies": {
-    "clean-css": "^5.1.2",
-    "grunt": "^1.4.0",
-    "html-minifier": "^4.0.0",
-    "uglify-es": "^3.3.9"
-  }
+	"name": "web-draw",
+	"version": "0.12.8",
+	"description": "A little real-time online collaborative drawing program.",
+	"private": true,
+	"scripts": {
+		"build": "make server.js",
+		"start": "node server.js",
+		"postversion": "git push && git push --tags"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/martendo/web-draw.git"
+	},
+	"author": "martendo",
+	"license": "GPL-3.0-or-later",
+	"bugs": {
+		"url": "https://github.com/martendo/web-draw/issues"
+	},
+	"homepage": "https://github.com/martendo/web-draw",
+	"dependencies": {
+		"msgpack-lite": "^0.1.26",
+		"ws": "^7.4.5"
+	},
+	"optionalDependencies": {
+		"bufferutil": "^4.0.3",
+		"utf-8-validate": "^5.0.5"
+	},
+	"devDependencies": {
+		"@types/msgpack-lite": "^0.1.8",
+		"@types/ws": "^8.2.2",
+		"clean-css-cli": "^5.5.0",
+		"html-minifier": "^4.0.0",
+		"terser-webpack-plugin": "^5.3.0",
+		"ts-loader": "^9.2.6",
+		"typescript": "^4.5.4",
+		"webpack": "^5.67.0",
+		"webpack-cli": "^4.9.1"
+	}
 }

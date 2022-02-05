@@ -1,7 +1,10 @@
 # "Built" code
-public/*.html
-public/*.css
-public/*.js
+build/
+public/404.html
+public/index.html
+public/style.css
+public/script.js
+server.js
 
 # Logs
 logs

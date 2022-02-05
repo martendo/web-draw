@@ -2,7 +2,7 @@
   This file is part of Web Draw.
 
   Web Draw - A little real-time online collaborative drawing program.
-  Copyright (C) 2020-2021 martendo
+  Copyright (C) 2020-2022 martendo
 
   Web Draw is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -20,1163 +20,1168 @@
 
 <!DOCTYPE html>
 <html lang="en" class="light">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-    <meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
-    
-    <title>Web Draw</title>
-    
-    <meta name="title" content="Web Draw">
-    <meta name="application-name" content="Web Draw">
-    <meta name="apple-mobile-web-app-title" content="Web Draw">
-    <meta name="author" content="martendo">
-    <meta name="description" content="A little real-time online collaborative drawing program.">
-    <link rel="canonical" href="https://w-draw.web.app">
-    <link rel="manifest" href="/app.webmanifest">
-    
-    <meta property="og:title" content="Web Draw">
-    <meta property="og:description" content="A little real-time online collaborative drawing program.">
-    <meta property="og:type" content="website">
-    
-    <meta property="og:image" content="https://w-draw.web.app/pen-icon-og.png">
-    <meta property="og:image:secure_url" content="https://w-draw.web.app/pen-icon-og.png">
-    <meta property="og:image:type" content="image/png">
-    <meta property="og:image:width" content="300">
-    <meta property="og:image:height" content="157">
-    <meta property="og:image:alt" content="Pen Logo for Web Draw">
-    
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00a2e8">
-    <meta name="msapplication-TileColor" content="#f8f8f8">
-    
-    <meta name="theme-color" content="#00a2e8">
-    
-    <link rel="stylesheet" href="/style.css">
-  </head>
-  
-  <body>
-    <input type="color" id="colourPicker" class="hidden">
-    <input type="file" id="chooseImage" class="hidden" accept="image/*">
-    <input type="file" id="chooseCanvasFile" class="hidden" accept=".bin">
-    <span id="tooltip" class="hidden"></span>
-    <div id="menuScreen">
-      <div id="infoBtnContainer">
-        <button class="infoBtn" id="infoBtn">Info
-        </button><button class="infoBtn" id="helpBtn">Help</button>
-      </div>
-      <div id="menuMainContainer">
-        <h1><img class="penIcon" src="{{ BASE64:src/img/pen-icon.png }}" alt="Pen Logo">Web Draw</h1>
-        <div id="connectionInfo">
-          <div id="connectionInfoText">Connecting to server...</div>
-          <div id="connectionInfoWait">&#183;&#183;&#183;</div>
-        </div>
-        <div id="menuOptionsContainer">
-          <div id="sessionOptions">
-            <p>Hey there! Want to create or join a session?</p>
-            <label for="sessionIdInput">ID: </label>
-            <input id="sessionIdInput" type="text" title="Enter a session ID"><br>
-            <button id="createSessionBtn">Create Session
-            </button><button id="joinSessionBtn">Join Session</button>
-          </div>
-        </div>
-      </div>
-      <div id="bottom">
-        <span class="menuInfo" id="menuInfo">
-          By <a href="https://github.com/martendo" target="_blank">martendo</a><br>
-          <a href="https://github.com/martendo/web-draw" target="_blank">GitHub</a>
-        </span>
-        <span class="menuInfo" id="versionInfo">
-          <code>{{ VERSION }}</code> - {{ DATE }}<br>
-          <a href="javascript:void(0)" id="appInfoLink">App Info</a>
-        </span>
-      </div>
-    </div>
-    <div id="drawScreen">
-      <ul id="menubar">
-        <li id="fileMenu" class="menuItem">
-          <div class="menuLabel">File</div>
-          <ul class="menuDropdown">
-            <li id="fileSaveBtn" title="Save your canvas along with undo/redo data">Save</li>
-            <li id="fileOpenBtn" title="Open a saved canvas file">Open</li>
-            <li class="separator"></li>
-            <li id="fileExportBtn" title="Export the drawing as a PNG image">Export</li>
-            <li id="fileImportBtn" title="Import an image onto the canvas">Import</li>
-          </ul>
-        </li><li id="editMenu" class="menuItem">
-          <div class="menuLabel">Edit</div>
-          <ul class="menuDropdown">
-            <li id="editUndoBtn" title="Undo the last action">Undo</li>
-            <li id="editRedoBtn" title="Redo the last action">Redo</li>
-            <li class="separator"></li>
-            <li id="editClearBtn" title="Clear the canvas to white">Clear</li>
-            <li id="editClearTransparentBtn" title="Clear the canvas to transparent">Clear Transparent</li>
-            <li class="separator"></li>
-            <li id="editResizeBtn" title="Change the size of the canvas">Resize Canvas</li>
-            <li class="separator"></li>
-            <li id="editSettingsBtn" title="View and modify Web Draw settings">Settings</li>
-          </ul>
-        </li><li id="viewMenu" class="menuItem">
-          <div class="menuLabel">View</div>
-          <ul class="menuDropdown">
-            <li id="viewResetZoomBtn" title="Set the zoom to 100%">Reset Zoom</li>
-            <li id="viewFitZoomBtn" title="Set the canvas zoom to fit the window">Fit to Window</li>
-            <li id="viewFillZoomBtn" title="Set the canvas zoom to fill the entire window">Fill Window</li>
-          </ul>
-        </li><li id="sessionMenu" class="menuItem">
-          <div class="menuLabel">Session</div>
-          <ul class="menuDropdown">
-            <li id="sessionInfoBtn" title="View session info">Info</li>
-            <li class="separator"></li>
-            <li id="sessionChangeIdBtn" title="Change the ID of this session">Change ID</li>
-            <li id="sessionSetPasswordBtn" title="Set or remove the password on this session">Set Password</li>
-            <li class="separator"></li>
-            <li id="sessionShareLinkBtn" title="Get a link you can share to join this session">Share Link</li>
-            <li id="sessionLeaveBtn" title="Leave this session">Leave</li>
-          </ul>
-        </li><li id="helpMenu" class="menuItem">
-          <div class="menuLabel">Help</div>
-          <ul class="menuDropdown">
-            <li id="helpHelpBtn" title="Don't know how to do something?">Help</li>
-            <li id="helpInfoBtn" title="See app and user info">Info</li>
-          </ul>
-        </li><li id="userBtn" class="menuItem floatRight">
-          <div id="userName" class="menuLabel" title="View and change your user settings">User</div>
-        </li><li id="chatBtn" class="menuItem floatRight">
-          <div class="menuLabel" title="Open or close the chat box">Chat <div id="chatNew"></div></div>
-        </li>
-      </ul>
-      <table id="topBox">
-        <tr>
-          <td>
-            <button id="undoBtn" title="Undo the last action">Undo
-            </button><button id="redoBtn" title="Redo the last action">Redo
-            </button><button id="clearBtn" title="Clear the canvas&#10;Double click to clear to transparent">Clear
-            </button><span class="spacer"></span><label for="canvasZoom">Zoom:</label>
-            <input id="canvasZoom" type="number" step="5" min="0" title="The canvas zoom"><button id="resetZoomBtn">Reset
-            </button><button id="fitZoomBtn">Fit</button>
-          </td>
-          <td class="tableExcess"></td>
-        </tr>
-      </table>
-      <table id="leftBox">
-        <tr>
-          <td>
-            <button id="penBtn" title="Pen Tool&#10;Draw a free-form line">
-              <img id="penBtnIcon" src="{{ BASE64:src/img/pen.png }}" alt="P">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="eraserBtn" title="Eraser Tool&#10;Erase to background colour or transparency">
-              <img id="eraserBtnIcon" src="{{ BASE64:src/img/eraser.png }}" alt="E">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="fillBtn" title="Flood Fill Tool&#10;Fill an area of the same colour">
-              <img id="fillBtnIcon" src="{{ BASE64:src/img/flood-fill.png }}" alt="F">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="colourPickerBtn" title="Colour Picker Tool&#10;Get a colour from the canvas">
-              <img id="colourPickerIcon" src="{{ BASE64:src/img/colour-picker.png }}" alt="C">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="selectBtn" title="Rectangular Select Tool&#10;Select a rectangular area from the canvas to manipulate">
-              <img id="selectIcon" src="{{ BASE64:src/img/select.png }}" alt="S">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="lineBtn" title="Line Tool&#10;Draw a straight line from one point to another">
-              <img id="lineIcon" src="{{ BASE64:src/img/line.png }}" alt="L">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="rectBtn" title="Rectangle Tool&#10;Draw a rectangle">
-              <img id="rectIcon" src="{{ BASE64:src/img/rect.png }}" alt="R">
-            </button>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <button id="ellipseBtn" title="Ellipse Tool&#10;Draw an ellipse">
-              <img id="ellipseIcon" src="{{ BASE64:src/img/ellipse.png }}" alt="E">
-            </button>
-          </td>
-        </tr>
-      </table>
-      <div id="rightBox">
-        <table id="rightTabBar" class="tabBar">
-          <tr>
-            <td class="tab" id="toolTab" title="Tool settings"><img src="{{ BASE64:src/img/tool-settings.png }}"></td>
-            <td class="tab" id="historyTab" title="Action history"><img src="{{ BASE64:src/img/action-history.png }}"></td>
-            <td class="tableExcess"></td>
-          </tr>
-        </table>
-        <div id="rightBoxContent">
-          <table id="toolTabBox" class="tabBox">
-            <tr>
-              <td>
-                <table class="colourTable">
-                  <tr>
-                    <td><label for="penColour0Value">Colour 1</label></td>
-                    <td><label for="penColour1Value">Colour 2</label></td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <span id="penColour0Container" class="penColourContainer">
-                        <span id="penColour0" class="penColour" title="Click to change colour 1"></span>
-                      </span>
-                    </td>
-                    <td>
-                      <span id="penColour1Container" class="penColourContainer">
-                        <span id="penColour1" class="penColour" title="Click to change colour 2"></span>
-                      </span>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td><input id="penColour0Value" class="penColourValue" type="text"></td>
-                    <td><input id="penColour1Value" class="penColourValue" type="text"></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-            <tr>
-              <td class="colourTable">
-                <table id="quickColourSelect"></table>
-              </td>
-            </tr>
-            <tr>
-              <td><div class="separator"></div></td>
-            </tr>
-            <tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
-              <td>
-                <div class="selectInput" title="How new content is added to the existing content">
-                  <label class="selectLabel" for="compositeSelect">Mode</label>
-                  <select id="compositeSelect">
-                    <option value="0" title="New content is drawn on top of the existing content.">Normal</option> <!-- source-over -->
-                    <option value="1" title="New content is drawn behind the existing content.">Behind</option> <!-- destination-over -->
-                    <option value="2" title="Existing content is kept where it doesn't overlap the new content.">Erase</option> <!-- destination-out -->
-                    <option class="separator" disabled>---</option>
-                    <option value="3" title="Retains the lightest pixels of both layers.">Lighten Only</option> <!-- lighten -->
-                    <option value="4" title="The pixels are inverted, multiplied, and inverted again.">Screen</option> <!-- screen -->
-                    <option value="5" title="Divides the bottom layer by the inverted top layer.">Dodge</option> <!-- color-dodge -->
-                    <option value="6" title="Where both shapes overlap the colour is determined by adding colour values.">Lighten</option> <!-- lighter -->
-                    <option class="separator" disabled>---</option>
-                    <option value="7" title="Retains the darkest pixels of both layers.">Darken Only</option> <!-- darken -->
-                    <option value="8" title="Divides the inverted bottom layer by the top layer, and then inverts the result.">Burn</option> <!-- color-burn -->
-                    <option value="9" title="The pixels of the top layer are multiplied with the corresponding pixel of the bottom layer.">Darken</option> <!-- multiply -->
-                    <option class="separator" disabled>---</option>
-                    <option value="10" title="Dark parts on the base layer become darker, and light parts become lighter.">Overlay</option> <!-- overlay -->
-                    <option value="11" title="Like overlay, but with top and bottom layer swapped.">Hard Light</option> <!-- hard-light -->
-                    <option value="12" title="A softer version of hard-light. Pure black or white does not result in pure black or white.">Soft Light</option> <!-- soft-light -->
-                    <option class="separator" disabled>---</option>
-                    <option value="13" title="Subtracts the bottom layer from the top layer or the other way round to always get a positive value.">Difference</option> <!-- difference -->
-                    <option value="14" title="Like difference, but with lower contrast.">Exclusion</option> <!-- exclusion -->
-                    <option class="separator" disabled>---</option>
-                    <option value="15" title="The new shape is drawn only where both the new shape and the destination canvas overlap. ">Source In</option> <!-- source-in -->
-                    <option value="16" title="The new shape is drawn where it doesn't overlap the existing canvas content.">Source Out</option> <!-- source-out -->
-                    <option value="17" title="The new shape is only drawn where it overlaps the existing canvas content.">Source Atop</option> <!-- source-atop -->
-                    <option value="18" title="The existing canvas content is kept where both the new shape and existing canvas content overlap.">Destination In</option> <!-- destination-in -->
-                    <option value="19" title="The existing canvas is only kept where it overlaps the new shape. The new shape is drawn behind the canvas content.">Destination Atop</option> <!-- destination-atop -->
-                    <option value="20" title="Shapes are made transparent where both overlap and drawn normal everywhere else.">No Overlap Only</option> <!-- xor -->
-                    <option value="21" title="Only the new shape is shown.">New Only</option> <!-- copy -->
-                    <option class="separator" disabled>---</option>
-                    <option value="22" title="Preserves the luma and chroma of the bottom layer, while adopting the hue of the top layer.">Hue</option> <!-- hue -->
-                    <option value="23" title="Preserves the luma and hue of the bottom layer, while adopting the chroma of the top layer.">Saturation</option> <!-- saturation -->
-                    <option value="24" title="Preserves the luma of the bottom layer, while adopting the hue and chroma of the top layer.">Colour</option> <!-- color -->
-                    <option value="25" title="Preserves the hue and chroma of the bottom layer, while adopting the luma of the top layer.">Luminosity</option> <!-- luminosity -->
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr class="toolSettings penSettings eraserSettings fillSettings lineSettings rectSettings ellipseSettings">
-              <td>
-                <div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-fdigits="1" data-callback="updateColourAlpha" title="Opacity, in percent">
-                  <div class="sliderLabel">Opacity</div>
-                  <div class="sliderBar" id="opacityBar"></div>
-                  <div class="sliderValue" id="opacityValue" contenteditable inputmode="decimal"></div>
-                  <div class="sliderValueUp" id="opacityValueUp">
-                    <svg width="20" height="15">
-                      <polygon points="10,3 3,12 17,12"></polygon>
-                    </svg>
-                  </div>
-                  <div class="sliderValueDown" id="opacityValueDown">
-                    <svg width="20" height="15">
-                      <polygon points="10,12 3,3 17,3"></polygon>
-                    </svg>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr class="toolSettings penSettings eraserSettings lineSettings rectSettings ellipseSettings">
-              <td>
-                <div class="sliderInput" id="sizeInput" data-min="1" data-width="150" data-max="10000" data-fdigits="0" title="The size of the pen in pixels">
-                  <div class="sliderLabel">Size</div>
-                  <div class="sliderBar" id="sizeBar"></div>
-                  <div class="sliderValue" id="sizeValue" contenteditable inputmode="decimal"></div>
-                  <div class="sliderValueUp" id="sizeValueUp">
-                    <svg width="20" height="15">
-                      <polygon points="10,3 3,12 17,12"></polygon>
-                    </svg>
-                  </div>
-                  <div class="sliderValueDown" id="sizeValueDown">
-                    <svg width="20" height="15">
-                      <polygon points="10,12 3,3 17,3"></polygon>
-                    </svg>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr class="toolSettings penSettings eraserSettings lineSettings">
-              <td>
-                <div class="selectInput" title="The shape at the ends of a line">
-                  <label class="selectLabel" for="lineCapSelect">Caps</label>
-                  <select id="lineCapSelect">
-                    <option value="0" title="The ends of lines are rounded.">Round</option>
-                    <option value="1" title="The ends of lines are squared off at the endpoints.">Butt</option>
-                    <option value="2" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr class="toolSettings penSettings eraserSettings">
-              <td title="Use quadratic curves between points instead of straight lines">
-                <input id="smoothenStrokes" type="checkbox">
-                <label for="smoothenStrokes">Smoothen strokes</label>
-              </td>
-            </tr>
-            <tr class="toolSettings eraserSettings">
-              <td title="Erase to transparency and not the background colour">
-                <input id="eraseTransparent" type="checkbox">
-                <label for="eraseTransparent">Erase to transparency</label>
-              </td>
-            </tr>
-            <tr class="toolSettings rectSettings ellipseSettings">
-              <td>
-                <input id="shapeOutline" type="checkbox">
-                <label for="shapeOutline">Outline</label>
-              </td>
-            </tr>
-            <tr class="toolSettings rectSettings ellipseSettings">
-              <td>
-                <input id="shapeFill" type="checkbox">
-                <label for="shapeFill">Fill</label>
-              </td>
-            </tr>
-            <tr class="toolSettings fillSettings">
-              <td>
-                <div class="sliderInput" id="fillThresholdInput" data-min="0" data-width="255" data-max="255" data-fdigits="0" title="The maximum colour difference from the clicked colour to fill">
-                  <div class="sliderLabel">Threshold</div>
-                  <div class="sliderBar" id="fillThresholdBar"></div>
-                  <div class="sliderValue" id="fillThresholdValue" contenteditable inputmode="decimal"></div>
-                  <div class="sliderValueUp" id="fillThresholdValueUp">
-                    <svg width="20" height="15">
-                      <polygon points="10,3 3,12 17,12"></polygon>
-                    </svg>
-                  </div>
-                  <div class="sliderValueDown" id="fillThresholdValueDown">
-                    <svg width="20" height="15">
-                      <polygon points="10,12 3,3 17,3"></polygon>
-                    </svg>
-                  </div>
-                </div>
-              </td>
-            </tr>
-            <tr class="toolSettings fillSettings">
-              <td>
-                <div class="selectInput" title="Colour channels used to determine colour similarity">
-                  <label class="selectLabel" for="fillBySelect">Fill by</label>
-                  <select id="fillBySelect">
-                    <option value="0" title="Check all channels">RGBA</option>
-                    <option value="1" title="Check all colour channels, but not alpha">RGB</option>
-                    <option value="2" title="Check only the red colour channel">Red</option>
-                    <option value="3" title="Check only the green colour channel">Green</option>
-                    <option value="4" title="Check only the blue colour channel">Blue</option>
-                    <option value="5" title="Check only the alpha channel">Alpha</option>
-                  </select>
-                </div>
-              </td>
-            </tr>
-            <tr class="toolSettings colourPickerSettings">
-              <td>
-                <input id="colourPickerMerge" type="checkbox">
-                <label for="colourPickerMerge">Merge with current</label>
-              </td>
-            </tr>
-            <tr class="toolSettings colourPickerSettings">
-              <td>
-                <input id="colourPickerOpacity" type="checkbox">
-                <label for="colourPickerOpacity">Sample opacity</label>
-              </td>
-            </tr>
-            <tr class="toolSettings selectSettings">
-              <td><button id="selectCopyBtn" class="toolBtn" title="Copy the pixels in the selected area on the canvas">Copy</button></td>
-            </tr>
-            <tr class="toolSettings selectSettings">
-              <td><button id="selectCutBtn" class="toolBtn" title="Cut the pixels from the selected area on the canvas">Cut</button></td>
-            </tr>
-            <tr class="toolSettings selectSettings">
-              <td><button id="selectPasteBtn" class="toolBtn" title="Paste the pixels in the selection onto the canvas">Paste</button></td>
-            </tr>
-            <tr class="toolSettings selectSettings">
-              <td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
-            </tr>
-          </table>
-          <table id="historyTabBox" class="tabBox table border">
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-      <div id="canvasContainer">
-        <canvas id="displayCanvas">The HTML canvas element isn't supported in your browser... :(</canvas>
-      </div>
-      <table id="statusBox">
-        <tr>
-          <td>
-            <span id="cursorPos" class="lightBox"></span>
-          </td>
-          <td class="tableExcess"></td>
-          <td id="selectionInfo">
-            <span id="selectPos" class="lightBox"></span> <span id="selectSize" class="lightBox"></span>
-          </td>
-        </tr>
-      </table>
-      <table id="bottomBox">
-        <tr>
-          <td>
-            <span>Session ID: </span>
-            <span id="sessionId" class="clickToCopy lightBox mono" title="Copy"></span><span class="spacer"></span><span id="userBox">There aren't any users connected to this session.</span><span class="spacer"></span><button id="shareLinkBtn" title="Get a link you can share to join this session">Share Link</button>
-            <button id="leaveBtn" title="Leave this session">Leave</button>
-          </td>
-          <td class="tableExcess"></td>
-        </tr>
-      </table>
-      <div id="chatBox">
-        <div class="boxHeader">Chat<button id="chatXBtn">&#215;</button></div>
-        <div id="chatMessages"></div>
-        <table id="chatInputArea">
-          <tr>
-            <td><textarea id="chatInput" placeholder="Send a message"></textarea></td>
-            <td><button id="chatSendBtn" title="Send">&#62;</button></td>
-          </tr>
-        </table>
-      </div>
-    </div>
-    
-    <div id="helpModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Help</h2></div>
-        <div class="modalBody">
-          <h3>Contents</h3>
-          <label for="helpContentsCollapse" class="collapseLabel"><a>Show/Hide</a></label><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
-          <div class="collapseContent">
-            <ul>
-              <li><a href="#help-sessions">Sessions</a><ul>
-                <li><a href="#help-sessions-links">Session Links</a></li>
-              </ul></li>
-              <li><a href="#help-menubar">Menubar</a><ul>
-                <li><a href="#help-menubar-save_open">Save/Open</a></li>
-                <li><a href="#help-menubar-export_import">Export/Import</a></li>
-                <li><a href="#help-menubar-resize_canvas">Resize Canvas</a></li>
-                <li><a href="#help-menubar-session_id_password">Session ID & Password</a></li>
-                <li><a href="#help-menubar-share_link">Share Link</a></li>
-                <li><a href="#help-menubar-info">Info</a></li>
-              </ul></li>
-              <li><a href="#help-top_toolbar">Top Toolbar</a><ul>
-                <li><a href="#help-top_toolbar-undo_redo">Undo/Redo</a></li>
-                <li><a href="#help-top_toolbar-clear">Clear</a></li>
-                <li><a href="#help-top_toolbar-canvas_zoom">Canvas Zoom</a></li>
-              </ul></li>
-              <li><a href="#help-left_toolbar">Left Toolbar</a></li>
-              <li><a href="#help-right_toolbar">Right Toolbar</a><ul>
-                <li><a href="#help-right_toolbar-tool_settings">Tool Settings</a><ul>
-                  <li><a href="#help-right_toolbar-colours">Colours</a></li>
-                  <li><a href="#help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</a><ul>
-                    <li><a href="#help-right_toolbar-mode_opacity-mode">Mode</a></li>
-                    <li><a href="#help-right_toolbar-mode_opacity-opacity">Opacity</a></li>
-                  </ul></li>
-                  <li><a href="#help-right_toolbar-line_size">Line Size Settings</a></li>
-                  <li><a href="#help-right_toolbar-line_cap">Line Cap Settings</a></li>
-                  <li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
-                    <li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
-                    <li><a href="#help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
-                  </ul></li>
-                  <li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
-                    <li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
-                    <li><a href="#help-right_toolbar-colour_picker-sample_opacity">Sample opacity</a></li>
-                  </ul></li>
-                  <li><a href="#help-right_toolbar-rect_select">Rectangular Select Actions</a><ul>
-                    <li><a href="#help-right_toolbar-rect_select-copy">Copy</a></li>
-                    <li><a href="#help-right_toolbar-rect_select-cut">Cut</a></li>
-                    <li><a href="#help-right_toolbar-rect_select-paste">Paste</a></li>
-                    <li><a href="#help-right_toolbar-rect_select-clear">Clear</a></li>
-                  </ul></li>
-                  <li><a href="#help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</a><ul>
-                    <li><a href="#help-right_toolbar-shape-outline">Outline</a></li>
-                    <li><a href="#help-right_toolbar-shape-fill">Fill</a></li>
-                  </ul></li>
-                </ul></li>
-                <li><a href="#help-right_toolbar-action_history">Action History</a><ul>
-                  <li><a href="#help-right_toolbar-action_history-toggling">Toggling Actions</a></li>
-                  <li><a href="#help-right_toolbar-action_history-moving">Moving Actions</a></li>
-                </ul></li>
-              </ul></li>
-              <li><a href="#help-chat">Chat</a><ul>
-                <li><a href="#help-chat-private_messages">Private Messages</a></li>
-                <li><a href="#help-chat-formatting">Formatting</a></li>
-                <li><a href="#help-chat-links">Links</a></li>
-              </ul></li>
-              <li><a href="#help-bottom_toolbar">Bottom Toolbar</a></li>
-              <li><a href="#help-keyboard_shortcuts">Keyboard Shortcuts</a><ul>
-                <li><a href="#help-keyboard_shortcuts-edit">Edit</a></li>
-                <li><a href="#help-keyboard_shortcuts-view">View</a></li>
-                <li><a href="#help-keyboard_shortcuts-selection">With Selection</a></li>
-                <li><a href="#help-keyboard_shortcuts-other">Other</a></li>
-              </ul></li>
-            </ul>
-          </div>
-          <h3 id="help-sessions">Sessions</h3>
-          Imagine a session is the room you're in. Everybody in the same room sees and works on the same drawing.<br>
-          If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
-          If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random 4-character ID.<br>
-          <br>
-          You may be prompted to enter a password when joining a session. If you don't know it, you can't join the session!
-          <h4 id="help-sessions-links">Session Links</h4>
-          If you're looking to share the link with your friends so they can automatically join, see <a href="#help-menubar-share_link">Share Link</a> on the menubar.<br>
-          <br>
-          The session URL can be used to automatically join the session. It follows this format:<br>
-          <code>https://w-draw.web.app<strong class="mono">/s/&#60;session_id&#62;</strong></code>, where <code>&#60;session_id&#62;</code> is the ID of the session to join.<br>
-          If a session with the given ID does not exist, a new one with that ID will be automatically created and joined.<br>
-          <br>
-          The session password can also be passed through the URL in a query string:<br>
-          <code>https://w-draw.web.app/s/secret-drawing<strong class="mono">?pass=&#60;password&#62;</strong></code>, where <code>&#60;password&#62;</code> is the session's password.<br>
-          If you are creating the session with this link (a session with the specified ID doesn't exist yet), then the password on the new session will be automatically set to the one specified.
-          <h3 id="help-menubar">Menubar</h3>
-          The menubar (at the very top of the screen) allows you to do useful things, like save your canvas for later, set a password on your session, or look at this help window!<br>
-          <h4 id="help-menubar-save_open">Save/Open</h4>
-          Web Draw can save and open files containing the info it needs to recreate your canvas. It's similar to the data that is sent to a new client joining your session. It contains the canvas' undo and redo data, which are lists of actions (strokes, flood fills, lines, etc.) clients have made and their properties (colour, opacity, etc.).<br>
-          <br>
-          <strong>WARNING!</strong><br>
-          The canvas data format is going to change and will become incompatible with newer versions of Web Draw.
-          <h4 id="help-menubar-export_import">Export/Import</h4>
-          With the "Export" button, you can save your drawing as a PNG image!<br>
-          And with "Import", you can upload an image to use in your drawing!
-          <h4 id="help-menubar-resize_canvas">Resize Canvas</h4>
-          In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.<br>
-          <br>
-          When choosing a new size for your canvas, you may also choose an offset position for the original image on the new canvas and how to fill new canvas space.<br>
-          The "Centre" button will automatically set the offset position so that the original image will be centred on the new canvas.
-          <h4 id="help-menubar-session_id_password">Session ID & Password</h4>
-          Through the "Session" menu, you can change the current session's ID and set (or remove) a password.
-          <h4 id="help-menubar-share_link">Share Link</h4>
-          Here you can get a link that you can share with your friends which will allow whoever uses it to automatically join the session. If your session has a password on it, you can optionally include it in the link so that whoever uses your link doesn't have to type it in. If the password isn't included, they will be prompted to enter it before joining, just like from the main page.
-          <h4 id="help-menubar-info">Info</h4>
-          This "Info" window will show a little info about the web app and the client (you!).<br>
-          Ping is the latency of the connection to the server. Every 10 seconds, the server will send a ping to your browser and wait for a pong to make sure the connection is still alive. It also measures the amount of time between when the ping was sent and the pong was received, and tells the browser about it so it can display it here so you can know about it. If you're curious, I typically get an average latency of around 40 ms.
-          <h3 id="help-top_toolbar">Top Toolbar</h3>
-          The top toolbar has your canvas controls.
-          <h4 id="help-top_toolbar-undo_redo">Undo/Redo</h4>
-          Click the "Undo" button to undo the last action on the canvas.<br>
-          Click "Redo" to redo the last undone action.<br>
-          <br>
-          Note: These are actions that anyone in the session has made, not just your own.
-          <h4 id="help-top_toolbar-clear">Clear</h4>
-          Clear the canvas to all white. Double click to clear to all transparent pixels. (<code>#00000000</code>)
-          <h4 id="help-top_toolbar-canvas_zoom">Canvas Zoom</h4>
-          This is the displayed size of the canvas on your screen. This doesn't affect the actual size of the canvas or the zoom of the canvas on anybody else's screen. If you need to be more precise or detailed or just need to draw something small, you can zoom in a bit.<br>
-          To change it, you can either use your mouse wheel on the canvas area with the <kbd>Control</kbd> key held down, or if you want, you can enter percentage size into the number box.<br>
-          The "Reset" button will reset the zoom to 100%.<br>
-          The "Fit" button will set the canvas zoom to the largest size that will fit in the canvas area.
-          <h3 id="help-left_toolbar">Left Toolbar</h3>
-          On the left, you've got all your different tools.<br>
-          <strong>Pen</strong>: Draw a free-form line however you want!<br>
-          <strong>Eraser</strong>: Erase part of the canvas to transparency or the background colour. (Uses pen tool internally)<br>
-          <strong>Flood Fill</strong>: Fill an area of a similar colour, decided by the fill threshold. Colours with a difference within the threshold will be recoloured.<br>
-          <strong>Colour Picker</strong>: Click on a spot on the canvas and set one of your colours to the colour of that spot.<br>
-          <strong>Rectangular Select</strong>: Select an area on the canvas to manipulate. You can copy, cut, paste, and clear pixels in your selection.<br>
-          <strong>Line</strong>: Draw a straight line between 2 points.<br>
-          <strong>Rectangle</strong>: Draw a rectangle, with optional outline & fill.<br>
-          <strong>Ellipse</strong>: Draw an ellipse, with optional outline & fill.<br>
-          <br>
-          Note: With every applicable tool, the left mouse button will use Colour 1, and the right will use Colour 2.
-          <h3 id="help-right_toolbar">Right Toolbar</h3>
-          The right toolbar has 2 tabs: A tool settings tab and an action history tab.<br>
-          <h4 id="help-right_toolbar-tool_settings">Tool Settings</h4>
-          Here you can find your colours and settings for all your tools.
-          <h5 id="help-right_toolbar-colours">Colours</h5>
-          The colours are always shown. Colour 1 is the colour to use with the left mouse button, and Colour 2 is used with the right. Click on a colour in the table to the left with the left or right button to set the corresponding colour. Click on the colour box for Colour 1 or 2 to choose a custom colour with a colour picker, or type in a hex RGB or RGBA colour value in the box below. You can use 3-digit or 6-digit hex RGB colours, or 4-digit or 8-digit hex RGBA colours.
-          <h5 id="help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</h5>
-          The pen, flood fill, line, and shapes tools all share the following settings:
-          <h6 id="help-right_toolbar-mode_opacity-mode">Mode</h6>
-          The "Mode" setting decides how new canvas content is added to the existing content. There are a total of 26 options, the most common of which I have put at the very top:<br>
-          <strong>Normal</strong>: New content is drawn on top of existing content. This is what is considered normal, hence the name "Normal".<br>
-          <strong>Behind</strong>: New content is drawn behind existing content. This means it will only be shown where the existing content has transparency.<br>
-          <strong>Erase</strong>: Existing content is kept where it doesn't overlap the new content. This means the pixels where the content overlaps will be made transparent, like it's being erased.<br>
-          <br>
-          The rest of the modes I won't describe here, but there are descriptions from the <a href="https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">MDN documentation</a>. Keep in mind I have renamed several of the options for clarity. You might be better off checking the tooltip for each mode, unless you want to see a picture.
-          <h6 id="help-right_toolbar-mode_opacity-opacity">Opacity</h6>
-          This is how "see-through" things you draw will be, 100 being completely opaque, and 0 being completely transparent.
-          <h5 id="help-right_toolbar-line_size">Line Size Settings</h5>
-          With the pen, line, and shape tools, you can set a line size. When drawing shapes, this applies to only the outline of the shape.<br>
-          This is the thickness of a line in pixels. The maximum is 10000, because I think that's a reasonable limit. Let me know if you think otherwise.
-          <h5 id="help-right_toolbar-line_cap">Line Cap Settings</h5>
-          The pen and line tools have a line cap setting.<br>
-          The line cap is what the ends of a line will look like.<br>
-          <strong>Pen cap options</strong>: Round, Butt, and Square.<br>
-          <strong>Round</strong>: The ends of lines are rounded.<br>
-          <strong>Butt</strong>: The ends of lines are squared off at the endpoints.<br>
-          <strong>Square</strong>: The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.
-          <h5 id="help-right_toolbar-flood_fill">Flood Fill Settings</h5>
-          <h6 id="help-right_toolbar-flood_fill-threshold">Threshold</h6>
-          The maximum colour difference of a pixel from the original clicked colour to be recoloured. This is the maximum difference for each of the channels selected with the "Fill by" setting, not the total of all the colour differences. If all values are within the threshold, the pixel will be recoloured.
-          <h6 id="help-right_toolbar-flood_fill-fill_by">Fill by</h6>
-          This setting determines which channels to check for colour difference to decide whether or not to recolour the pixel. Available options are: RGBA (default), RGB, Red, Green, Blue, and Alpha.
-          <h5 id="help-right_toolbar-colour_picker">Colour Picker Settings</h5>
-          You can merge the sampled colour with the current and/or sample the opacity in addition to colour.
-          <h6 id="help-right_toolbar-colour_picker-merge">Merge with current</h6>
-          The new colour will be the average of the current colour and the sampled colour. For example, if the current is black <code>(0, 0, 0)</code> and the sampled is white <code>(255, 255, 255)</code>, the new colour will be grey <code>(128, 128, 128)</code>.
-          <h6 id="help-right_toolbar-colour_picker-sample_opacity">Sample opacity</h6>
-          Set your colour opacity to the sampled pixel's alpha value.
-          <h5 id="help-right_toolbar-rect_select">Rectangular Select Actions</h5>
-          The rectangular select tool doesn't have any settings available, but there are buttons for manipulating your selection.
-          <h6 id="help-right_toolbar-rect_select-copy">Copy</h6>
-          Copy the pixels at the selected area on the canvas.
-          <h6 id="help-right_toolbar-rect_select-cut">Cut</h6>
-          Copy the pixels and then clear the selected area to Colour 2.
-          <h6 id="help-right_toolbar-rect_select-paste">Paste</h6>
-          Put the pixels in the selection onto the canvas.
-          <h6 id="help-right_toolbar-rect_select-clear">Clear</h6>
-          Set the selected pixels to Colour 2.
-          <h5 id="help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</h5>
-          When drawing shapes, you can enable or disable outlines and/or fill.
-          <h6 id="help-right_toolbar-shape-outline">Outline</h6>
-          The line around the outer edge of the shape. Uses the colour which the mouse was clicked with.
-          <h6 id="help-right_toolbar-shape-fill">Fill</h6>
-          Whether or not the inside of the shape is filled with a solid colour. Uses the opposite colour from what the mouse was clicked with.
-          <h4 id="help-right_toolbar-action_history">Action History</h4>
-          Here you can find the history of all actions that make up the canvas you see. Each entry in the list consists of a little snapshot of what the canvas looked like at that point in history and the name of the action that made it look like that. The current point in history is highlighted. Undoing or redoing will move that highlight up or down the list. Clicking any given entry in the list will take you to that point in history.<br>
-          <br>
-          The following are some ways you can edit action history. Keep in mind that these changes will affect actions that come after the edited one, as you're changing history!
-          <h5 id="help-right_toolbar-action_history-toggling">Toggling Actions</h5>
-          Any action in history can be enabled/disabled at any time with the button to the right of an action entry in the table. When an action is "disabled", it will be as if it was never made.
-          <h5 id="help-right_toolbar-action_history-moving">Moving Actions</h5>
-          Moving actions up and down in history can be done with the up and down arrows next to action entries. An action that is moved up will happen before the previous action, and an action that is moved down will happen after the next action. This may be useful if your buddies accidentally mess up the order of things, since you're all drawing at the same time.
-          <h3 id="help-chat">Chat</h3>
-          Use the chat to send messages to other people in the session, including private messages to people you choose.
-          <h4 id="help-chat-private_messages">Private Messages</h4>
-          Normally, a message is sent to everyone in the session. However, if the message begins with "to:", it will be a private message sent only to the people with the client IDs that follow. For example, if your message is "to:x7sm PRIVATE MESSAGE!!!", only you and the person with the client ID of <code>x7sm</code> will be able to see the message, and no one else. You can also use a comma-separated list of IDs, like this: "to:x7sm,18hp Hello!"<br>
-          <br>
-          There MUST be a space between the "to" list and the message.<br>
-          <br>
-          Clicking the name of a user in the chat (above a message they have sent) will add their client ID to the "to" list in the message box.
-          <h4 id="help-chat-formatting">Formatting</h4>
-          You can also use some formatting similar to markdown in your messages. Available formatting:
-          <table class="table border">
-            <tr>
-              <th>Typed</th>
-              <th>Displayed</th>
-            </tr>
-            <tr>
-              <td>**Bold Text**</td>
-              <td><strong>Bold Text</strong></td>
-            </tr>
-            <tr>
-              <td>*Italicized Text* OR _Italicized Text_</td>
-              <td><em>Italicized Text</em></td>
-            </tr>
-            <tr>
-              <td>__Underlined Text__</td>
-              <td><u>Underlined Text</u></td>
-            </tr>
-            <tr>
-              <td>~~Strikethrough Text~~</td>
-              <td><s>Strikethrough Text</s></td>
-            </tr>
-          </table>
-          <br>
-          You can escape the special characters if, for example, you want to use asterisks around something without italicizing it. You can do that by putting a backslash before a special character. "\*text*" will suffice and will be shown as "*text*". If the opening or closing or both formatting characters are escaped (e.g. "\*"), the text will not be formatted. And as you should expect, you can escape the backslash as well: "\\**text**" will result in "\<strong>text</strong>".
-          <h4 id="help-chat-links">Links</h4>
-          Valid URLs sent in messages using the HTTP or HTTPS protocols will be automatically converted into hyperlinks. For example, sending "https://google.com" will turn out like "<a href="https://google.com" target="_blank" title="https://google.com">https://google.com</a>".
-          <h3 id="help-bottom_toolbar">Bottom Toolbar</h3>
-          At the bottom of your screen is some session info.<br>
-          You will see the ID of the session you are currently in and the number of users connected to it.<br>
-          Your session ID can be easily copied to the clipboard by clicking on it. If you want to share a link where your buddies can automatically join your session without any other hassle, just copy the link in the address bar, which will have your session ID in it. (See above, Sessions.)<br>
-          Finally, a "Leave" button to leave the session. You will be taken back to the main page.
-          <h3 id="help-keyboard_shortcuts">Keyboard Shortcuts</h3>
-          <h4 id="help-keyboard_shortcuts-edit">Edit</h4>
-          <ul>
-            <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> - Undo</li>
-            <li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <strong>OR</strong> <kbd>Ctrl</kbd> + <kbd>Y</kbd> - Redo</li>
-          </ul>
-          <h4 id="help-keyboard_shortcuts-view">View</h4>
-          <ul>
-            <li><kbd>+</kbd> - Zoom canvas in</li>
-            <li><kbd>-</kbd> - Zoom canvas out</li>
-            <li>Set zoom:
-              <ul>
-                <li><kbd>1</kbd> - 100%</li>
-                <li><kbd>2</kbd> - 200%</li>
-                <li><kbd>3</kbd> - 400%</li>
-                <li><kbd>4</kbd> - 800%</li>
-                <li><kbd>5</kbd> - 1600%</li>
-              </ul>
-            </li>
-          </ul>
-          <ul>
-            <li><kbd>Escape</kbd> - Toggle chat sidebar</li>
-          </ul>
-          <h4 id="help-keyboard_shortcuts-selection">With Selection</h4>
-          <ul>
-            <li><kbd>Ctrl</kbd> + <kbd>C</kbd> - Copy</li>
-            <li><kbd>Ctrl</kbd> + <kbd>X</kbd> - Cut</li>
-            <li><kbd>Ctrl</kbd> + <kbd>V</kbd> - Paste</li>
-          </ul>
-          <h4 id="help-keyboard_shortcuts-other">Other</h4>
-          <ul>
-            <li><kbd>F1</kbd> - Open Help window</li>
-          </ul>
-          <br>
-        </div>
-        <div class="modalFooter">
-          <button id="helpModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="appInfoModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>App Info</h2></div>
-        <div class="modalBody">
-          As you can probably tell from the version number, Web Draw isn't finished yet. It may never be, but I'll definitely keep adding things and improving the program.<br>
-          <br>
-          I plan to make Web Draw a nice drawing program with lots of features. When it feels like a better online real-time version of MS Paint, I'll be happy to call it "finished", even though I'm sure it won't be at that point. You can see what I have planned in my <a href="https://github.com/martendo/web-draw/blob/master/TODO.md" target="_blank">to-do list</a>.
-          <h3>Why'd you make this?</h3>
-          I dunno, for fun. It's cool, though.<br>
-          <br>
-          <h3>More Info</h3>
-          Web Draw is written entirely in plain JavaScript, so that I know what I'm doing. The interface is also plain HTML and CSS.<br>
-          <br>
-        </div>
-        <div class="modalFooter">
-          <button id="appInfoModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="noWsModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Your Browser Doesn't Support WebSockets!</h2></div>
-        <div class="modalBody">
-          That means your browser is old. You should upgrade.<br>
-          Web Draw doesn't work without WebSockets. Sorry, but no WebSockets means no Web Draw.<br>
-        </div>
-      </div>
-    </div>
-    
-    <div id="sessionNoExistModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>There is no existing session with the ID <code id="sessionNoExist">N/A</code>.</h2></div>
-        <div class="modalFooter">
-          <button id="sessionNoExistModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    <div id="sessionAlreadyExistModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>A session with the ID <code id="sessionAlreadyExist">N/A</code> already exists. Please choose another ID.</h2></div>
-        <div class="modalFooter">
-          <button id="sessionAlreadyExistModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="retrieveModal" class="modal">
-      <div class="modalContent" style="min-width: 20em;">
-        <div class="modalHeader"><h2 id="retrieveText">Setting up canvas...</h2></div>
-      </div>
-    </div>
-    
-    <div id="oldCanvasFileModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Error Setting Up Canvas</h2></div>
-        <div class="modalBody">
-          There was a problem while trying to set up the drawing in your canvas file.<br>
-          It's likely that it is old and outdated - the canvas format has changed and will continue to change until I stop messing around with features.<br>
-        </div>
-        <div class="modalFooter">
-          <button id="oldCanvasFileModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="errorModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Woah! Error!</h2></div>
-        <div class="modalBody">
-          There's been a problem with the server. That means something's really not right. :/<br>
-          Try reloading the page, and if it still doesn't work, the server may be down. Sorry!
-        </div>
-        <div class="modalFooter">
-          <button id="errorModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="disconnectModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Trying to reconnect...</h2></div>
-        <div class="modalBody">
-          <div id="disconnectText">You were disconnected from the server.</div>
-          <div id="reconnectWait">...</div>
-        </div>
-        <div class="modalFooter">
-          <button id="disconnectModalGiveUpBtn">Give Up</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="canvasResizeModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Resize Canvas</h2></div>
-        <div class="modalBody">
-          <table>
-            <tr>
-              <td>
-                <fieldset>
-                  <legend>Canvas Size</legend>
-                  <table class="table">
-                    <tr>
-                      <td><label for="canvasResizeWidth">Width: </label></td>
-                      <td><input id="canvasResizeWidth" type="number" min="1" step="1"></td>
-                      <td>px</td>
-                    </tr>
-                    <tr>
-                      <td><label for="canvasResizeHeight">Height: </label></td>
-                      <td><input id="canvasResizeHeight" type="number" min="1" step="1"></td>
-                      <td>px</td>
-                    </tr>
-                  </table>
-                </fieldset>
-                <fieldset>
-                  <legend>Offset</legend>
-                  <table class="table">
-                    <tr>
-                      <td><label for="canvasResizeOffsetX">X: </label></td>
-                      <td><input id="canvasResizeOffsetX" type="number" min="0" step="1"></td>
-                      <td>px</td>
-                    </tr>
-                    <tr>
-                      <td><label for="canvasResizeOffsetY">Y: </label></td>
-                      <td><input id="canvasResizeOffsetY" type="number" min="0" step="1"></td>
-                      <td>px</td>
-                    </tr>
-                    <tr>
-                      <td colspan="3"><button id="canvasResizeOffsetCentre">Centre</button></td>
-                    </tr>
-                  </table>
-                </fieldset>
-                <label for="canvasResizeFill">Fill with:</label>
-                <select id="canvasResizeFill">
-                  <option value="0">Colour 1 (foreground)</option>
-                  <option value="1">Colour 2 (background)</option>
-                  <option value="2">White</option>
-                  <option value="3">Transparency</option>
-                </select>
-              </td>
-              <td><span class="spacer"></span></td>
-              <td id="canvasResizePreviewCell">
-                <fieldset>
-                  <legend>Preview</legend>
-                  <canvas id="resizePreviewCanvas"></canvas>
-                </fieldset>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="modalFooter">
-          <button id="resizeModalResetBtn">Reset</button><button id="resizeModalResizeBtn">Resize</button><button id="resizeModalCancelBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="changeSessionIdModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Change Session ID</h2></div>
-        <div class="modalBody">
-          Current session ID: <span id="sessionIdCurrent" class="clickToCopy lightBox mono" title="Copy">N/A</span><br>
-          <br>
-          <label for="sessionIdNew">New session ID: </label>
-          <input id="sessionIdNew" type="text">
-        </div>
-        <div class="modalFooter">
-          <button id="sessionIdModalChangeBtn">Change</button><button id="sessionIdModalCancelBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-    <div id="sessionIdChangedModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>The session ID has been changed to <code id="sessionIdChanged">N/A</code>.</h2></div>
-        <div class="modalFooter">
-          <button id="sessionIdChangedModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    <div id="sessionHasIdModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>There is already a session with the ID <code id="sessionHasId">N/A</code>. Please choose another ID.</h2></div>
-        <div class="modalFooter">
-          <button id="sessionHasIdModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="setSessionPasswordModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Set Session Password</h2></div>
-        <div class="modalBody">
-          <span id="sessionPasswordCurrent"></span><br>
-          <br>
-          <label for="sessionPasswordNew">New password: </label>
-          <input id="sessionPasswordNew" type="text">
-        </div>
-        <div class="modalFooter">
-          <button id="setSessionPasswordModalRemoveBtn" class="floatLeft">Remove Password</button><button id="setSessionPasswordModalSetBtn">Set</button><button id="setSessionPasswordModalCancelBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-    <div id="enterSessionPasswordModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Enter Password</h2></div>
-        <div class="modalBody">
-          The session <code id="enterSessionPasswordId">N/A</code> has a password set on it. Please enter it to join.<br>
-          <label for="enterSessionPassword">Password: </label>
-          <input id="enterSessionPassword" type="text">
-        </div>
-        <div class="modalFooter">
-          <button id="enterSessionPasswordModalJoinBtn">Join</button><button id="enterSessionPasswordModalCancelBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-    <div id="sessionWrongPasswordModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>The password <code id="sessionWrongPassword">N/A</code> does not match the password for the session <code id="sessionWrongPasswordId">N/A</code>.</h2></div>
-        <div class="modalFooter">
-          <button id="sessionWrongPasswordModalOkBtn">OK</button>
-        </div>
-      </div>
-    </div>
-    <div id="shareSessionLinkModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Share Session Link</h2></div>
-        <div class="modalBody">
-          Share this link with your friends to join this session!<br>
-          <br>
-          <button id="sessionLinkCopy">Copy</button>
-          <code id="sessionLink" class="clickToCopy lightBox mono" title="Copy">N/A</code><br>
-          <div id="sessionLinkPassword">
-            <br>
-            <table class="table">
-              <tr>
-                <td><input type="checkbox" id="sessionLinkPasswordInput" class="check" checked></td>
-                <td>
-                  <div class="checkLabel">
-                    <label for="sessionLinkPasswordInput">
-                      Include Password<br>
-                      <small>Include the session's password in the link so whoever uses it doesn't need to type it in and can automatically join.</small>
-                    </label>
-                  </div>
-                </td>
-              </tr>
-            </table>
-          </div>
-        </div>
-        <div class="modalFooter">
-          <button id="shareLinkModalCloseBtn">Close</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="userModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>User Settings</h2></div>
-        <div class="modalBody">
-          <label for="userNameInput">Name: </label>
-          <input id="userNameInput" type="text">
-        </div>
-        <div class="modalFooter">
-          <button id="userModalSaveBtn">Save</button><button id="userModalCancelBtn">Cancel</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="infoModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Info</h2></div>
-        <div class="modalBody">
-          <table id="infoModalTable">
-            <tr>
-              <td>
-                <h3>Web Draw<img class="penIcon" src="{{ BASE64:src/img/pen.png }}" alt="Pen Logo"></h3>
-                <small><code>{{ VERSION }}</code></small><br>
-                By <a href="https://github.com/martendo" target="_blank">martendo</a><br>
-                <table class="table">
-                  <tr>
-                    <td>Started:</td>
-                    <td>Aug 24, 2020</td>
-                  </tr>
-                  <tr>
-                    <td>Last updated:</td>
-                    <td>{{ DATE }}</td>
-                  </tr>
-                </table>
-                <a href="https://w-draw.web.app">https://w-draw.web.app</a><br>
-                <a href="https://github.com/martendo/web-draw" target="_blank">GitHub</a>
-              </td>
-              <td><span class="spacer"></span></td>
-              <td>
-                <h3>User Info</h3>
-                <table id="infoTable" class="table">
-                  <tr>
-                    <td>Client ID:</td>
-                    <td><span id="clientIdInfo" class="clickToCopy lightBox table mono full" title="Copy">N/A</span></td>
-                  </tr>
-                  <tr>
-                    <td>Session ID:</td>
-                    <td><span id="sessionIdInfo" class="clickToCopy lightBox table mono full" title="Copy">N/A</span></td>
-                  </tr>
-                  <tr>
-                    <td>Ping:</td>
-                    <td><span id="pingInfo" class="clickToCopy lightBox table full" title="Copy">N/A</span></td>
-                  </tr>
-                  <tr>
-                    <td>Avg. latency:</td>
-                    <td><span id="avgPingInfo" class="clickToCopy lightBox table full" title="Copy">N/A</span></td>
-                  </tr>
-                  <tr>
-                    <td colspan="2"><a href="javascript:void(0)" id="allPingsLink">See all previous pings</a></td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div class="modalFooter">
-          <button id="infoModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="allPingsModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Previous Pings</h2></div>
-        <div class="modalBody">
-          <table class="table border">
-            <tr>
-              <th>Lowest</th>
-              <th>Highest</th>
-              <th>Average</th>
-            </tr>
-            <tr>
-              <td id="minLatency">N/A</td>
-              <td id="maxLatency">N/A</td>
-              <td id="avgLatency">N/A</td>
-            </tr>
-          </table>
-          <br>
-          <table class="table border alternate">
-            <thead>
-              <tr id="pingTableHeaderRow">
-                <th>#</th>
-                <th>Latency</th>
-              </tr>
-            </thead>
-            <tbody id="pingTableBody"></tbody>
-          </table>
-        </div>
-        <div class="modalFooter">
-          <button id="allPingsModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="sessionInfoModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Session Info</h2></div>
-        <div class="modalBody">
-          Session ID: <span id="sessionInfoId" class="clickToCopy lightBox mono" title="Copy">N/A</span><br>
-          Number of clients connected: <strong id="sessionInfoClients">0</strong><br>
-          <br>
-          Clients:<br>
-          <table class="table border" id="sessionInfoClientInfo">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-              </tr>
-            </thead>
-            <tbody id="sessionInfoClientBody"></tbody>
-          </table>
-        </div>
-        <div class="modalFooter">
-          <button id="sessionInfoModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <div id="settingsModal" class="modal">
-      <div class="modalContent">
-        <div class="modalHeader"><h2>Settings</h2></div>
-        <div class="modalBody">
-          <fieldset>
-            <legend>Mouse Movements</legend>
-            <table class="table">
-              <tr>
-                <td><input type="checkbox" id="sendMouseMovements" checked></td>
-                <td><label for="sendMouseMovements">Send mouse movements</label></td>
-              </tr>
-              <tr>
-                <td><input type="checkbox" id="receiveMouseMovements" checked></td>
-                <td><label for="receiveMouseMovements">Receive mouse movements</label></td>
-              </tr>
-            </table>
-          </fieldset>
-          <fieldset>
-            <legend>Colour Theme</legend>
-            <table class="table">
-              <tr>
-                <td><input type="radio" name="theme" id="lightTheme" checked></td>
-                <td><label for="lightTheme">Light</label></td>
-              </tr>
-              <tr>
-                <td><input type="radio" name="theme" id="darkTheme"></td>
-                <td><label for="darkTheme">Dark</label></td>
-              </tr>
-            </table>
-          </fieldset>
-        </div>
-        <div class="modalFooter">
-          <button id="settingsModalDoneBtn">Done</button>
-        </div>
-      </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/msgpack-lite/dist/msgpack.min.js"></script>
-    <script src="/script.js"></script>
-    
-  </body>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,height=device-height,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noimageindex">
+
+		<title>Web Draw</title>
+
+		<meta name="title" content="Web Draw">
+		<meta name="application-name" content="Web Draw">
+		<meta name="apple-mobile-web-app-title" content="Web Draw">
+		<meta name="author" content="martendo">
+		<meta name="description" content="A little real-time online collaborative drawing program.">
+		<link rel="canonical" href="https://w-draw.web.app">
+		<link rel="manifest" href="/app.webmanifest">
+
+		<meta property="og:title" content="Web Draw">
+		<meta property="og:description" content="A little real-time online collaborative drawing program.">
+		<meta property="og:type" content="website">
+
+		<meta property="og:image" content="https://w-draw.web.app/pen-icon-og.png">
+		<meta property="og:image:secure_url" content="https://w-draw.web.app/pen-icon-og.png">
+		<meta property="og:image:type" content="image/png">
+		<meta property="og:image:width" content="300">
+		<meta property="og:image:height" content="157">
+		<meta property="og:image:alt" content="Pen Logo for Web Draw">
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#00a2e8">
+		<meta name="msapplication-TileColor" content="#f8f8f8">
+
+		<meta name="theme-color" content="#00a2e8">
+
+		<link rel="stylesheet" href="/style.css">
+	</head>
+
+	<body>
+		<input type="color" id="colourPicker" class="hidden">
+		<input type="file" id="chooseImage" class="hidden" accept="image/*">
+		<input type="file" id="chooseCanvasFile" class="hidden" accept=".bin">
+		<span id="tooltip" class="hidden"></span>
+		<div id="menuScreen">
+			<div id="infoBtnContainer">
+				<button class="infoBtn" id="infoBtn">Info
+				</button><button class="infoBtn" id="helpBtn">Help</button>
+			</div>
+			<div id="menuMainContainer">
+				<h1><img class="penIcon" src="{{BASE64:src/img/pen-icon.png}}" alt="Pen Logo">Web Draw</h1>
+				<div id="connectionInfo">
+					<div id="connectionInfoText">Connecting to server...</div>
+					<div id="connectionInfoWait">&#183;&#183;&#183;</div>
+				</div>
+				<div id="menuOptionsContainer">
+					<div id="sessionOptions">
+						<p>Hey there! Want to create or join a session?</p>
+						<label for="sessionIdInput">ID: </label>
+						<input id="sessionIdInput" type="text" title="Enter a session ID"><br>
+						<button id="createSessionBtn">Create Session
+						</button><button id="joinSessionBtn">Join Session</button>
+					</div>
+				</div>
+			</div>
+			<div id="bottom">
+				<span class="menuInfo" id="menuInfo">
+					Copyright (C) 2020-{{YEAR}} <a href="https://github.com/martendo" target="_blank">martendo</a><br>
+					<a href="https://github.com/martendo/web-draw" target="_blank">GitHub</a>
+				</span>
+				<span class="menuInfo" id="versionInfo">
+					<code>{{VERSION}}</code> - {{DATE}}<br>
+					<a href="javascript:void(0)" id="licenseLink">License</a>
+				</span>
+			</div>
+		</div>
+		<div id="drawScreen">
+			<ul id="menubar">
+				<li id="fileMenu" class="menuItem">
+					<div class="menuLabel">File</div>
+					<ul class="menuDropdown">
+						<li id="fileSaveBtn" title="Save your canvas along with undo/redo data">Save</li>
+						<li id="fileOpenBtn" title="Open a saved canvas file">Open</li>
+						<li class="separator"></li>
+						<li id="fileExportBtn" title="Export the drawing as a PNG image">Export</li>
+						<li id="fileImportBtn" title="Import an image onto the canvas">Import</li>
+					</ul>
+				</li><li id="editMenu" class="menuItem">
+					<div class="menuLabel">Edit</div>
+					<ul class="menuDropdown">
+						<li id="editUndoBtn" title="Undo the last action">Undo</li>
+						<li id="editRedoBtn" title="Redo the last action">Redo</li>
+						<li class="separator"></li>
+						<li id="editClearBtn" title="Clear the canvas to white">Clear</li>
+						<li id="editClearTransparentBtn" title="Clear the canvas to transparent">Clear Transparent</li>
+						<li class="separator"></li>
+						<li id="editResizeBtn" title="Change the size of the canvas">Resize Canvas</li>
+						<li class="separator"></li>
+						<li id="editSettingsBtn" title="View and modify Web Draw settings">Settings</li>
+					</ul>
+				</li><li id="viewMenu" class="menuItem">
+					<div class="menuLabel">View</div>
+					<ul class="menuDropdown">
+						<li id="viewResetZoomBtn" title="Set the zoom to 100%">Reset Zoom</li>
+						<li id="viewFitZoomBtn" title="Set the canvas zoom to fit the window">Fit to Window</li>
+						<li id="viewFillZoomBtn" title="Set the canvas zoom to fill the entire window">Fill Window</li>
+					</ul>
+				</li><li id="sessionMenu" class="menuItem">
+					<div class="menuLabel">Session</div>
+					<ul class="menuDropdown">
+						<li id="sessionInfoBtn" title="View session info">Info</li>
+						<li class="separator"></li>
+						<li id="sessionChangeIdBtn" title="Change the ID of this session">Change ID</li>
+						<li id="sessionSetPasswordBtn" title="Set or remove the password on this session">Set Password</li>
+						<li class="separator"></li>
+						<li id="sessionShareLinkBtn" title="Get a link you can share to join this session">Share Link</li>
+						<li id="sessionLeaveBtn" title="Leave this session">Leave</li>
+					</ul>
+				</li><li id="helpMenu" class="menuItem">
+					<div class="menuLabel">Help</div>
+					<ul class="menuDropdown">
+						<li id="helpHelpBtn" title="Don't know how to do something?">Help</li>
+						<li id="helpInfoBtn" title="See app and user info">Info</li>
+					</ul>
+				</li><li id="userBtn" class="menuItem floatRight">
+					<div id="userName" class="menuLabel" title="View and change your user settings">User</div>
+				</li><li id="chatBtn" class="menuItem floatRight">
+					<div class="menuLabel" title="Open or close the chat box">Chat <div id="chatNew"></div></div>
+				</li>
+			</ul>
+			<table id="topBox">
+				<tr>
+					<td>
+						<button id="undoBtn" title="Undo the last action">Undo
+						</button><button id="redoBtn" title="Redo the last action">Redo
+						</button><button id="clearBtn" title="Clear the canvas&#10;Double click to clear to transparent">Clear
+						</button><span class="spacer"></span><label for="canvasZoom">Zoom:</label>
+						<input id="canvasZoom" type="number" step="5" min="0" title="The canvas zoom"><button id="resetZoomBtn">Reset
+						</button><button id="fitZoomBtn">Fit</button>
+					</td>
+					<td class="tableExcess"></td>
+				</tr>
+			</table>
+			<table id="leftBox">
+				<tr>
+					<td>
+						<button id="penBtn" title="Pen Tool&#10;Draw a free-form line">
+							<img id="penBtnIcon" src="{{BASE64:src/img/pen.png}}" alt="P">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="eraserBtn" title="Eraser Tool&#10;Erase to background colour or transparency">
+							<img id="eraserBtnIcon" src="{{BASE64:src/img/eraser.png}}" alt="E">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="fillBtn" title="Flood Fill Tool&#10;Fill an area of the same colour">
+							<img id="fillBtnIcon" src="{{BASE64:src/img/flood-fill.png}}" alt="F">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="colourPickerBtn" title="Colour Picker Tool&#10;Get a colour from the canvas">
+							<img id="colourPickerIcon" src="{{BASE64:src/img/colour-picker.png}}" alt="C">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="selectBtn" title="Rectangular Select Tool&#10;Select a rectangular area from the canvas to manipulate">
+							<img id="selectIcon" src="{{BASE64:src/img/select.png}}" alt="S">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="lineBtn" title="Line Tool&#10;Draw a straight line from one point to another">
+							<img id="lineIcon" src="{{BASE64:src/img/line.png}}" alt="L">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="rectBtn" title="Rectangle Tool&#10;Draw a rectangle">
+							<img id="rectIcon" src="{{BASE64:src/img/rect.png}}" alt="R">
+						</button>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<button id="ellipseBtn" title="Ellipse Tool&#10;Draw an ellipse">
+							<img id="ellipseIcon" src="{{BASE64:src/img/ellipse.png}}" alt="E">
+						</button>
+					</td>
+				</tr>
+			</table>
+			<div id="rightBox">
+				<table id="rightTabBar" class="tabBar">
+					<tr>
+						<td class="tab" id="toolTab" title="Tool settings"><img src="{{BASE64:src/img/tool-settings.png}}"></td>
+						<td class="tab" id="historyTab" title="Action history"><img src="{{BASE64:src/img/action-history.png}}"></td>
+						<td class="tableExcess"></td>
+					</tr>
+				</table>
+				<div id="rightBoxContent">
+					<table id="toolTabBox" class="tabBox">
+						<tr>
+							<td>
+								<table class="colourTable">
+									<tr>
+										<td><label for="penColour0Value">Colour 1</label></td>
+										<td><label for="penColour1Value">Colour 2</label></td>
+									</tr>
+									<tr>
+										<td>
+											<span id="penColour0Container" class="penColourContainer">
+												<span id="penColour0" class="penColour" title="Click to change colour 1"></span>
+											</span>
+										</td>
+										<td>
+											<span id="penColour1Container" class="penColourContainer">
+												<span id="penColour1" class="penColour" title="Click to change colour 2"></span>
+											</span>
+										</td>
+									</tr>
+									<tr>
+										<td><input id="penColour0Value" class="penColourValue" type="text"></td>
+										<td><input id="penColour1Value" class="penColourValue" type="text"></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td class="colourTable">
+								<table id="quickColourSelect"></table>
+							</td>
+						</tr>
+						<tr>
+							<td><div class="separator"></div></td>
+						</tr>
+						<tr class="toolSettings penSettings fillSettings lineSettings rectSettings ellipseSettings">
+							<td>
+								<div class="selectInput" title="How new content is added to the existing content">
+									<label class="selectLabel" for="compositeSelect">Mode</label>
+									<select id="compositeSelect">
+										<option value="SOURCE_OVER" title="Draw the new content on top of the existing content.">Normal</option>
+										<option value="DESTINATION_OVER" title="Draw the new content behind the existing content.">Behind</option>
+										<option value="DESTINATION_OUT" title="Keep only the existing content where it doesn't overlap the new content.">Erase</option>
+										<option class="separator" disabled>---</option>
+										<option value="LIGHTEN" title="Retain the lightest pixels of both the new and existing content.">Lighten Only</option>
+										<option value="SCREEN" title="Pixels are inverted, multiplied, and inverted again.">Screen</option>
+										<option value="COLOR_DODGE" title="Divide the existing content by the inverted new content.">Dodge</option>
+										<option value="LIGHTER" title="Where both the new and existing content overlap the colour is determined by adding colour values.">Lighter</option>
+										<option class="separator" disabled>---</option>
+										<option value="DARKEN" title="Retain the darkest pixels of both the new and existing content.">Darken Only</option>
+										<option value="COLOR_BURN" title="Divide the inverted existing content by the new content, and then invert the result.">Burn</option>
+										<option value="MULTIPLY" title="Pixels of the new content are multiplied with the corresponding pixels of the existing content.">Multiply</option>
+										<option class="separator" disabled>---</option>
+										<option value="OVERLAY" title="A combination of Darken and Screen. Dark parts of the existing content become darker, and light parts become lighter.">Overlay</option>
+										<option value="HARD_LIGHT" title="Like Overlay, but with the new and existing content layers swapped.">Hard Light</option>
+										<option value="SOFT_LIGHT" title="A softer version of Hard Light. Pure black or white does not result in pure black or white.">Soft Light</option>
+										<option class="separator" disabled>---</option>
+										<option value="DIFFERENCE" title="Take the difference of the new and existing content's colour values.">Difference</option>
+										<option value="EXCLUSION" title="Like Difference, but with lower contrast.">Exclusion</option>
+										<option class="separator" disabled>---</option>
+										<option value="SOURCE_IN" title="Keep only the new content where it overlaps the existing content.">Source In</option>
+										<option value="SOURCE_OUT" title="Keep only the new content where it doesn't overlap the existing content.">Source Out</option>
+										<option value="SOURCE_ATOP" title="Draw the new content on top of the existing content only where they overlap.">Source Atop</option>
+										<option value="DESTINATION_IN" title="Keep only the existing content where it overlaps the new content.">Destination In</option>
+										<option value="DESTINATION_ATOP" title="Draw the new content behind the existing content only where they overlap.">Destination Atop</option>
+										<option value="XOR" title="Draw the new and existing content only where they don't overlap.">No Overlap Only</option>
+										<option value="COPY" title="Keep only the new content.">New Only</option>
+										<option class="separator" disabled>---</option>
+										<option value="HUE" title="Preserve the luma and chroma of the existing content, while adopting the hue of the new content.">Hue</option>
+										<option value="SATURATION" title="Preserve the luma and hue of the existing content, while adopting the chroma of the new content.">Saturation</option>
+										<option value="COLOR" title="Preserve the luma of the existing content, while adopting the hue and chroma of the new content.">Colour</option>
+										<option value="LUMINOSITY" title="Preserve the hue and chroma of the existing content, while adopting the luma of the content.">Luminosity</option>
+									</select>
+								</div>
+							</td>
+						</tr>
+						<tr class="toolSettings penSettings eraserSettings fillSettings lineSettings rectSettings ellipseSettings">
+							<td>
+								<div class="sliderInput" id="opacityInput" data-min="0" data-width="100" data-max="100" data-fdigits="1" data-callback="updateColourAlpha" title="Opacity, in percent">
+									<div class="sliderLabel">Opacity</div>
+									<div class="sliderBar" id="opacityBar"></div>
+									<div class="sliderValue" id="opacityValue" contenteditable inputmode="decimal"></div>
+									<div class="sliderValueUp" id="opacityValueUp">
+										<svg width="20" height="15">
+											<polygon points="10,3 3,12 17,12"></polygon>
+										</svg>
+									</div>
+									<div class="sliderValueDown" id="opacityValueDown">
+										<svg width="20" height="15">
+											<polygon points="10,12 3,3 17,3"></polygon>
+										</svg>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr class="toolSettings penSettings eraserSettings lineSettings rectSettings ellipseSettings">
+							<td>
+								<div class="sliderInput" id="sizeInput" data-min="1" data-width="150" data-max="10000" data-fdigits="0" title="The size of the pen in pixels">
+									<div class="sliderLabel">Size</div>
+									<div class="sliderBar" id="sizeBar"></div>
+									<div class="sliderValue" id="sizeValue" contenteditable inputmode="decimal"></div>
+									<div class="sliderValueUp" id="sizeValueUp">
+										<svg width="20" height="15">
+											<polygon points="10,3 3,12 17,12"></polygon>
+										</svg>
+									</div>
+									<div class="sliderValueDown" id="sizeValueDown">
+										<svg width="20" height="15">
+											<polygon points="10,12 3,3 17,3"></polygon>
+										</svg>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr class="toolSettings penSettings eraserSettings lineSettings">
+							<td>
+								<div class="selectInput" title="The shape at the ends of a line">
+									<label class="selectLabel" for="lineCapSelect">Caps</label>
+									<select id="lineCapSelect">
+										<option value="ROUND" title="The ends of lines are rounded.">Round</option>
+										<option value="BUTT" title="The ends of lines are squared off at the endpoints.">Butt</option>
+										<option value="SQUARE" title="The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.">Square</option>
+									</select>
+								</div>
+							</td>
+						</tr>
+						<tr class="toolSettings penSettings eraserSettings">
+							<td title="Use quadratic curves between points instead of straight lines">
+								<input id="smoothenStrokes" type="checkbox">
+								<label for="smoothenStrokes">Smoothen strokes</label>
+							</td>
+						</tr>
+						<tr class="toolSettings eraserSettings">
+							<td title="Erase to transparency and not the background colour">
+								<input id="eraseTransparent" type="checkbox">
+								<label for="eraseTransparent">Erase to transparency</label>
+							</td>
+						</tr>
+						<tr class="toolSettings rectSettings ellipseSettings">
+							<td>
+								<input id="shapeOutline" type="checkbox">
+								<label for="shapeOutline">Outline</label>
+							</td>
+						</tr>
+						<tr class="toolSettings rectSettings ellipseSettings">
+							<td>
+								<input id="shapeFill" type="checkbox">
+								<label for="shapeFill">Fill</label>
+							</td>
+						</tr>
+						<tr class="toolSettings fillSettings">
+							<td>
+								<div class="sliderInput" id="fillThresholdInput" data-min="0" data-width="255" data-max="255" data-fdigits="0" title="The maximum colour difference from the clicked colour to fill">
+									<div class="sliderLabel">Threshold</div>
+									<div class="sliderBar" id="fillThresholdBar"></div>
+									<div class="sliderValue" id="fillThresholdValue" contenteditable inputmode="decimal"></div>
+									<div class="sliderValueUp" id="fillThresholdValueUp">
+										<svg width="20" height="15">
+											<polygon points="10,3 3,12 17,12"></polygon>
+										</svg>
+									</div>
+									<div class="sliderValueDown" id="fillThresholdValueDown">
+										<svg width="20" height="15">
+											<polygon points="10,12 3,3 17,3"></polygon>
+										</svg>
+									</div>
+								</div>
+							</td>
+						</tr>
+						<tr class="toolSettings fillSettings">
+							<td>
+								<div class="selectInput" title="Colour channels used to determine colour similarity">
+									<label class="selectLabel" for="fillBySelect">Fill by</label>
+									<select id="fillBySelect">
+										<option value="RGBA" title="Check all channels">RGBA</option>
+										<option value="RGB" title="Check all colour channels, but not alpha">RGB</option>
+										<option value="RED" title="Check only the red colour channel">Red</option>
+										<option value="GREEN" title="Check only the green colour channel">Green</option>
+										<option value="BLUE" title="Check only the blue colour channel">Blue</option>
+										<option value="ALPHA" title="Check only the alpha channel">Alpha</option>
+									</select>
+								</div>
+							</td>
+						</tr>
+						<tr class="toolSettings colourPickerSettings">
+							<td>
+								<input id="colourPickerMerge" type="checkbox">
+								<label for="colourPickerMerge">Merge with current</label>
+							</td>
+						</tr>
+						<tr class="toolSettings colourPickerSettings">
+							<td>
+								<input id="colourPickerOpacity" type="checkbox">
+								<label for="colourPickerOpacity">Sample opacity</label>
+							</td>
+						</tr>
+						<tr class="toolSettings selectSettings">
+							<td><button id="selectCopyBtn" class="toolBtn" title="Copy the pixels in the selected area on the canvas">Copy</button></td>
+						</tr>
+						<tr class="toolSettings selectSettings">
+							<td><button id="selectCutBtn" class="toolBtn" title="Cut the pixels from the selected area on the canvas">Cut</button></td>
+						</tr>
+						<tr class="toolSettings selectSettings">
+							<td><button id="selectPasteBtn" class="toolBtn" title="Paste the pixels in the selection onto the canvas">Paste</button></td>
+						</tr>
+						<tr class="toolSettings selectSettings">
+							<td><button id="selectClearBtn" class="toolBtn" title="Clear the pixels in the selected area on the canvas">Clear</button></td>
+						</tr>
+					</table>
+					<table id="historyTabBox" class="tabBox table border">
+						<tbody></tbody>
+					</table>
+				</div>
+			</div>
+			<div id="canvasContainer">
+				<canvas id="displayCanvas">The HTML canvas element isn't supported in your browser... :(</canvas>
+			</div>
+			<table id="statusBox">
+				<tr>
+					<td>
+						<span id="cursorPos" class="lightBox"></span>
+					</td>
+					<td class="tableExcess"></td>
+					<td id="selectionInfo">
+						<span id="selectPos" class="lightBox"></span> <span id="selectSize" class="lightBox"></span>
+					</td>
+				</tr>
+			</table>
+			<table id="bottomBox">
+				<tr>
+					<td>
+						<span>Session ID: </span>
+						<span id="sessionId" class="clickToCopy lightBox mono" title="Copy"></span><span class="spacer"></span><span id="userBox">There aren't any users connected to this session.</span><span class="spacer"></span><button id="shareLinkBtn" title="Get a link you can share to join this session">Share Link</button>
+						<button id="leaveBtn" title="Leave this session">Leave</button>
+					</td>
+					<td class="tableExcess"></td>
+				</tr>
+			</table>
+			<div id="chatBox">
+				<div class="boxHeader">Chat<button id="chatXBtn">&#215;</button></div>
+				<div id="chatMessages"></div>
+				<table id="chatInputArea">
+					<tr>
+						<td><textarea id="chatInput" placeholder="Send a message"></textarea></td>
+						<td><button id="chatSendBtn" title="Send">&#62;</button></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+
+		<div id="helpModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Help</h2></div>
+				<div class="modalBody">
+					<h3>Contents</h3>
+					<label for="helpContentsCollapse" class="collapseLabel"><a>Show/Hide</a></label><input type="checkbox" class="collapseButton" id="helpContentsCollapse">
+					<div class="collapseContent">
+						<ul>
+							<li><a href="#help-sessions">Sessions</a><ul>
+								<li><a href="#help-sessions-links">Session Links</a></li>
+							</ul></li>
+							<li><a href="#help-menubar">Menubar</a><ul>
+								<li><a href="#help-menubar-save_open">Save/Open</a></li>
+								<li><a href="#help-menubar-export_import">Export/Import</a></li>
+								<li><a href="#help-menubar-resize_canvas">Resize Canvas</a></li>
+								<li><a href="#help-menubar-session_id_password">Session ID & Password</a></li>
+								<li><a href="#help-menubar-share_link">Share Link</a></li>
+								<li><a href="#help-menubar-info">Info</a></li>
+							</ul></li>
+							<li><a href="#help-top_toolbar">Top Toolbar</a><ul>
+								<li><a href="#help-top_toolbar-undo_redo">Undo/Redo</a></li>
+								<li><a href="#help-top_toolbar-clear">Clear</a></li>
+								<li><a href="#help-top_toolbar-canvas_zoom">Canvas Zoom</a></li>
+							</ul></li>
+							<li><a href="#help-left_toolbar">Left Toolbar</a></li>
+							<li><a href="#help-right_toolbar">Right Toolbar</a><ul>
+								<li><a href="#help-right_toolbar-tool_settings">Tool Settings</a><ul>
+									<li><a href="#help-right_toolbar-colours">Colours</a></li>
+									<li><a href="#help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</a><ul>
+										<li><a href="#help-right_toolbar-mode_opacity-mode">Mode</a></li>
+										<li><a href="#help-right_toolbar-mode_opacity-opacity">Opacity</a></li>
+									</ul></li>
+									<li><a href="#help-right_toolbar-line_size">Line Size Settings</a></li>
+									<li><a href="#help-right_toolbar-line_cap">Line Cap Settings</a></li>
+									<li><a href="#help-right_toolbar-flood_fill">Flood Fill Settings</a><ul>
+										<li><a href="#help-right_toolbar-flood_fill-threshold">Threshold</a></li>
+										<li><a href="#help-right_toolbar-flood_fill-fill_by">Fill by</a></li>
+									</ul></li>
+									<li><a href="#help-right_toolbar-colour_picker">Colour Picker Settings</a><ul>
+										<li><a href="#help-right_toolbar-colour_picker-merge">Merge with current</a></li>
+										<li><a href="#help-right_toolbar-colour_picker-sample_opacity">Sample opacity</a></li>
+									</ul></li>
+									<li><a href="#help-right_toolbar-rect_select">Rectangular Select Actions</a><ul>
+										<li><a href="#help-right_toolbar-rect_select-copy">Copy</a></li>
+										<li><a href="#help-right_toolbar-rect_select-cut">Cut</a></li>
+										<li><a href="#help-right_toolbar-rect_select-paste">Paste</a></li>
+										<li><a href="#help-right_toolbar-rect_select-clear">Clear</a></li>
+									</ul></li>
+									<li><a href="#help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</a><ul>
+										<li><a href="#help-right_toolbar-shape-outline">Outline</a></li>
+										<li><a href="#help-right_toolbar-shape-fill">Fill</a></li>
+									</ul></li>
+								</ul></li>
+								<li><a href="#help-right_toolbar-action_history">Action History</a><ul>
+									<li><a href="#help-right_toolbar-action_history-toggling">Toggling Actions</a></li>
+									<li><a href="#help-right_toolbar-action_history-moving">Moving Actions</a></li>
+								</ul></li>
+							</ul></li>
+							<li><a href="#help-chat">Chat</a><ul>
+								<li><a href="#help-chat-private_messages">Private Messages</a></li>
+								<li><a href="#help-chat-formatting">Formatting</a></li>
+								<li><a href="#help-chat-links">Links</a></li>
+							</ul></li>
+							<li><a href="#help-bottom_toolbar">Bottom Toolbar</a></li>
+							<li><a href="#help-keyboard_shortcuts">Keyboard Shortcuts</a><ul>
+								<li><a href="#help-keyboard_shortcuts-edit">Edit</a></li>
+								<li><a href="#help-keyboard_shortcuts-view">View</a></li>
+								<li><a href="#help-keyboard_shortcuts-selection">With Selection</a></li>
+								<li><a href="#help-keyboard_shortcuts-other">Other</a></li>
+							</ul></li>
+						</ul>
+					</div>
+					<h3 id="help-sessions">Sessions</h3>
+					Imagine a session is the room you're in. Everybody in the same room sees and works on the same drawing.<br>
+					If you have the ID of the session you want to join, type it in the box and click "Join Session"!<br>
+					If you're looking to start a new session, type in an ID for it and click "Create Session"! Or, if you like, leave the ID box blank and you'll get a random 4-character ID.<br>
+					<br>
+					You may be prompted to enter a password when joining a session. If you don't know it, you can't join the session!
+					<h4 id="help-sessions-links">Session Links</h4>
+					If you're looking to share the link with your friends so they can automatically join, see <a href="#help-menubar-share_link">Share Link</a> on the menubar.<br>
+					<br>
+					The session URL can be used to automatically join the session. It follows this format:<br>
+					<code>https://w-draw.web.app<strong class="mono">/s/&#60;session_id&#62;</strong></code>, where <code>&#60;session_id&#62;</code> is the ID of the session to join.<br>
+					If a session with the given ID does not exist, a new one with that ID will be automatically created and joined.<br>
+					<br>
+					The session password can also be passed through the URL in a query string:<br>
+					<code>https://w-draw.web.app/s/secret-drawing<strong class="mono">?pass=&#60;password&#62;</strong></code>, where <code>&#60;password&#62;</code> is the session's password.<br>
+					If you are creating the session with this link (a session with the specified ID doesn't exist yet), then the password on the new session will be automatically set to the one specified.
+					<h3 id="help-menubar">Menubar</h3>
+					The menubar (at the very top of the screen) allows you to do useful things, like save your canvas for later, set a password on your session, or look at this help window!<br>
+					<h4 id="help-menubar-save_open">Save/Open</h4>
+					Web Draw can save and open files containing the info it needs to recreate your canvas. It's similar to the data that is sent to a new client joining your session. It contains the canvas' undo and redo data, which are lists of actions (strokes, flood fills, lines, etc.) clients have made and their properties (colour, opacity, etc.).<br>
+					<br>
+					<strong>WARNING!</strong><br>
+					The canvas data format is going to change and will become incompatible with newer versions of Web Draw.
+					<h4 id="help-menubar-export_import">Export/Import</h4>
+					With the "Export" button, you can save your drawing as a PNG image!<br>
+					And with "Import", you can upload an image to use in your drawing!
+					<h4 id="help-menubar-resize_canvas">Resize Canvas</h4>
+					In the "Edit" menu, the "Resize Canvas" button allows you to change the size of the canvas. Good if you need that extra bit of space, or if you have too much extra space.<br>
+					<br>
+					When choosing a new size for your canvas, you may also choose an offset position for the original image on the new canvas and how to fill new canvas space.<br>
+					The "Centre" button will automatically set the offset position so that the original image will be centred on the new canvas.
+					<h4 id="help-menubar-session_id_password">Session ID & Password</h4>
+					Through the "Session" menu, you can change the current session's ID and set (or remove) a password.
+					<h4 id="help-menubar-share_link">Share Link</h4>
+					Here you can get a link that you can share with your friends which will allow whoever uses it to automatically join the session. If your session has a password on it, you can optionally include it in the link so that whoever uses your link doesn't have to type it in. If the password isn't included, they will be prompted to enter it before joining, just like from the main page.
+					<h4 id="help-menubar-info">Info</h4>
+					This "Info" window will show a little info about the web app and the client (you!).<br>
+					Ping is the latency of the connection to the server. Every 10 seconds, the server will send a ping to your browser and wait for a pong to make sure the connection is still alive. It also measures the amount of time between when the ping was sent and the pong was received, and tells the browser about it so it can display it here so you can know about it. If you're curious, I typically get an average latency of around 40 ms.
+					<h3 id="help-top_toolbar">Top Toolbar</h3>
+					The top toolbar has your canvas controls.
+					<h4 id="help-top_toolbar-undo_redo">Undo/Redo</h4>
+					Click the "Undo" button to undo the last action on the canvas.<br>
+					Click "Redo" to redo the last undone action.<br>
+					<br>
+					Note: These are actions that anyone in the session has made, not just your own.
+					<h4 id="help-top_toolbar-clear">Clear</h4>
+					Clear the canvas to all white. Double click to clear to all transparent pixels. (<code>#00000000</code>)
+					<h4 id="help-top_toolbar-canvas_zoom">Canvas Zoom</h4>
+					This is the displayed size of the canvas on your screen. This doesn't affect the actual size of the canvas or the zoom of the canvas on anybody else's screen. If you need to be more precise or detailed or just need to draw something small, you can zoom in a bit.<br>
+					To change it, you can either use your mouse wheel on the canvas area with the <kbd>Control</kbd> key held down, or if you want, you can enter percentage size into the number box.<br>
+					The "Reset" button will reset the zoom to 100%.<br>
+					The "Fit" button will set the canvas zoom to the largest size that will fit in the canvas area.
+					<h3 id="help-left_toolbar">Left Toolbar</h3>
+					On the left, you've got all your different tools.<br>
+					<strong>Pen</strong>: Draw a free-form line however you want!<br>
+					<strong>Eraser</strong>: Erase part of the canvas to transparency or the background colour. (Uses pen tool internally)<br>
+					<strong>Flood Fill</strong>: Fill an area of a similar colour, decided by the fill threshold. Colours with a difference within the threshold will be recoloured.<br>
+					<strong>Colour Picker</strong>: Click on a spot on the canvas and set one of your colours to the colour of that spot.<br>
+					<strong>Rectangular Select</strong>: Select an area on the canvas to manipulate. You can copy, cut, paste, and clear pixels in your selection.<br>
+					<strong>Line</strong>: Draw a straight line between 2 points.<br>
+					<strong>Rectangle</strong>: Draw a rectangle, with optional outline & fill.<br>
+					<strong>Ellipse</strong>: Draw an ellipse, with optional outline & fill.<br>
+					<br>
+					Note: With every applicable tool, the left mouse button will use Colour 1, and the right will use Colour 2.
+					<h3 id="help-right_toolbar">Right Toolbar</h3>
+					The right toolbar has 2 tabs: A tool settings tab and an action history tab.<br>
+					<h4 id="help-right_toolbar-tool_settings">Tool Settings</h4>
+					Here you can find your colours and settings for all your tools.
+					<h5 id="help-right_toolbar-colours">Colours</h5>
+					The colours are always shown. Colour 1 is the colour to use with the left mouse button, and Colour 2 is used with the right. Click on a colour in the table to the left with the left or right button to set the corresponding colour. Click on the colour box for Colour 1 or 2 to choose a custom colour with a colour picker, or type in a hex RGB or RGBA colour value in the box below. You can use 3-digit or 6-digit hex RGB colours, or 4-digit or 8-digit hex RGBA colours.
+					<h5 id="help-right_toolbar-mode_opacity">Tool Mode and Opacity Settings</h5>
+					The pen, flood fill, line, and shapes tools all share the following settings:
+					<h6 id="help-right_toolbar-mode_opacity-mode">Mode</h6>
+					The "Mode" setting decides how new canvas content is added to the existing content. There are a total of 26 options, the most common of which I have put at the very top:<br>
+					<strong>Normal</strong>: New content is drawn on top of existing content. This is what is considered normal, hence the name "Normal".<br>
+					<strong>Behind</strong>: New content is drawn behind existing content. This means it will only be shown where the existing content has transparency.<br>
+					<strong>Erase</strong>: Existing content is kept where it doesn't overlap the new content. This means the pixels where the content overlaps will be made transparent, like it's being erased.<br>
+					<br>
+					The rest of the modes I won't describe here, but there are descriptions from the <a href="https://developer.mozilla.org/docs/Web/API/CanvasRenderingContext2D/globalCompositeOperation" target="_blank">MDN documentation</a>. Keep in mind I have renamed several of the options for clarity. You might be better off checking the tooltip for each mode, unless you want to see a picture.
+					<h6 id="help-right_toolbar-mode_opacity-opacity">Opacity</h6>
+					This is how "see-through" things you draw will be, 100 being completely opaque, and 0 being completely transparent.
+					<h5 id="help-right_toolbar-line_size">Line Size Settings</h5>
+					With the pen, line, and shape tools, you can set a line size. When drawing shapes, this applies to only the outline of the shape.<br>
+					This is the thickness of a line in pixels. The maximum is 10000, because I think that's a reasonable limit. Let me know if you think otherwise.
+					<h5 id="help-right_toolbar-line_cap">Line Cap Settings</h5>
+					The pen and line tools have a line cap setting.<br>
+					The line cap is what the ends of a line will look like.<br>
+					<strong>Pen cap options</strong>: Round, Butt, and Square.<br>
+					<strong>Round</strong>: The ends of lines are rounded.<br>
+					<strong>Butt</strong>: The ends of lines are squared off at the endpoints.<br>
+					<strong>Square</strong>: The ends of lines are squared off by adding a box with an equal width and half the height of the line's thickness.
+					<h5 id="help-right_toolbar-flood_fill">Flood Fill Settings</h5>
+					<h6 id="help-right_toolbar-flood_fill-threshold">Threshold</h6>
+					The maximum colour difference of a pixel from the original clicked colour to be recoloured. This is the maximum difference for each of the channels selected with the "Fill by" setting, not the total of all the colour differences. If all values are within the threshold, the pixel will be recoloured.
+					<h6 id="help-right_toolbar-flood_fill-fill_by">Fill by</h6>
+					This setting determines which channels to check for colour difference to decide whether or not to recolour the pixel. Available options are: RGBA (default), RGB, Red, Green, Blue, and Alpha.
+					<h5 id="help-right_toolbar-colour_picker">Colour Picker Settings</h5>
+					You can merge the sampled colour with the current and/or sample the opacity in addition to colour.
+					<h6 id="help-right_toolbar-colour_picker-merge">Merge with current</h6>
+					The new colour will be the average of the current colour and the sampled colour. For example, if the current is black <code>(0, 0, 0)</code> and the sampled is white <code>(255, 255, 255)</code>, the new colour will be grey <code>(128, 128, 128)</code>.
+					<h6 id="help-right_toolbar-colour_picker-sample_opacity">Sample opacity</h6>
+					Set your colour opacity to the sampled pixel's alpha value.
+					<h5 id="help-right_toolbar-rect_select">Rectangular Select Actions</h5>
+					The rectangular select tool doesn't have any settings available, but there are buttons for manipulating your selection.
+					<h6 id="help-right_toolbar-rect_select-copy">Copy</h6>
+					Copy the pixels at the selected area on the canvas.
+					<h6 id="help-right_toolbar-rect_select-cut">Cut</h6>
+					Copy the pixels and then clear the selected area to Colour 2.
+					<h6 id="help-right_toolbar-rect_select-paste">Paste</h6>
+					Put the pixels in the selection onto the canvas.
+					<h6 id="help-right_toolbar-rect_select-clear">Clear</h6>
+					Set the selected pixels to Colour 2.
+					<h5 id="help-right_toolbar-shape">Shape (Rectangle & Ellipse) Settings</h5>
+					When drawing shapes, you can enable or disable outlines and/or fill.
+					<h6 id="help-right_toolbar-shape-outline">Outline</h6>
+					The line around the outer edge of the shape. Uses the colour which the mouse was clicked with.
+					<h6 id="help-right_toolbar-shape-fill">Fill</h6>
+					Whether or not the inside of the shape is filled with a solid colour. Uses the opposite colour from what the mouse was clicked with.
+					<h4 id="help-right_toolbar-action_history">Action History</h4>
+					Here you can find the history of all actions that make up the canvas you see. Each entry in the list consists of a little snapshot of what the canvas looked like at that point in history and the name of the action that made it look like that. The current point in history is highlighted. Undoing or redoing will move that highlight up or down the list. Clicking any given entry in the list will take you to that point in history.<br>
+					<br>
+					The following are some ways you can edit action history. Keep in mind that these changes will affect actions that come after the edited one, as you're changing history!
+					<h5 id="help-right_toolbar-action_history-toggling">Toggling Actions</h5>
+					Any action in history can be enabled/disabled at any time with the button to the right of an action entry in the table. When an action is "disabled", it will be as if it was never made.
+					<h5 id="help-right_toolbar-action_history-moving">Moving Actions</h5>
+					Moving actions up and down in history can be done with the up and down arrows next to action entries. An action that is moved up will happen before the previous action, and an action that is moved down will happen after the next action. This may be useful if your buddies accidentally mess up the order of things, since you're all drawing at the same time.
+					<h3 id="help-chat">Chat</h3>
+					Use the chat to send messages to other people in the session, including private messages to people you choose.
+					<h4 id="help-chat-private_messages">Private Messages</h4>
+					Normally, a message is sent to everyone in the session. However, if the message begins with "to:", it will be a private message sent only to the people with the client IDs that follow. For example, if your message is "to:x7sm PRIVATE MESSAGE!!!", only you and the person with the client ID of <code>x7sm</code> will be able to see the message, and no one else. You can also use a comma-separated list of IDs, like this: "to:x7sm,18hp Hello!"<br>
+					<br>
+					There MUST be a space between the "to" list and the message.<br>
+					<br>
+					Clicking the name of a user in the chat (above a message they have sent) will add their client ID to the "to" list in the message box.
+					<h4 id="help-chat-formatting">Formatting</h4>
+					You can also use some formatting similar to markdown in your messages. Available formatting:
+					<table class="table border">
+						<tr>
+							<th>Typed</th>
+							<th>Displayed</th>
+						</tr>
+						<tr>
+							<td>**Bold Text**</td>
+							<td><strong>Bold Text</strong></td>
+						</tr>
+						<tr>
+							<td>*Italicized Text* OR _Italicized Text_</td>
+							<td><em>Italicized Text</em></td>
+						</tr>
+						<tr>
+							<td>__Underlined Text__</td>
+							<td><u>Underlined Text</u></td>
+						</tr>
+						<tr>
+							<td>~~Strikethrough Text~~</td>
+							<td><s>Strikethrough Text</s></td>
+						</tr>
+					</table>
+					<br>
+					You can escape the special characters if, for example, you want to use asterisks around something without italicizing it. You can do that by putting a backslash before a special character. "\*text*" will suffice and will be shown as "*text*". If the opening or closing or both formatting characters are escaped (e.g. "\*"), the text will not be formatted. And as you should expect, you can escape the backslash as well: "\\**text**" will result in "\<strong>text</strong>".
+					<h4 id="help-chat-links">Links</h4>
+					Valid URLs sent in messages using the HTTP or HTTPS protocols will be automatically converted into hyperlinks. For example, sending "https://google.com" will turn out like "<a href="https://google.com" target="_blank" title="https://google.com">https://google.com</a>".
+					<h3 id="help-bottom_toolbar">Bottom Toolbar</h3>
+					At the bottom of your screen is some session info.<br>
+					You will see the ID of the session you are currently in and the number of users connected to it.<br>
+					Your session ID can be easily copied to the clipboard by clicking on it. If you want to share a link where your buddies can automatically join your session without any other hassle, just copy the link in the address bar, which will have your session ID in it. (See above, Sessions.)<br>
+					Finally, a "Leave" button to leave the session. You will be taken back to the main page.
+					<h3 id="help-keyboard_shortcuts">Keyboard Shortcuts</h3>
+					<h4 id="help-keyboard_shortcuts-edit">Edit</h4>
+					<ul>
+						<li><kbd>Ctrl</kbd> + <kbd>Z</kbd> - Undo</li>
+						<li><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>Z</kbd> <strong>OR</strong> <kbd>Ctrl</kbd> + <kbd>Y</kbd> - Redo</li>
+					</ul>
+					<h4 id="help-keyboard_shortcuts-view">View</h4>
+					<ul>
+						<li><kbd>+</kbd> - Zoom canvas in</li>
+						<li><kbd>-</kbd> - Zoom canvas out</li>
+						<li>Set zoom:
+							<ul>
+								<li><kbd>1</kbd> - 100%</li>
+								<li><kbd>2</kbd> - 200%</li>
+								<li><kbd>3</kbd> - 400%</li>
+								<li><kbd>4</kbd> - 800%</li>
+								<li><kbd>5</kbd> - 1600%</li>
+							</ul>
+						</li>
+					</ul>
+					<ul>
+						<li><kbd>Escape</kbd> - Toggle chat sidebar</li>
+					</ul>
+					<h4 id="help-keyboard_shortcuts-selection">With Selection</h4>
+					<ul>
+						<li><kbd>Ctrl</kbd> + <kbd>C</kbd> - Copy</li>
+						<li><kbd>Ctrl</kbd> + <kbd>X</kbd> - Cut</li>
+						<li><kbd>Ctrl</kbd> + <kbd>V</kbd> - Paste</li>
+					</ul>
+					<h4 id="help-keyboard_shortcuts-other">Other</h4>
+					<ul>
+						<li><kbd>F1</kbd> - Open Help window</li>
+					</ul>
+					<br>
+				</div>
+				<div class="modalFooter">
+					<button id="helpModalDoneBtn">Done</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="licenseModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>License</h2></div>
+				<div class="modalBody">
+					<p>
+						Web Draw - A little real-time online collaborative drawing program.<br>
+						Copyright (C) 2020-2022 martendo
+					</p>
+					<p>
+						Web Draw is free software: you can redistribute it and/or modify
+						it under the terms of the GNU General Public License as published by
+						the Free Software Foundation, either version 3 of the License, or
+						(at your option) any later version.
+					</p>
+					<p>
+						Web Draw is distributed in the hope that it will be useful,
+						but WITHOUT ANY WARRANTY; without even the implied warranty of
+						MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+						GNU General Public License for more details.
+					</p>
+					<p><a href="https://www.gnu.org/licenses/gpl-3.0">https://www.gnu.org/licenses/gpl-3.0</a></p>
+				</div>
+				<div class="modalFooter">
+					<button id="licenseModalDoneBtn">Done</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="noWsModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Your Browser Doesn't Support WebSockets!</h2></div>
+				<div class="modalBody">
+					That means your browser is old. You should upgrade.<br>
+					Web Draw doesn't work without WebSockets. Sorry, but no WebSockets means no Web Draw.<br>
+				</div>
+			</div>
+		</div>
+
+		<div id="sessionNoExistModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>There is no existing session with the ID <code id="sessionNoExist">N/A</code>.</h2></div>
+				<div class="modalFooter">
+					<button id="sessionNoExistModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+		<div id="sessionAlreadyExistModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>A session with the ID <code id="sessionAlreadyExist">N/A</code> already exists. Please choose another ID.</h2></div>
+				<div class="modalFooter">
+					<button id="sessionAlreadyExistModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="retrieveModal" class="modal">
+			<div class="modalContent" style="min-width: 20em;">
+				<div class="modalHeader"><h2 id="retrieveText">Setting up canvas...</h2></div>
+			</div>
+		</div>
+
+		<div id="oldCanvasFileModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Error Setting Up Canvas</h2></div>
+				<div class="modalBody">
+					There was a problem while trying to set up the drawing in your canvas file.<br>
+					It's likely that it is old and outdated - the canvas format has changed and will continue to change until I stop messing around with features.<br>
+				</div>
+				<div class="modalFooter">
+					<button id="oldCanvasFileModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="errorModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Woah! Error!</h2></div>
+				<div class="modalBody">
+					There's been a problem with the server. That means something's really not right. :/<br>
+					Try reloading the page, and if it still doesn't work, the server may be down. Sorry!
+				</div>
+				<div class="modalFooter">
+					<button id="errorModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="disconnectModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Trying to reconnect...</h2></div>
+				<div class="modalBody">
+					<div id="disconnectText">You were disconnected from the server.</div>
+					<div id="reconnectWait">...</div>
+				</div>
+				<div class="modalFooter">
+					<button id="disconnectModalGiveUpBtn">Give Up</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="canvasResizeModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Resize Canvas</h2></div>
+				<div class="modalBody">
+					<table>
+						<tr>
+							<td>
+								<fieldset>
+									<legend>Canvas Size</legend>
+									<table class="table">
+										<tr>
+											<td><label for="canvasResizeWidth">Width: </label></td>
+											<td><input id="canvasResizeWidth" type="number" min="1" step="1"></td>
+											<td>px</td>
+										</tr>
+										<tr>
+											<td><label for="canvasResizeHeight">Height: </label></td>
+											<td><input id="canvasResizeHeight" type="number" min="1" step="1"></td>
+											<td>px</td>
+										</tr>
+									</table>
+								</fieldset>
+								<fieldset>
+									<legend>Offset</legend>
+									<table class="table">
+										<tr>
+											<td><label for="canvasResizeOffsetX">X: </label></td>
+											<td><input id="canvasResizeOffsetX" type="number" min="0" step="1"></td>
+											<td>px</td>
+										</tr>
+										<tr>
+											<td><label for="canvasResizeOffsetY">Y: </label></td>
+											<td><input id="canvasResizeOffsetY" type="number" min="0" step="1"></td>
+											<td>px</td>
+										</tr>
+										<tr>
+											<td colspan="3"><button id="canvasResizeOffsetCentre">Centre</button></td>
+										</tr>
+									</table>
+								</fieldset>
+								<label for="canvasResizeFill">Fill with:</label>
+								<select id="canvasResizeFill">
+									<option value="0">Colour 1 (foreground)</option>
+									<option value="1">Colour 2 (background)</option>
+									<option value="2">White</option>
+									<option value="3">Transparency</option>
+								</select>
+							</td>
+							<td><span class="spacer"></span></td>
+							<td id="canvasResizePreviewCell">
+								<fieldset>
+									<legend>Preview</legend>
+									<canvas id="resizePreviewCanvas"></canvas>
+								</fieldset>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modalFooter">
+					<button id="resizeModalResetBtn">Reset</button><button id="resizeModalResizeBtn">Resize</button><button id="resizeModalCancelBtn">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="changeSessionIdModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Change Session ID</h2></div>
+				<div class="modalBody">
+					Current session ID: <span id="sessionIdCurrent" class="clickToCopy lightBox mono" title="Copy">N/A</span><br>
+					<br>
+					<label for="sessionIdNew">New session ID: </label>
+					<input id="sessionIdNew" type="text">
+				</div>
+				<div class="modalFooter">
+					<button id="sessionIdModalChangeBtn">Change</button><button id="sessionIdModalCancelBtn">Cancel</button>
+				</div>
+			</div>
+		</div>
+		<div id="sessionIdChangedModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>The session ID has been changed to <code id="sessionIdChanged">N/A</code>.</h2></div>
+				<div class="modalFooter">
+					<button id="sessionIdChangedModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+		<div id="sessionHasIdModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>There is already a session with the ID <code id="sessionHasId">N/A</code>. Please choose another ID.</h2></div>
+				<div class="modalFooter">
+					<button id="sessionHasIdModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="setSessionPasswordModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Set Session Password</h2></div>
+				<div class="modalBody">
+					<span id="sessionPasswordCurrent"></span><br>
+					<br>
+					<label for="sessionPasswordNew">New password: </label>
+					<input id="sessionPasswordNew" type="text">
+				</div>
+				<div class="modalFooter">
+					<button id="setSessionPasswordModalRemoveBtn" class="floatLeft">Remove Password</button><button id="setSessionPasswordModalSetBtn">Set</button><button id="setSessionPasswordModalCancelBtn">Cancel</button>
+				</div>
+			</div>
+		</div>
+		<div id="enterSessionPasswordModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Enter Password</h2></div>
+				<div class="modalBody">
+					The session <code id="enterSessionPasswordId">N/A</code> has a password set on it. Please enter it to join.<br>
+					<label for="enterSessionPassword">Password: </label>
+					<input id="enterSessionPassword" type="text">
+				</div>
+				<div class="modalFooter">
+					<button id="enterSessionPasswordModalJoinBtn">Join</button><button id="enterSessionPasswordModalCancelBtn">Cancel</button>
+				</div>
+			</div>
+		</div>
+		<div id="sessionWrongPasswordModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>The password <code id="sessionWrongPassword">N/A</code> does not match the password for the session <code id="sessionWrongPasswordId">N/A</code>.</h2></div>
+				<div class="modalFooter">
+					<button id="sessionWrongPasswordModalOkBtn">OK</button>
+				</div>
+			</div>
+		</div>
+		<div id="shareSessionLinkModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Share Session Link</h2></div>
+				<div class="modalBody">
+					Share this link with your friends to join this session!<br>
+					<br>
+					<button id="sessionLinkCopy">Copy</button>
+					<code id="sessionLink" class="clickToCopy lightBox mono" title="Copy">N/A</code><br>
+					<div id="sessionLinkPassword">
+						<br>
+						<table class="table">
+							<tr>
+								<td><input type="checkbox" id="sessionLinkPasswordInput" class="check" checked></td>
+								<td>
+									<div class="checkLabel">
+										<label for="sessionLinkPasswordInput">
+											Include Password<br>
+											<small>Include the session's password in the link so whoever uses it doesn't need to type it in and can automatically join.</small>
+										</label>
+									</div>
+								</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div class="modalFooter">
+					<button id="shareLinkModalCloseBtn">Close</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="userModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>User Settings</h2></div>
+				<div class="modalBody">
+					<label for="userNameInput">Name: </label>
+					<input id="userNameInput" type="text">
+				</div>
+				<div class="modalFooter">
+					<button id="userModalSaveBtn">Save</button><button id="userModalCancelBtn">Cancel</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="infoModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Info</h2></div>
+				<div class="modalBody">
+					<table id="infoModalTable">
+						<tr>
+							<td>
+								<h3>Web Draw<img class="penIcon" src="{{BASE64:src/img/pen.png}}" alt="Pen Logo"></h3>
+								<small><code>{{VERSION}}</code></small><br>
+								By <a href="https://github.com/martendo" target="_blank">martendo</a><br>
+								<table class="table">
+									<tr>
+										<td>Started:</td>
+										<td>24 August 2020</td>
+									</tr>
+									<tr>
+										<td>Last updated:</td>
+										<td>{{DATE}}</td>
+									</tr>
+								</table>
+								<a href="https://w-draw.web.app">https://w-draw.web.app</a><br>
+								<a href="https://github.com/martendo/web-draw" target="_blank">GitHub</a>
+							</td>
+							<td><span class="spacer"></span></td>
+							<td>
+								<h3>User Info</h3>
+								<table id="infoTable" class="table">
+									<tr>
+										<td>Client ID:</td>
+										<td><span id="clientIdInfo" class="clickToCopy lightBox table mono full" title="Copy">N/A</span></td>
+									</tr>
+									<tr>
+										<td>Session ID:</td>
+										<td><span id="sessionIdInfo" class="clickToCopy lightBox table mono full" title="Copy">N/A</span></td>
+									</tr>
+									<tr>
+										<td>Ping:</td>
+										<td><span id="pingInfo" class="clickToCopy lightBox table full" title="Copy">N/A</span></td>
+									</tr>
+									<tr>
+										<td>Avg. latency:</td>
+										<td><span id="avgPingInfo" class="clickToCopy lightBox table full" title="Copy">N/A</span></td>
+									</tr>
+									<tr>
+										<td colspan="2"><a href="javascript:void(0)" id="allPingsLink">See all previous pings</a></td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="modalFooter">
+					<button id="infoModalDoneBtn">Done</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="allPingsModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Previous Pings</h2></div>
+				<div class="modalBody">
+					<table class="table border">
+						<tr>
+							<th>Lowest</th>
+							<th>Highest</th>
+							<th>Average</th>
+						</tr>
+						<tr>
+							<td id="minLatency">N/A</td>
+							<td id="maxLatency">N/A</td>
+							<td id="avgLatency">N/A</td>
+						</tr>
+					</table>
+					<br>
+					<table class="table border alternate">
+						<thead>
+							<tr id="pingTableHeaderRow">
+								<th>#</th>
+								<th>Latency</th>
+							</tr>
+						</thead>
+						<tbody id="pingTableBody"></tbody>
+					</table>
+				</div>
+				<div class="modalFooter">
+					<button id="allPingsModalDoneBtn">Done</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="sessionInfoModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Session Info</h2></div>
+				<div class="modalBody">
+					Session ID: <span id="sessionInfoId" class="clickToCopy lightBox mono" title="Copy">N/A</span><br>
+					Number of clients connected: <strong id="sessionInfoClients">0</strong><br>
+					<br>
+					Clients:<br>
+					<table class="table border" id="sessionInfoClientInfo">
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+							</tr>
+						</thead>
+						<tbody id="sessionInfoClientBody"></tbody>
+					</table>
+				</div>
+				<div class="modalFooter">
+					<button id="sessionInfoModalDoneBtn">Done</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="settingsModal" class="modal">
+			<div class="modalContent">
+				<div class="modalHeader"><h2>Settings</h2></div>
+				<div class="modalBody">
+					<fieldset>
+						<legend>Mouse Movements</legend>
+						<table class="table">
+							<tr>
+								<td><input type="checkbox" id="sendMouseMovements" checked></td>
+								<td><label for="sendMouseMovements">Send mouse movements</label></td>
+							</tr>
+							<tr>
+								<td><input type="checkbox" id="receiveMouseMovements" checked></td>
+								<td><label for="receiveMouseMovements">Receive mouse movements</label></td>
+							</tr>
+						</table>
+					</fieldset>
+					<fieldset>
+						<legend>Colour Theme</legend>
+						<table class="table">
+							<tr>
+								<td><input type="radio" name="theme" id="lightTheme" checked></td>
+								<td><label for="lightTheme">Light</label></td>
+							</tr>
+							<tr>
+								<td><input type="radio" name="theme" id="darkTheme"></td>
+								<td><label for="darkTheme">Dark</label></td>
+							</tr>
+						</table>
+					</fieldset>
+				</div>
+				<div class="modalFooter">
+					<button id="settingsModalDoneBtn">Done</button>
+				</div>
+			</div>
+		</div>
+		<script src="/script.js"></script>
+	</body>
 </html>
