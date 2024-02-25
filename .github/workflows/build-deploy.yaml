@@ -26,7 +26,8 @@ jobs:
       - name: Install deploy dependencies
         run: npm install -g firebase-tools
 
+      - name: Create service account key file
+        run: echo '${{ secrets.GSA_KEY }}' > "$HOME"/gsakey.json
+
       - name: Deploy to Firebase Hosting
-        run: firebase deploy --token "$FIREBASE_TOKEN" --only hosting
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        run: export GOOGLE_APPLICATION_CREDENTIALS="$HOME"/gsakey.json && firebase deploy --only hosting
