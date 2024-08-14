@@ -1,8 +1,8 @@
 # Web Draw ![Pen Logo](/src/img/pen.png)
 [![Version](https://img.shields.io/github/v/tag/martendo/web-draw?label=version)](https://github.com/martendo/web-draw/tags)
-[![Website](https://img.shields.io/website?down_color=inactive&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fw-draw.web.app)](https://w-draw.web.app)
+[![Website](https://img.shields.io/website?down_color=inactive&down_message=offline&up_color=success&up_message=online&url=https%3A%2F%2Fw-draw.web.app)](https://draw.marbal.ca)
 
-A little real-time online collaborative drawing program. <https://w-draw.web.app>
+A little real-time online collaborative drawing program. <https://draw.marbal.ca>
 
 Web Draw is a web app that allows users to draw on a shared canvas in real time.
 It's currently a little rough, but is seeing some improvement here and there.

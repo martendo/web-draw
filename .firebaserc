@@ -6,7 +6,7 @@
 		"web-draw-fe761": {
 			"hosting": {
 				"app": [
-					"w-draw"
+					"web-draw-fe761"
 				]
 			}
 		}
